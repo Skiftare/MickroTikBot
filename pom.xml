@@ -33,12 +33,15 @@
             <artifactId>java-telegram-bot-api</artifactId>
             <version>7.9.1</version>
         </dependency>
+<<<<<<< HEAD
         <!-- TelegramBotsDependency(Test) -->
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>6.3.0</version>
         </dependency>
+=======
+>>>>>>> da20164 (первичная настройка тестов и репозитория)
     </dependencies>
 
     <build>
