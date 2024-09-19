@@ -24,6 +24,7 @@ public class HelpCommand implements Command {
                 .collect(Collectors.joining("\n"));
         responseText += "\n" + COMMAND_NAME + " - " + COMMAND_DESCRIPTION;
 
+
     }
 
     @Override
