@@ -27,18 +27,21 @@
         </license>
     </licenses>
     <dependencies>
-        <!-- Telegram -->
+
+        <!-- PomReaderDependency -->
         <dependency>
-            <groupId>com.github.pengrad</groupId>
-            <artifactId>java-telegram-bot-api</artifactId>
-            <version>7.9.1</version>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.8.4</version>
         </dependency>
-        <!-- TelegramBotsDependency(Test) -->
+
+        <!-- TelegramBotsDependency -->
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>6.3.0</version>
         </dependency>
+
     </dependencies>
 
     <build>
