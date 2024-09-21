@@ -1,8 +1,13 @@
-package core;
+package edu.Configuration;
 
 
-import handles.commands.Command;
-import handles.tables.CommandTable;
+import edu.handles.commands.Command;
+import edu.handles.tables.CommandTable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,15 +16,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TelegramBotCore extends TelegramLongPollingBot {
 
-    private final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
-    private final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд.";
+    private static final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
+    private static final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд.";
 
     private final Map<String, Command> commandTable = new HashMap<>();
 
@@ -81,7 +82,8 @@ public class TelegramBotCore extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().severe("Error while sending message to user: " + e.getMessage());
+
         }
     }
 

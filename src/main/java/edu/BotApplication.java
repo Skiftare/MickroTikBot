@@ -1,15 +1,18 @@
-import core.TelegramBotCore;
-import handles.commands.Command;
-import handles.commands.enteties.AuthorsCommand;
-import handles.commands.enteties.HelpCommand;
-import handles.commands.enteties.InfoCommand;
-import handles.tables.CommandTable;
+package edu;
+
+import edu.Configuration.TelegramBotCore;
+import edu.handles.commands.Command;
+import edu.handles.commands.enteties.AuthorsCommand;
+import edu.handles.commands.enteties.HelpCommand;
+import edu.handles.commands.enteties.InfoCommand;
+import edu.handles.tables.CommandTable;
+import java.util.logging.Logger;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.util.logging.Logger;
 
+@SuppressWarnings("HideUtilityClassConstructor")
 public class BotApplication {
     private static Logger logger = Logger.getLogger(BotApplication.class.getName());
 
@@ -36,9 +39,7 @@ public class BotApplication {
             botsApi.registerBot(new TelegramBotCore(coreCommandTable));
             logger.info("Bot registered");
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.info("Bot registration failed with stacktrace: " + e.getStackTrace());
         }
     }
-
-
 }

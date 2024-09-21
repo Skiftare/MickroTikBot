@@ -1,11 +1,12 @@
-package handles.commands.enteties;
+package edu.handles.commands.enteties;
 
-import handles.commands.Command;
-import handles.tables.CommandTable;
+import edu.handles.commands.Command;
+import edu.handles.tables.CommandTable;
+import java.util.stream.Collectors;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.stream.Collectors;
+
 
 public class HelpCommand implements Command {
 
@@ -14,14 +15,15 @@ public class HelpCommand implements Command {
     private static final String COMMAND_DESCRIPTION = "Получить список всех доступных команд";
 
 
+
     private String responseText;
 
     public HelpCommand(CommandTable table) {
-
+        String separatorInLine = " - ";
         responseText = table.getCommands().values().stream()
-                .map(command -> command.getCommandName() + " - " + command.getCommandDescription())
+                .map(command -> command.getCommandName() + separatorInLine + command.getCommandDescription())
                 .collect(Collectors.joining("\n"));
-        responseText += "\n" + COMMAND_NAME + " - " + COMMAND_DESCRIPTION;
+        responseText += "\n" + COMMAND_NAME + separatorInLine + COMMAND_DESCRIPTION;
 
 
     }

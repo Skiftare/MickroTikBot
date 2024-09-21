@@ -1,9 +1,7 @@
-package handles.tables;
+package edu.handles.tables;
 
-import handles.commands.Command;
-
+import edu.handles.commands.Command;
 import java.util.HashMap;
-import java.util.Map;
 
 public class CommandTable {
     private HashMap<String, Command> commandHashMap = new HashMap<>();
@@ -22,6 +20,7 @@ public class CommandTable {
             commandHashMap.put(command.getCommandName(), command);
         }
     }
+
     public void addCommandsFrom(CommandTable otherTable) {
         commandHashMap.putAll(otherTable.getCommands());
     }

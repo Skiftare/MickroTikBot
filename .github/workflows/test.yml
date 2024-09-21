@@ -1,13 +1,11 @@
 name: Build and Checkstyle
 
 on:
-  push:
-    branches:
-      - '**'  # Запуск на всех ветках
+  workflow_dispatch:
   pull_request:
-    paths:
-      - .github/workflows/test.yml
-      - src/main/**
+  paths:
+    - .github/workflows/test.yml
+    - src/main/**
 
 jobs:
   build:
@@ -41,3 +39,16 @@ jobs:
           min-coverage-changed-files: 30
           title: Code Coverage
           update-comment: true
+  checkstyle:
+    name: checkstyle
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - run: mvn checkstyle:check
