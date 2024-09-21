@@ -1,7 +1,9 @@
 name: Build and Checkstyle
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - '**'  # Запуск на всех ветках
   pull_request:
     paths:
       - .github/workflows/test.yml
@@ -23,6 +25,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Build with Maven
+        run: mvn package
+
       - name: Run tests with coverage
         run: mvn test jacoco:report
 
@@ -36,5 +41,3 @@ jobs:
           min-coverage-changed-files: 30
           title: Code Coverage
           update-comment: true
-
-
