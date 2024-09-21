@@ -23,8 +23,8 @@ public class CommandTableTests {
         CommandTable commandTable = new CommandTable(infoCommand, authorsCommand);
 
         assertEquals(2, commandTable.getCommands().size());
-        assertTrue(commandTable.getCommands().containsKey("info"));
-        assertTrue(commandTable.getCommands().containsKey("authors"));
+        assertTrue(commandTable.getCommands().containsKey("/info"));
+        assertTrue(commandTable.getCommands().containsKey("/authors"));
     }
 
     @Test
@@ -40,6 +40,6 @@ public class CommandTableTests {
         commandTable.addCommandsFrom(anotherTable);
 
         assertEquals(3, commandTable.getCommands().size());
-        assertTrue(commandTable.getCommands().containsKey("help"));
+        assertTrue(commandTable.getCommands().containsKey("/help"));
     }
 }
