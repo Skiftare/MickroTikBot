@@ -24,8 +24,6 @@ public class HelpCommand implements Command {
                 .map(command -> command.getCommandName() + separatorInLine + command.getCommandDescription())
                 .collect(Collectors.joining("\n"));
         responseText += "\n" + COMMAND_NAME + separatorInLine + COMMAND_DESCRIPTION;
-
-
     }
 
     @Override

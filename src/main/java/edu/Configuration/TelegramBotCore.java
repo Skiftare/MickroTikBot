@@ -3,6 +3,8 @@ package edu.Configuration;
 
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,21 +63,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
 
     private ReplyKeyboardMarkup getKeyboardMarkup() {
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        keyboardMarkup.setResizeKeyboard(true);
-        keyboardMarkup.setOneTimeKeyboard(false);
-
-        List<KeyboardRow> keyboard = commandTable.values().stream()
-                .filter(Command::isVisibleForKeyboard)
-                .map(command -> {
-                    KeyboardRow row = new KeyboardRow();
-                    row.add(new KeyboardButton(command.getCommandName()));
-                    return row;
-                })
-                .collect(Collectors.toList());
-
-        keyboardMarkup.setKeyboard(keyboard);
-        return keyboardMarkup;
+        // Передаем список команд в сборщик
+        KeyboardMarkupBuilder keyboardBuilder = new KeyboardMarkupBuilder(new ArrayList<>(commandTable.values()));
+        return keyboardBuilder.build();
     }
 
     public void sendMessageToUser(SendMessage message) {
