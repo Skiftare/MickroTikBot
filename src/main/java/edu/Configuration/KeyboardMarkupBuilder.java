@@ -1,13 +1,13 @@
 package edu.Configuration;
 
 import edu.handles.commands.Command;
+import java.util.ArrayList;
+import java.util.List;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class KeyboardMarkupBuilder {
 
