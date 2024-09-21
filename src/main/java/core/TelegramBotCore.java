@@ -2,7 +2,7 @@ package core;
 
 
 import handles.commands.Command;
-import handles.tables.enteties.CoreCommandTable;
+import handles.tables.CommandTable;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -18,14 +18,12 @@ import java.util.stream.Collectors;
 
 public class TelegramBotCore extends TelegramLongPollingBot {
 
-    // Таблица команд: ключ — команда, значение — объект класса, реализующего команду
     private final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
     private final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд.";
 
     private final Map<String, Command> commandTable = new HashMap<>();
 
-    public TelegramBotCore() {
-        CoreCommandTable coreCommandTable = new CoreCommandTable();
+    public TelegramBotCore(CommandTable coreCommandTable) {
         commandTable.putAll(coreCommandTable.getCommands());
     }
 
@@ -50,14 +48,16 @@ public class TelegramBotCore extends TelegramLongPollingBot {
             if (command != null) {
                 response = command.execute(update);
             } else {
-
                 response.setChatId(chatId);
                 response.setText(UNKNOWN_COMMAND);
             }
             response.setReplyMarkup(getKeyboardMarkup());
             sendMessageToUser(response);
         }
+
+
     }
+
 
     private ReplyKeyboardMarkup getKeyboardMarkup() {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
