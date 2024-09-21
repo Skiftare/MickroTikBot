@@ -1,12 +1,12 @@
-package handles.commands.enteties;
+package edu.handles.commands.enteties;
 
 
-import Data.PomReader;
-import handles.commands.Command;
+import edu.Data.PomReader;
+import edu.handles.commands.Command;
+import java.util.List;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
 
 public class AuthorsCommand implements Command {
     private static final boolean IS_VISIBLE_FOR_KEYBOARD = true;
