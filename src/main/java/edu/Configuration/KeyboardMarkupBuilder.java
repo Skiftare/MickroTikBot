@@ -12,14 +12,13 @@ import java.util.stream.Collectors;
 public class KeyboardMarkupBuilder {
 
     private final ReplyKeyboardMarkup replyKeyboardMarkup;
-    private final List<KeyboardRow> keyboard;
 
     public KeyboardMarkupBuilder(List<Command> commands) {
         replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(false);
 
-        keyboard = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
 
         for (Command command : commands) {
             if (command.isVisibleForKeyboard()) {
