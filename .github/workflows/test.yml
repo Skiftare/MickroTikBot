@@ -1,7 +1,6 @@
 name: Build and Checkstyle
 
 on:
-  workflow_dispatch:
   pull_request:
     paths:
     - .github/workflows/test.yml
