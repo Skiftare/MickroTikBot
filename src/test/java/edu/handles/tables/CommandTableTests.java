@@ -1,10 +1,10 @@
-package handles.tables;
+package edu.handles.tables;
 
 
-import handles.commands.Command;
-import handles.commands.enteties.AuthorsCommand;
-import handles.commands.enteties.HelpCommand;
-import handles.commands.enteties.InfoCommand;
+import edu.handles.commands.Command;
+import edu.handles.commands.enteties.AuthorsCommand;
+import edu.handles.commands.enteties.HelpCommand;
+import edu.handles.commands.enteties.InfoCommand;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 

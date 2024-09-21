@@ -1,10 +1,11 @@
-package handles.commands;
+package edu.handles.commands;
 
 
-import handles.commands.enteties.AuthorsCommand;
-import handles.commands.enteties.HelpCommand;
-import handles.commands.enteties.InfoCommand;
-import handles.tables.CommandTable;
+import edu.handles.commands.Command;
+import edu.handles.commands.enteties.AuthorsCommand;
+import edu.handles.commands.enteties.HelpCommand;
+import edu.handles.commands.enteties.InfoCommand;
+import edu.handles.tables.CommandTable;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mockito;
