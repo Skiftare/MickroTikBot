@@ -2,7 +2,6 @@ package handles.commands.enteties;
 
 import handles.commands.Command;
 import handles.tables.CommandTable;
-import handles.tables.enteties.PreCommandTable;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -17,8 +16,8 @@ public class HelpCommand implements Command {
 
     private String responseText;
 
-    public HelpCommand() {
-        CommandTable table = new PreCommandTable();
+    public HelpCommand(CommandTable table) {
+
         responseText = table.getCommands().values().stream()
                 .map(command -> command.getCommandName() + " - " + command.getCommandDescription())
                 .collect(Collectors.joining("\n"));
