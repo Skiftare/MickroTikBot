@@ -2,8 +2,11 @@ name: Build and Checkstyle
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - '**'
   pull_request:
-  paths:
+    paths:
     - .github/workflows/test.yml
     - src/main/**
 
