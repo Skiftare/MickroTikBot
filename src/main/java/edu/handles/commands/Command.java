@@ -1,4 +1,4 @@
-package handles.commands;
+package edu.handles.commands;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;

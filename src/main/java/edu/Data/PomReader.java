@@ -1,13 +1,14 @@
-package Data;
-
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+package edu.Data;
 
 import java.io.FileReader;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
-public  class PomReader {
+@SuppressWarnings("HideUtilityClassConstructor")
+public class PomReader {
     private static List<String> authorsList;
     private final static String ERROR_MESSAGE = "Не удалось получить авторов.";
 
@@ -24,7 +25,7 @@ public  class PomReader {
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info("Failed to read pom.xml with stacktrace: " + e.getStackTrace());
             authorsList.clear();
             authorsList.add(ERROR_MESSAGE);
         }
