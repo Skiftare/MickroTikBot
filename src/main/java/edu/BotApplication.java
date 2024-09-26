@@ -18,9 +18,12 @@ public class BotApplication {
 
     private static CommandTable commandTableAssembling() {
         logger.info("Assembling command table");
+
         Command infoCommand = new InfoCommand();
         Command authorsCommand = new AuthorsCommand();
+
         CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand);
+
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");
         return new CommandTable(preCommandTable, helpCommand);
