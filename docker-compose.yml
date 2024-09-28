@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: MickroTikBot
+    networks:
+      - botnet
+    depends_on:
+      - chr
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    restart: always
+
+  chr:
+    build: ./docker/chr
+    container_name: chr_router
+    privileged: true
+    networks:
+      - botnet
+    ports:
+      - "2222:2222"
+    depends_on:
+      - db
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    restart: always
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    networks:
+      - botnet
+    ports:
+      - "5432:5432"
+    restart: always
+
+networks:
+  botnet:
+    driver: bridge
