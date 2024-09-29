@@ -1,7 +1,6 @@
 package edu.handles.commands;
 
 
-import edu.handles.commands.Command;
 import edu.handles.commands.enteties.AuthorsCommand;
 import edu.handles.commands.enteties.HelpCommand;
 import edu.handles.commands.enteties.InfoCommand;
@@ -47,7 +46,7 @@ public class CommandsTest {
 
         assertNotNull(result.getText(), "SendMessage should not be null");
         assertEquals("/authors", authorsCommand.getCommandName());
-        assertEquals("Kirill Bratanov\nArtem Berdichevskii", result.getText());
+        assertEquals("skif\nartem", result.getText());
     }
 
     @Test

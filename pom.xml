@@ -29,6 +29,7 @@
     <properties>
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
         <checkstyle.version>10.12.7</checkstyle.version>
+        <liquibase.version>4.26.0</liquibase.version>
     </properties>
     <dependencies>
 
@@ -45,6 +46,27 @@
             <artifactId>telegrambots</artifactId>
             <version>6.3.0</version>
         </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.4</version>
+        </dependency>
+
+
+
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -69,6 +91,7 @@
             <artifactId>jsch</artifactId>
             <version>0.1.55</version>
         </dependency>
+
 
     </dependencies>
 
