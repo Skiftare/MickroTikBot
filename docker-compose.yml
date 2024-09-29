@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   bot:
     build:
@@ -9,8 +8,13 @@ services:
       - botnet
     depends_on:
       - chr
+      - postgresql
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
     restart: always
 
   chr:
@@ -22,25 +26,45 @@ services:
     ports:
       - "2222:2222"
     depends_on:
-      - db
+      - postgresql
     dns:
       - 8.8.8.8
       - 8.8.4.4
     restart: always
 
-  db:
-    image: postgres:13
-    container_name: postgres_db
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
-    networks:
-      - botnet
+  postgresql:
+    image: postgres:16
     ports:
       - "5432:5432"
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: table
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    networks:
+      - botnet
+
     restart: always
+  liquibase-migrations:
+    image: liquibase/liquibase:4.25
+    depends_on:
+      - postgresql
+    command:
+      - --changelog-file=master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://postgresql:5432/table
+      - --username=postgres
+      - --password=postgres
+      - update
+    volumes:
+      - ./migrations:/liquibase/changelog
+    networks:
+        - botnet
 
 networks:
   botnet:
     driver: bridge
+volumes:
+  postgresql: { }
