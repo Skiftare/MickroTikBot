@@ -12,9 +12,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class CommandsTest {
@@ -56,7 +57,7 @@ public class CommandsTest {
         CommandTable mockedCommandTable = Mockito.mock(CommandTable.class);
 
         // Мокаем вызов метода getCommands()
-        when(mockedCommandTable.getCommands()).thenReturn(new HashMap<>());
+        when(mockedCommandTable.getCommands()).thenReturn(new LinkedHashMap<>());
 
         Command helpCommand = new HelpCommand(mockedCommandTable);
 
