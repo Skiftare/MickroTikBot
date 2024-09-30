@@ -18,5 +18,3 @@ unzip chr-6.49.6.img.zip
 qemu-system-x86_64 -hda chr-6.49.6.img -boot d -m 256M -nographic \
   -device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::2222-:22
 
-# Ожидание завершения работы
-echo "RouterOS запущен. Подключитесь через SSH на порт 2222"
