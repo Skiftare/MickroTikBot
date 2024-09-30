@@ -4,9 +4,9 @@ FROM debian:latest
 RUN apt-get update && apt-get install -y qemu-kvm curl unzip wget
 
 # CentOS образ
-RUN wget https://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -O /opt/centos.iso
+RUN wget https://mirrors.centos.org/mirrorlist?path=/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso&redirect=1&protocol=https
 
-yum install -y qemu-kvm wget unzip qemu-img
+RUN apt-get update && apt-get install -y qemu-kvm wget unzip qemu-utils
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
@@ -20,7 +20,6 @@ RUN chmod +x mikrotik_routeros.sh
 RUN mkdir -p /output
 
 CMD ["/mikrotik_routeros.sh"]
-
 
 
 

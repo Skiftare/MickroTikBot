@@ -14,7 +14,7 @@ public class SSHConnection {
     private static Logger logger = Logger.getLogger(SSHConnection.class.getName());
 
     // Настройки подключения
-    private static final String HOST = System.getenv("CONTAINER_IP");  // IP-адрес Mikrotik
+    private static final String HOST = "10.10.10.10";  // IP-адрес Mikrotik
     private static final int PORT = Integer.parseInt(System.getenv("RUS_CHR_Mikrotik_SSH_Port"));  // Порт SSH
     private static final String USER = System.getenv("RUS_CHR_Mikrotik_User_Name");         // Имя пользователя
     private static final String PASSWORD = ""; // Пароль
