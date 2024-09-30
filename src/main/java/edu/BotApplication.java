@@ -59,4 +59,7 @@ public class BotApplication {
             logger.info("Bot registration failed with stacktrace: " + e.getStackTrace());
         }
     }
+
+
+
 }
