@@ -14,17 +14,19 @@ public class SSHConnection {
     private static Logger logger = Logger.getLogger(SSHConnection.class.getName());
 
     // Настройки подключения
-    private static final String HOST = System.getenv("RUS_CHR_Mikrotik_IP_Adr");  // IP-адрес Mikrotik
+    private static final String HOST = System.getenv("CONTAINER_IP");  // IP-адрес Mikrotik
     private static final int PORT = Integer.parseInt(System.getenv("RUS_CHR_Mikrotik_SSH_Port"));  // Порт SSH
     private static final String USER = System.getenv("RUS_CHR_Mikrotik_User_Name");         // Имя пользователя
-    private static final String PASSWORD = System.getenv("RUS_CHR_Mikrotik_Password"); // Пароль
+    private static final String PASSWORD = ""; // Пароль
 
-    private static void establishingSSH(String[] args) {
+    private static void establishingSSH() {
         try {
             // Создаем сессию SSH
             JSch jsch = new JSch();
             Session session = jsch.getSession(USER, HOST, PORT);
             session.setPassword(PASSWORD);
+
+            session.setConfig("StrictHostKeyChecking", "no");
 
             // Устанавливаем соединение
             session.connect();
@@ -67,5 +69,9 @@ public class SSHConnection {
         } catch (Exception e) {
             logger.info(String.valueOf(e));
         }
+    }
+
+    public static void main(String[] args) {
+        establishingSSH();  // Вызываем метод для его выполнения
     }
 }
