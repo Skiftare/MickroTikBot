@@ -4,10 +4,7 @@ import edu.Configuration.DataConnection;
 import edu.Configuration.TelegramBotCore;
 import edu.Data.DataManager;
 import edu.handles.commands.Command;
-import edu.handles.commands.enteties.AuthorsCommand;
-import edu.handles.commands.enteties.HelpCommand;
-import edu.handles.commands.enteties.InfoCommand;
-import edu.handles.commands.enteties.RegisterCommand;
+import edu.handles.commands.enteties.*;
 import edu.handles.tables.CommandTable;
 import java.util.logging.Logger;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -34,7 +31,8 @@ public class BotApplication {
         Command authorsCommand = new AuthorsCommand();
 
         Command registerCommand = new RegisterCommand(dataManager);
-        CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand);
+        Command stateCommand = new StateCommand();
+        CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand, stateCommand);
 
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");

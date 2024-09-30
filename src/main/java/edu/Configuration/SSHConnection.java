@@ -14,29 +14,34 @@ public class SSHConnection {
     private static Logger logger = Logger.getLogger(SSHConnection.class.getName());
 
     // Настройки подключения
-    private static final String HOST = "10.10.10.10";  // IP-адрес Mikrotik
-    private static final int PORT = Integer.parseInt(System.getenv("RUS_CHR_Mikrotik_SSH_Port"));  // Порт SSH
-    private static final String USER = System.getenv("RUS_CHR_Mikrotik_User_Name");         // Имя пользователя
-    private static final String PASSWORD = ""; // Пароль
+    private static final String HOST = "localhost";  // IP-адрес Mikrotik, теперь localhost
+    private static final int PORT = 2222;            // Порт SSH, используем 2222 для подключения
+    private static final String USER = "admin";      // Имя пользователя (admin)
+    private static final String PASSWORD = "";       // Пароль (если есть)
 
-    private static void establishingSSH() {
+    public static String establishingSSH() {
+        StringBuilder stateString = new StringBuilder();  // Используем StringBuilder для накопления данных
         try {
             // Создаем сессию SSH
             JSch jsch = new JSch();
             Session session = jsch.getSession(USER, HOST, PORT);
             session.setPassword(PASSWORD);
 
+            // Отключаем проверку хоста, чтобы избежать вопросов о ключе
             session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password"); // Настройки аутентификации
+
+            logger.info("Trying to connect to SSH...");
 
             // Устанавливаем соединение
             session.connect();
+            logger.info("Connected successfully.");
 
             // Создаем канал для выполнения команды
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
 
             // Команда, которую вы хотите отправить на Mikrotik
             String command = "/system resource print";
-
             channel.setCommand(command);
 
             // Получаем входной поток для чтения результата выполнения команды
@@ -51,7 +56,8 @@ public class SSHConnection {
                     if (i < 0) {
                         break;
                     }
-                    logger.info(new String(tmp, 0, i));
+                    // Добавляем новые данные к результату
+                    stateString.append(new String(tmp, 0, i));
                 }
                 if (channel.isClosed()) {
                     if (in.available() == 0) {
@@ -67,11 +73,11 @@ public class SSHConnection {
             session.disconnect();
 
         } catch (Exception e) {
-            logger.info(String.valueOf(e));
+            stateString.append("Couldn't establish connection! Error: " + e.getMessage());
+            logger.info("Error: " + e);
         }
-    }
 
-    public static void main(String[] args) {
-        establishingSSH();  // Вызываем метод для его выполнения
+        // Возвращаем накопленные данные
+        return stateString.toString();
     }
 }
