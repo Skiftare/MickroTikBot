@@ -1,11 +1,11 @@
 package edu.Configuration;
 
-import java.io.InputStream;
-import java.util.logging.Logger;
-
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+
+import java.io.InputStream;
+import java.util.logging.Logger;
 
 @SuppressWarnings("HideUtilityClassConstructor")
 public class SSHConnection {
@@ -13,7 +13,7 @@ public class SSHConnection {
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;
 
-    private static final Logger logger = Logger.getLogger(SSHConnection.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SSHConnection.class.getName());
 
     // Настройки подключения
     private static final String HOST = "chr_router";  // Имя сервиса в docker-compose
@@ -37,11 +37,11 @@ public class SSHConnection {
             session.setConfig("StrictHostKeyChecking", "no");
             session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
 
-            logger.info("Попытка подключения к SSH...");
+            LOGGER.info("Попытка подключения к SSH...");
 
             // Устанавливаем соединение
             session.connect();
-            logger.info("Подключение успешно установлено.");
+            LOGGER.info("Подключение успешно установлено.");
 
             // Создаем канал для выполнения команды
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -59,12 +59,16 @@ public class SSHConnection {
             while (true) {
                 while (in.available() > 0) {
                     int i = in.read(tmp, 0, BUFFER_SIZE);
-                    if (i < 0) break;
+                    if (i < 0) {
+                        break;
+                    }
                     stateString.append(new String(tmp, 0, i));
                 }
                 if (channel.isClosed()) {
-                    if (in.available() == 0) break;
-                    logger.info("Exit-status: " + channel.getExitStatus());
+                    if (in.available() == 0) {
+                        break;
+                    }
+                    LOGGER.info("Exit-status: " + channel.getExitStatus());
                 }
                 Thread.sleep(TIMEOUT);
             }
@@ -75,7 +79,7 @@ public class SSHConnection {
 
         } catch (Exception e) {
             stateString.append("Не удалось установить соединение! Ошибка: ").append(e.getMessage());
-            logger.severe("Ошибка: " + e);
+            LOGGER.severe("Ошибка: " + e);
         }
 
         return stateString.toString();
