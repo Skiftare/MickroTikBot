@@ -8,7 +8,6 @@ services:
       - botnet
     depends_on:
       - chr
-      - postgresql
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
     env_file:
@@ -25,46 +24,13 @@ services:
       - botnet
     ports:
       - "2222:2222"
-    depends_on:
-      - postgresql
     dns:
       - 8.8.8.8
       - 8.8.4.4
     restart: always
 
-  postgresql:
-    image: postgres:16
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgresql:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: table
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-
-    networks:
-      - botnet
-
-    restart: always
-  liquibase-migrations:
-    image: liquibase/liquibase:4.25
-    depends_on:
-      - postgresql
-    command:
-      - --changelog-file=master.xml
-      - --driver=org.postgresql.Driver
-      - --url=jdbc:postgresql://postgresql:5432/table
-      - --username=postgres
-      - --password=postgres
-      - update
-    volumes:
-      - ./migrations:/liquibase/changelog
-    networks:
-        - botnet
-
 networks:
   botnet:
-    driver: bridge
+    driver: bridgeы
 volumes:
   postgresql: { }
