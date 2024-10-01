@@ -26,8 +26,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
     public TelegramBotCore(CommandTable coreCommandTable,
                            KeyboardMarkupBuilder keyboardMarkupBuilder,
-                           DataManager incomingDataManager)
-    {
+                           DataManager incomingDataManager) {
         this.keyboardMarkupBuilder = keyboardMarkupBuilder;
         this.dataManager = incomingDataManager;
         commandTable.putAll(coreCommandTable.getCommands());
@@ -52,7 +51,12 @@ public class TelegramBotCore extends TelegramLongPollingBot {
             Command command = commandTable.get(messageText);
 
             UserProfileStatus status = dataManager.getUserProfileStatus(chatId);
-            Logger.getAnonymousLogger().info("User " + chatId + " with status " + status.toString() + " sent message: " + messageText);
+            Logger.getAnonymousLogger().info("Client "
+                    + chatId
+                    + " with status "
+                    + status.toString()
+                    + " sent message: "
+                    + messageText);
             SendMessage response = new SendMessage();
 
             if (command != null && command.isVisibleForKeyboard(status)) {
@@ -66,7 +70,10 @@ public class TelegramBotCore extends TelegramLongPollingBot {
             }
             sendMessageToUser(response);
         } else if (update.getMessage().hasContact()) {
-            Logger.getAnonymousLogger().info("User " + update.getMessage().getChatId() + " sent phone number: " + update.getMessage().getContact().getPhoneNumber());
+            Logger.getAnonymousLogger().info("User "
+                    + update.getMessage().getChatId()
+                    + " sent phone number: "
+                    + update.getMessage().getContact().getPhoneNumber());
             SendMessage response = commandTable.get("/authentificate").execute(update);
 
             UserProfileStatus status = dataManager.getUserProfileStatus(update.getMessage().getChatId());

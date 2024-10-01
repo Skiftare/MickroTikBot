@@ -25,7 +25,7 @@ public class AuthentificateCommand implements Command {
         if (update.getMessage().hasContact()) {
             Contact contact = update.getMessage().getContact();
             String phoneNumber = contact.getPhoneNumber();
-            Logger.getAnonymousLogger().info("User " + chatId + " sent phone number: " + phoneNumber);
+            Logger.getAnonymousLogger().info("Client " + chatId + " sent phone number: " + phoneNumber);
             // Здесь ваш код для обработки номера телефона и аутентификации
             String responseText = "Вы успешно аутентифицированы!";
             dataManager.updateUserPhoneByTelegramId(

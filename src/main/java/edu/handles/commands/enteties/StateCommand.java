@@ -35,11 +35,7 @@ public class StateCommand implements Command {
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
 
-        if (status == UserProfileStatus.NO_VPN || status == UserProfileStatus.ACTIVE_VPN) {
-            return true;
-        } else {
-            return false;
-        }
+        return (status == UserProfileStatus.NO_VPN || status == UserProfileStatus.ACTIVE_VPN);
 
     }
 
