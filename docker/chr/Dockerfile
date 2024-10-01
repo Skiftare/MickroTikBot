@@ -18,7 +18,6 @@ RUN chmod +x mikrotik_routeros.sh
 
 # Создаем директорию для выходных данных
 RUN mkdir -p /output
-
 CMD ["/mikrotik_routeros.sh"]
 
 
