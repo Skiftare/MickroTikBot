@@ -1,24 +1,30 @@
 FROM debian:latest
 
-# зависимости
-RUN apt-get update && apt-get install -y qemu-kvm curl unzip wget
+# Установка зависимостей
+RUN apt-get update && apt-get install -y \
+    qemu-kvm \
+    qemu-utils \
+    wget \
+    unzip \
+    iproute2 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# CentOS образ
-RUN wget https://mirrors.centos.org/mirrorlist?path=/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso&redirect=1&protocol=https
+# Создание рабочих директорий
+RUN mkdir -p /opt/routeros /output
 
-RUN apt-get update && apt-get install -y qemu-kvm wget unzip qemu-utils
+# Скачивание CentOS образа
+RUN wget -O /opt/centos.iso "https://mirrors.centos.org/mirrorlist?path=/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso&redirect=1&protocol=https"
 
+# Копирование скриптов
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# Установка рабочей директории
+WORKDIR /opt/routeros
+
+# Запуск entrypoint скрипта
 CMD ["/entrypoint.sh"]
-
-COPY mikrotik_routeros.sh /mikrotik_routeros.sh
-RUN chmod +x mikrotik_routeros.sh
-
-# Создаем директорию для выходных данных
-RUN mkdir -p /output
-CMD ["/mikrotik_routeros.sh"]
 
 
 

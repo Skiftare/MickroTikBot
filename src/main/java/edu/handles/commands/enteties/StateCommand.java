@@ -1,11 +1,11 @@
 package edu.handles.commands.enteties;
 
 
-import edu.handles.commands.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static edu.Configuration.SSHConnection.establishingSSH;
+import edu.handles.commands.Command;
 
 public class StateCommand implements Command {
 
