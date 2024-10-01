@@ -14,7 +14,7 @@ public class SSHConnection {
     private static Logger logger = Logger.getLogger(SSHConnection.class.getName());
 
     // Настройки подключения
-    private static final String HOST = "localhost";  // IP-адрес Mikrotik, теперь localhost
+    private static final String HOST = "chr_router";  // IP-адрес Mikrotik, теперь localhost
     private static final int PORT = 2222;            // Порт SSH, используем 2222 для подключения
     private static final String USER = "admin";      // Имя пользователя (admin)
     private static final String PASSWORD = "";       // Пароль (если есть)
@@ -79,5 +79,9 @@ public class SSHConnection {
 
         // Возвращаем накопленные данные
         return stateString.toString();
+    }
+
+    public static void main(String[] args) {
+        String s = establishingSSH();
     }
 }
