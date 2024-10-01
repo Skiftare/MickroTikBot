@@ -1,13 +1,18 @@
 package edu;
 
-import edu.Configuration.TelegramBotCore;
-import edu.handles.commands.Command;
-import edu.handles.commands.enteties.*;
-import edu.handles.tables.CommandTable;
 import java.util.logging.Logger;
+
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
+import edu.Configuration.TelegramBotCore;
+import edu.handles.commands.Command;
+import edu.handles.commands.enteties.AuthorsCommand;
+import edu.handles.commands.enteties.HelpCommand;
+import edu.handles.commands.enteties.InfoCommand;
+import edu.handles.commands.enteties.StateCommand;
+import edu.handles.tables.CommandTable;
 
 
 @SuppressWarnings("HideUtilityClassConstructor")

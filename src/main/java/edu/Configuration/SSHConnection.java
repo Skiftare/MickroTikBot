@@ -1,11 +1,13 @@
 package edu.Configuration;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+
+@SuppressWarnings("HideUtilityClassConstructor")
 public class SSHConnection {
 
     private static final int BUFFER_SIZE = 1024;
@@ -29,7 +31,7 @@ public class SSHConnection {
 
             // Отключаем проверку хоста, чтобы избежать вопросов о ключе
             session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password"); // Настройки аутентификации
+            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
 
             logger.info("Trying to connect to SSH...");
 
@@ -79,9 +81,5 @@ public class SSHConnection {
 
         // Возвращаем накопленные данные
         return stateString.toString();
-    }
-
-    public static void main(String[] args) {
-        String s = establishingSSH();
     }
 }
