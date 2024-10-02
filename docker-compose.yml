@@ -10,6 +10,8 @@ services:
       - chr
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
+      - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
     env_file:
       - .env
     ports:
@@ -27,6 +29,11 @@ services:
     dns:
       - 8.8.8.8
       - 8.8.4.4
+    environment:
+      - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
+      - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
+    env_file:
+      - .env
     restart: always
 
 networks:
