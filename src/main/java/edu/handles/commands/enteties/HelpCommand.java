@@ -3,6 +3,8 @@ package edu.handles.commands.enteties;
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
 import java.util.stream.Collectors;
+
+import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -37,6 +39,11 @@ public class HelpCommand implements Command {
     @Override
     public boolean isVisibleForKeyboard() {
         return IS_VISIBLE_FOR_KEYBOARD;
+    }
+
+    @Override
+    public boolean isVisibleForKeyboard(UserProfileStatus status) {
+        return true;
     }
 
     @Override
