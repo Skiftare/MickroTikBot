@@ -36,6 +36,45 @@ services:
       - .env
     restart: always
 
+
+  postgresql:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: table
+      POSTGRES_USER: ${NEW_DATABASE_LOGIN}
+      POSTGRES_PASSWORD: ${NEW_DATABASE_PASS}
+    env_file:
+      - .env
+
+    networks:
+      - botnet
+
+    restart: always
+  liquibase-migrations:
+    image: liquibase/liquibase:4.25
+    depends_on:
+      - postgresql
+    command:
+      [
+        "--changelog-file=master.xml",
+        "--driver=org.postgresql.Driver",
+        "--url=jdbc:postgresql://postgresql:5432/table",
+        "--username=${NEW_DATABASE_LOGIN}",
+        "--password=${NEW_DATABASE_PASS}",
+        "update"
+      ]
+    volumes:
+      - ./migrations:/liquibase/changelog
+    networks:
+      - botnet
+    restart:
+      on-failure
+
+
 networks:
   botnet:
     driver: bridge

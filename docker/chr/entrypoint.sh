@@ -25,7 +25,7 @@ change_router_credentials() {
     
     # Используем утилиту RouterOS CLI для изменения учетных данных
     # Предполагается, что по умолчанию логин 'admin' без пароля
-    ssh -p 2222 admin@localhost "/user set admin password=$NEW_ROUTER_PASS; /user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full; /user remove admin" 
+    # ssh -p 2222 admin@localhost "/user set admin password=$NEW_ROUTER_PASS; /user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full; /user remove admin"
 
     echo "Учетные данные RouterOS успешно изменены."
 }
