@@ -3,7 +3,7 @@
 # Функция для запуска RouterOS
 start_routeros() {
     echo "Запуск RouterOS..."
-    
+
     # Скачиваем образ RouterOS
     wget https://download.mikrotik.com/routeros/6.49.6/chr-6.49.6.img.zip
     unzip chr-6.49.6.img.zip
@@ -19,13 +19,39 @@ start_routeros() {
     change_router_credentials
 }
 
-# Функция для изменения учетных данных RouterOS
+# Функция для изменения учетных данных RouterOS и работы с первым запуском
 change_router_credentials() {
-    echo "Изменение учетных данных RouterOS..."
-    
-    # Используем утилиту RouterOS CLI для изменения учетных данных
-    # Предполагается, что по умолчанию логин 'admin' без пароля
-    ssh -p 2222 admin@localhost "/user set admin password=$NEW_ROUTER_PASS;" 
+    echo "Изменение учетных данных RouterOS и установка нового пароля..."
+
+    expect << EOF
+        spawn ssh -p 2222 admin@localhost
+        expect {
+            # Ловим вопрос о лицензии
+            "Do you want to see the software license?" {
+                send "n\r"
+                exp_continue
+            }
+            # Ловим запрос на установку нового пароля
+            "Please enter new password:" {
+                send "$NEW_ROUTER_PASS\r"
+                exp_continue
+            }
+            "Re-enter new password:" {
+                send "$NEW_ROUTER_PASS\r"
+                exp_continue
+            }
+            # Продолжаем после успешной установки пароля
+            #"admin@" {
+                # Создаем нового пользователя с административными правами
+                #send "/user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full;\r"
+                # Удаляем пользователя admin
+                #send "/ip ssh set allow-password=yes;\r"
+                #echo /ip service print
+                #send "/user remove admin;\r"
+                #send "quit\r"
+            }
+        }
+EOF
 
     echo "Учетные данные RouterOS успешно изменены."
 }
