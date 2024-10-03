@@ -4,12 +4,12 @@
 apt update -y
 apt install -y qemu-kvm qemu-utils wget unzip
 
-apt-get update
-apt-get install iproute2
+#apt-get update
+#apt-get install iproute2
 
 # Создание рабочей директории
 mkdir -p /opt/routeros
-cd /opt/routeros
+cd /opt/routeros || exit
 
 # Скачиваем образ RouterOS (укажите актуальную версию)
 wget https://download.mikrotik.com/routeros/6.49.6/chr-6.49.6.img.zip
