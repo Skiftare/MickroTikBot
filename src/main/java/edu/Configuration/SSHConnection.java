@@ -37,7 +37,7 @@ public class SSHConnection {
 
             // Отключаем проверку хоста
             session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            session.setConfig("PreferredAuthentications", "publickey,password");
 
             LOGGER.info("Попытка подключения к SSH...");
 
