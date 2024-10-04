@@ -58,6 +58,11 @@ services:
     image: liquibase/liquibase:4.25
     depends_on:
       - postgresql
+    environment:
+      NEW_DATABASE_LOGIN: ${NEW_DATABASE_LOGIN}
+      NEW_DATABASE_PASS: ${NEW_DATABASE_PASS}
+    env_file:
+      - .env
     command:
       [
         "--changelog-file=master.xml",

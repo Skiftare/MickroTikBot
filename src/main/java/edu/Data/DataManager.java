@@ -4,7 +4,6 @@ package edu.Data;
 import edu.Configuration.DataConnectConfigurator;
 import edu.Data.dto.ClientTransfer;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
