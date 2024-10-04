@@ -1,12 +1,12 @@
 package edu.handles.commands.enteties;
 
 
+import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static edu.Configuration.SSHConnection.establishingSSH;
-import edu.handles.commands.Command;
 
 public class StateCommand implements Command {
 
@@ -16,10 +16,14 @@ public class StateCommand implements Command {
 
     @Override
     public SendMessage execute(Update update) {
+
         SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId());
         String stateMessage = establishingSSH();
-        message.setText(stateMessage);
+        message.setText(stateMessage + "\n"
+                + "Эта команда доступна только "
+                + "зарегестрированным пользователям. "
+                + "Позволяет проверить, в каком состоянии находится наш роутер.");
         return message;
     }
 
@@ -30,12 +34,13 @@ public class StateCommand implements Command {
 
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
-        if(status == UserProfileStatus.GUEST) {
+
+        if (status == UserProfileStatus.NO_VPN || status == UserProfileStatus.ACTIVE_VPN) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
+
     }
 
     @Override

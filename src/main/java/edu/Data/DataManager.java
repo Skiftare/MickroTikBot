@@ -11,8 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
-
+//TODO: пускай мы будем хранить лишь зарегестрированных пользователей БД,
+// а тех, кто пока только проходят регистрацию,
+// будем держать в памяти (LinkedHashMap какая-то подойдёт)
 public class DataManager {
     private final DataConnectConfigurator dataConnection;
 
@@ -23,7 +26,8 @@ public class DataManager {
 
     // Метод для создания записи
     public void save(ClientTransfer client) {
-        String query = "INSERT INTO users (tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) " +
+        String query = "INSERT INTO users " +
+                "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = dataConnection.getConnection();
@@ -71,6 +75,7 @@ public class DataManager {
         }
         return client;
     }
+
     public boolean isUserExists(Long tgUserId) {
         String query = "SELECT 1 FROM users WHERE tg_user_id = ?";
 
@@ -88,9 +93,10 @@ public class DataManager {
         }
     }
 
-    public void addUser(ClientTransfer client) throws Exception {
+    public void addUser(ClientTransfer client) {
 
-        String query = "INSERT INTO users (tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) " +
+        String query = "INSERT INTO users " +
+                "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = dataConnection.getConnection();
@@ -113,7 +119,9 @@ public class DataManager {
 
     // Метод для обновления записи
     public void update(ClientTransfer client) {
-        String query = "UPDATE users SET phone = ?, name = ?, user_last_visited = ?, vpn_profile = ?, is_vpn_profile_alive = ?, expired_at = ? WHERE tg_user_id = ?";
+        String query = "UPDATE users SET " +
+                "phone = ?, name = ?, user_last_visited = ?, vpn_profile = ?, is_vpn_profile_alive = ?, expired_at = ? " +
+                "WHERE tg_user_id = ?";
 
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -131,9 +139,11 @@ public class DataManager {
             e.printStackTrace();
         }
     }
+
     public void updateUserPhoneByTelegramId(Long tgUserId, String newPhone) {
         String query = "UPDATE users SET phone = ? WHERE tg_user_id = ?";
-
+        Logger.getAnonymousLogger().info("Updating phone for user with tg_user_id: " + tgUserId);
+        Logger.getAnonymousLogger().info("Updating phone for user with tg_user_id: " + tgUserId);
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -145,9 +155,9 @@ public class DataManager {
             int rowsUpdated = preparedStatement.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println("User phone updated successfully for tg_user_id: " + tgUserId);
+                Logger.getAnonymousLogger().info("User phone updated successfully for tg_user_id: " + tgUserId);
             } else {
-                System.out.println("No user found with tg_user_id: " + tgUserId);
+                Logger.getAnonymousLogger().info("No user found with tg_user_id: " + tgUserId);
             }
 
         } catch (SQLException e) {
@@ -197,29 +207,21 @@ public class DataManager {
         }
         return clients;
     }
+
     public UserProfileStatus getUserProfileStatus(Long tgUserId) {
-        String query = "SELECT 1 FROM users WHERE tg_user_id = ?";
-        UserProfileStatus status = UserProfileStatus.GUEST;
 
-        try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            preparedStatement.setLong(1, tgUserId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                if(resultSet.getString("phone") == null) {
-                    status = UserProfileStatus.UNCONFIRMED;
-                } else if(resultSet.getBoolean("is_vpn_profile_alive")) {
-                    status = UserProfileStatus.ACTIVE_VPN;
-                } else {
-                    status = UserProfileStatus.NO_VPN;
-                }
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ClientTransfer client = findById(tgUserId);
+        if(client == null){
+            return UserProfileStatus.GUEST;
         }
-        return status;
+        else if(client.phone() == null){
+            return UserProfileStatus.UNCONFIRMED;
+        }
+        else if(client.isVpnProfileAlive()){
+            return UserProfileStatus.ACTIVE_VPN;
+        }
+        else{
+            return UserProfileStatus.NO_VPN;
+        }
     }
 }
