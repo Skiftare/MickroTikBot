@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,6 +22,7 @@ public class RegisterCommand implements Command {
     public RegisterCommand(DataManager dataManager) {
         this.dataManager = dataManager;
     }
+
     Logger logger = Logger.getLogger(RegisterCommand.class.getName());
 
     @Override
@@ -35,44 +35,36 @@ public class RegisterCommand implements Command {
         SendMessage response = new SendMessage();
         response.setChatId(update.getMessage().getChatId().toString());
 
-        // Создание объекта User
 
         try {
             // Попытка зарегистрировать пользователя в БД
-            if(dataManager.isUserExists(tgUserId)){
-                response.setText("Данный этап регистрации успешно пройден. Если хотите просмотреть свой профиль, нажмите /profile");
-
-                return response;
-            }
-            else {
+            if (dataManager.isUserExists(tgUserId)) {
+                response.setText("Данный этап регистрации успешно пройден. Для подтверждения телефона воспользуйтесь кнопкой ниже");
+            } else {
                 ClientTransfer clientProfile = getClientTransfer(tgUserId, name);
                 dataManager.addUser(clientProfile);
                 response.setText("Вам необходимо подтвердить номер телефона для дальнейшего использования сервиса.");
-
-                KeyboardButton contactButton = new KeyboardButton("Отправить номер телефона");
-                contactButton.setRequestContact(true);
-                KeyboardRow keyboardRow = new KeyboardRow();
-                keyboardRow.add(contactButton);
-
-                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-                keyboardMarkup.setKeyboard(Arrays.asList(keyboardRow));
-                keyboardMarkup.setResizeKeyboard(true);  // Подстройка клавиатуры под экран
-                keyboardMarkup.setOneTimeKeyboard(true);  // Клавиатура исчезнет после нажатия
-
-                response.setReplyMarkup(keyboardMarkup);
 
 
                 List<ClientTransfer> l = dataManager.getAllUsers();
                 logger.info("Кол-во пользователей - " + l.size());
             }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-            response.setText("Произошла ошибка при регистрации. Пожалуйста, попробуйте позже.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
             response.setText("Произошла ошибка при регистрации. Пожалуйста, попробуйте позже.");
-
         }
+        KeyboardButton contactButton = new KeyboardButton("Отправить номер телефона");
+        contactButton.setRequestContact(true);
+        KeyboardRow keyboardRow = new KeyboardRow();
+        keyboardRow.add(contactButton);
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setKeyboard(Arrays.asList(keyboardRow));
+        keyboardMarkup.setResizeKeyboard(true);  // Подстройка клавиатуры под экран
+        keyboardMarkup.setOneTimeKeyboard(true);  // Клавиатура исчезнет после нажатия
+
+        response.setReplyMarkup(keyboardMarkup);
+
 
         return response;
     }
@@ -87,7 +79,7 @@ public class RegisterCommand implements Command {
                 currentDate, // Дата последнего визита (текущая дата)
                 null, // VPN-профиль, если отсутствует
                 false, // Статус VPN-профиля, можно оставить null
-                null // Дата истечения, если неизвестна
+                new Date(0) //Пускай так
         );
         return clientProfile;
     }
@@ -100,10 +92,9 @@ public class RegisterCommand implements Command {
 
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
-        if(status == UserProfileStatus.GUEST) {
+        if (status == UserProfileStatus.GUEST || status == UserProfileStatus.UNCONFIRMED) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

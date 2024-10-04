@@ -8,6 +8,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.logging.Logger;
+
 public class AuthentificateCommand implements Command {
     private final DataManager dataManager;
 
@@ -23,17 +25,18 @@ public class AuthentificateCommand implements Command {
         if (update.getMessage().hasContact()) {
             Contact contact = update.getMessage().getContact();
             String phoneNumber = contact.getPhoneNumber();
-
+            Logger.getAnonymousLogger().info("User " + chatId + " sent phone number: " + phoneNumber);
             // Здесь ваш код для обработки номера телефона и аутентификации
             String responseText = "Вы успешно аутентифицированы!";
             dataManager.updateUserPhoneByTelegramId(
                     update.getMessage().getChatId(),
                     phoneNumber
             );
+            Logger.getAnonymousLogger().info("User " + chatId + " was successfully authenticated");
             return new SendMessage(chatId.toString(), responseText);
         }
 
-        return new SendMessage(chatId.toString(), "Для аутентификации необходимо отправить номер телефона.");
+        return new SendMessage(chatId.toString(), "Что-то пошло не так");
     }
 
     @Override
@@ -43,12 +46,7 @@ public class AuthentificateCommand implements Command {
 
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
-        if(status == UserProfileStatus.UNCONFIRMED || status == UserProfileStatus.GUEST) {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return false;
     }
 
     @Override

@@ -9,6 +9,7 @@ public interface Command {
     SendMessage execute(Update update);
 
     boolean isVisibleForKeyboard();
+
     boolean isVisibleForKeyboard(UserProfileStatus status);
 
     String getCommandName();

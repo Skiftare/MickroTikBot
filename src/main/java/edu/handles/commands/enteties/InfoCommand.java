@@ -31,12 +31,7 @@ public class InfoCommand implements Command {
 
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
-        if(status == UserProfileStatus.GUEST) {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return true;
     }
 
     @Override
