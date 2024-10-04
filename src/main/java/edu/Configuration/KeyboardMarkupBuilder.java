@@ -28,6 +28,7 @@ public class KeyboardMarkupBuilder {
         mapOfKeyboards.put(UserProfileStatus.NO_VPN, buildNoVPNKeyboard());
 
     }
+
     private  List<KeyboardRow> generateKeyboardByPrivelege(UserProfileStatus status){
         List<KeyboardRow> keyboardRows = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
