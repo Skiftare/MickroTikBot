@@ -74,6 +74,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + update.getMessage().getChatId()
                     + " sent phone number: "
                     + update.getMessage().getContact().getPhoneNumber());
+
             SendMessage response = commandTable.get("/authentificate").execute(update);
 
             UserProfileStatus status = dataManager.getUserProfileStatus(update.getMessage().getChatId());
