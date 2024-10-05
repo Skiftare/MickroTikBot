@@ -39,10 +39,10 @@ public class KeyboardMarkupBuilder {
         int countOfUploadedButtons = 0;
         for (Command command : commandTable.getCommands().values()) {
             if (command.isVisibleForKeyboard(status)) {
-                Logger.getAnonymousLogger().info("Command " +
-                        command.getCommandName() +
-                        " is visible for status " +
-                        status);
+                Logger.getAnonymousLogger().info("Command "
+                        + command.getCommandName()
+                        + " is visible for status "
+                        + status);
                 KeyboardButton button = new KeyboardButton(command.getCommandName());
                 button.setText(command.getCommandName());
                 row.add(button);
@@ -57,7 +57,12 @@ public class KeyboardMarkupBuilder {
         if (countOfUploadedButtons % 2 != 0) {
             keyboardRows.add(row);
         }
-        Logger.getAnonymousLogger().info("Keyboard for status " + status + " was generated with " + countOfUploadedButtons + " buttons & " + keyboardRows.size() + " rows");
+        Logger.getAnonymousLogger().info("Keyboard for status "
+                + status + " was generated with "
+                + countOfUploadedButtons
+                + " buttons & "
+                + keyboardRows.size()
+                + " rows");
 
 
         return keyboardRows;
