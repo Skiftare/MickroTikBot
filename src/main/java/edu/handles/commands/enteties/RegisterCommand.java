@@ -39,7 +39,7 @@ public class RegisterCommand implements Command {
         try {
             // Попытка зарегистрировать пользователя в БД
             if (dataManager.isUserExists(tgUserId)) {
-                response.setText("Данный этап регистрации успешно пройден. Для подтверждения телефона воспользуйтесь кнопкой ниже");
+                response.setText("Для подтверждения телефона воспользуйтесь кнопкой ниже");
             } else {
                 ClientTransfer clientProfile = getClientTransfer(tgUserId, name);
                 dataManager.addUser(clientProfile);
@@ -92,11 +92,7 @@ public class RegisterCommand implements Command {
 
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
-        if (status == UserProfileStatus.GUEST || status == UserProfileStatus.UNCONFIRMED) {
-            return true;
-        } else {
-            return false;
-        }
+        return  (status == UserProfileStatus.GUEST || status == UserProfileStatus.UNCONFIRMED);
     }
 
     @Override

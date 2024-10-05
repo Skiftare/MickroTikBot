@@ -10,14 +10,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
 //TODO: пускай мы будем хранить лишь зарегестрированных пользователей БД,
 // а тех, кто пока только проходят регистрацию,
 // будем держать в памяти (LinkedHashMap какая-то подойдёт)
+@SuppressWarnings({"MultipleStringLiterals", "MagicNumber"})
 public class DataManager {
     private final DataConnectConfigurator dataConnection;
+    private static final String INSERT_USER_QUERY =
+
+            "INSERT INTO users "
+                    + "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String SELECT_USER_BY_ID_QUERY =
+            "SELECT * FROM users WHERE tg_user_id = ?";
+    private static final String UPDATE_USER_PHONE_QUERY =
+            "UPDATE users SET phone = ? WHERE tg_user_id = ?";
+    private static final String DELETE_USER_QUERY =
+            "DELETE FROM users WHERE tg_user_id = ?";
+
+
 
     public DataManager(DataConnectConfigurator dataConnection) {
         this.dataConnection = dataConnection;
@@ -26,12 +41,9 @@ public class DataManager {
 
     // Метод для создания записи
     public void save(ClientTransfer client) {
-        String query = "INSERT INTO users " +
-                "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY)) {
 
             preparedStatement.setLong(1, client.tgUserId());
             preparedStatement.setString(2, client.phone());
@@ -43,17 +55,17 @@ public class DataManager {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 
     // Метод для чтения записи
     public ClientTransfer findById(Long tgUserId) {
-        String query = "SELECT * FROM users WHERE tg_user_id = ?";
+
         ClientTransfer client = null;
 
         try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID_QUERY)) {
 
             preparedStatement.setLong(1, tgUserId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -71,16 +83,15 @@ public class DataManager {
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
         return client;
     }
 
     public boolean isUserExists(Long tgUserId) {
-        String query = "SELECT 1 FROM users WHERE tg_user_id = ?";
 
         try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID_QUERY)) {
 
             preparedStatement.setLong(1, tgUserId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -88,19 +99,16 @@ public class DataManager {
             // Если запрос вернет хотя бы одну строку, пользователь существует
             return resultSet.next();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
             return false;
         }
     }
 
     public void addUser(ClientTransfer client) {
 
-        String query = "INSERT INTO users " +
-                "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY)) {
 
             preparedStatement.setLong(1, client.tgUserId());
             preparedStatement.setString(2, client.phone());
@@ -112,16 +120,17 @@ public class DataManager {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 
 
     // Метод для обновления записи
     public void update(ClientTransfer client) {
-        String query = "UPDATE users SET " +
-                "phone = ?, name = ?, user_last_visited = ?, vpn_profile = ?, is_vpn_profile_alive = ?, expired_at = ? " +
-                "WHERE tg_user_id = ?";
+        String query = "UPDATE users SET "
+                + "phone = ?, name = ?, "
+                + "user_last_visited = ?, vpn_profile = ?, is_vpn_profile_alive = ?, expired_at = ? "
+                + "WHERE tg_user_id = ?";
 
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -136,16 +145,15 @@ public class DataManager {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 
     public void updateUserPhoneByTelegramId(Long tgUserId, String newPhone) {
-        String query = "UPDATE users SET phone = ? WHERE tg_user_id = ?";
         Logger.getAnonymousLogger().info("Updating phone for user with tg_user_id: " + tgUserId);
         Logger.getAnonymousLogger().info("Updating phone for user with tg_user_id: " + tgUserId);
         try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_PHONE_QUERY)) {
 
             // Устанавливаем параметры для запроса
             preparedStatement.setString(1, newPhone);
@@ -161,7 +169,7 @@ public class DataManager {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -176,7 +184,7 @@ public class DataManager {
             preparedStatement.setLong(1, tgUserId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -203,7 +211,7 @@ public class DataManager {
                 clients.add(client);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
         return clients;
     }
@@ -211,16 +219,13 @@ public class DataManager {
     public UserProfileStatus getUserProfileStatus(Long tgUserId) {
 
         ClientTransfer client = findById(tgUserId);
-        if(client == null){
+        if (client == null) {
             return UserProfileStatus.GUEST;
-        }
-        else if(client.phone() == null){
+        } else if (client.phone() == null) {
             return UserProfileStatus.UNCONFIRMED;
-        }
-        else if(client.isVpnProfileAlive()){
+        } else if (client.isVpnProfileAlive()) {
             return UserProfileStatus.ACTIVE_VPN;
-        }
-        else{
+        } else {
             return UserProfileStatus.NO_VPN;
         }
     }
