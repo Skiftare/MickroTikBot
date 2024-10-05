@@ -1,7 +1,9 @@
 FROM debian:latest
 
 # Установка зависимостей
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    apt-utils \
     qemu-kvm \
     qemu-utils \
     wget \
@@ -9,7 +11,10 @@ RUN apt-get update && apt-get install -y \
     iproute2 \
     curl \
     expect \
-    && rm -rf /var/lib/apt/lists/*
+    openssh-client \
+    ca-certificates \
+    gnupg && \
+    rm -rf /var/lib/apt/lists/*
 
 # Создание рабочих директорий
 RUN mkdir -p /opt/routeros /output

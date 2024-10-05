@@ -21,40 +21,42 @@ start_routeros() {
 
 # Функция для изменения учетных данных RouterOS и работы с первым запуском
 change_router_credentials() {
-    echo "Изменение учетных данных RouterOS и установка нового пароля..."
+    echo "Первый запуск RouterOS. Принятие лицензионного соглашения и установка пароля..."
 
-    expect << EOF
-        spawn ssh -p 2222 admin@localhost
-        expect {
-            # Ловим вопрос о лицензии
-            "Do you want to see the software license?" {
-                send "n\r"
-                exp_continue
-            }
-            # Ловим запрос на установку нового пароля
-            "Please enter new password:" {
-                send "$NEW_ROUTER_PASS\r"
-                exp_continue
-            }
-            "Re-enter new password:" {
-                send "$NEW_ROUTER_PASS\r"
-                exp_continue
-            }
-            # Продолжаем после успешной установки пароля
-            #"admin@" {
-                # Создаем нового пользователя с административными правами
-                #send "/user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full;\r"
-                # Удаляем пользователя admin
-                #send "/ip ssh set allow-password=yes;\r"
-                #echo /ip service print
-                #send "/user remove admin;\r"
-                #send "quit\r"
-            }
-        }
+    # Используем expect для автоматического взаимодействия через SSH
+    /usr/bin/expect << EOF
+    set timeout 20
+
+    # Подключаемся к RouterOS по SSH (порт проброшен на 2222)
+        spawn ssh -o StrictHostKeyChecking=no admin@chr_router -p 2222
+
+    # Ожидание первого запуска и принятие лицензионного соглашения
+        expect "Do you want to see the software license?"
+        send "n\r"
+
+    # После принятия лицензии RouterOS предложит установить новый пароль
+        expect "new password>"
+        send "$NEW_ROUTER_PASS\r"
+
+        expect "repeat new password>"
+        send "$NEW_ROUTER_PASS\r"
+
+    # Логируем создание нового пользователя
+        expect "] >"
+        send "/user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full\r"
+
+    # Опционально, удаляем стандартного пользователя admin для безопасности
+        send "/user remove admin\r"
+        expect "] >"
+
+    # Завершаем сессию
+        send "quit\r"
+        expect eof
 EOF
 
-    echo "Учетные данные RouterOS успешно изменены."
+    echo "Учетные данные успешно изменены."
 }
+
 
 # Функция для запуска CentOS (оставлена без изменений)
 start_centos() {
