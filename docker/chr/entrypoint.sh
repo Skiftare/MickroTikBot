@@ -12,8 +12,8 @@ start_routeros() {
     qemu-system-x86_64 -drive file=chr-6.49.6.img,format=raw -boot d -m 256M -nographic \
       -device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::2222-:22 &
 
-    # Ждем, пока RouterOS полностью загрузится
-    sleep 60
+    # Увеличиваем время ожидания на 120 секунд, чтобы RouterOS успел полностью загрузиться
+    sleep 120
 
     # Изменение учетных данных
     change_router_credentials
@@ -25,38 +25,28 @@ change_router_credentials() {
 
     # Используем expect для автоматического взаимодействия через SSH
     /usr/bin/expect << EOF
-    set timeout 20
+    set timeout 40
 
-    # Подключаемся к RouterOS по SSH (порт проброшен на 2222)
-        spawn ssh -o StrictHostKeyChecking=no admin@chr_router -p 2222
+    # Подключаемся к RouterOS по SSH (порт проброшен на 2222, localhost из-за проброса порта)
+    spawn ssh -o StrictHostKeyChecking=no admin@localhost -p 2222
 
     # Ожидание первого запуска и принятие лицензионного соглашения
-        expect "Do you want to see the software license?"
-        send "n\r"
-
-    # После принятия лицензии RouterOS предложит установить новый пароль
-        expect "new password>"
-        send "$NEW_ROUTER_PASS\r"
-
-        expect "repeat new password>"
-        send "$NEW_ROUTER_PASS\r"
-
-    # Логируем создание нового пользователя
-        expect "] >"
-        send "/user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full\r"
-
-    # Опционально, удаляем стандартного пользователя admin для безопасности
-        send "/user remove admin\r"
-        expect "] >"
+    expect {
+        "Do you want to see the software license?" { send "n\r"; exp_continue }
+        "new password>" { send "$NEW_ROUTER_PASS\r"; exp_continue }
+        "repeat new password>" { send "$NEW_ROUTER_PASS\r"; exp_continue }
+        "] >" { send "/user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full\r"; exp_continue }
+        "] >" { send "/user remove admin\r"; exp_continue }
+    }
 
     # Завершаем сессию
-        send "quit\r"
-        expect eof
+    expect "] >"
+    send "quit\r"
+    expect eof
 EOF
 
     echo "Учетные данные успешно изменены."
 }
-
 
 # Функция для запуска CentOS (оставлена без изменений)
 start_centos() {
