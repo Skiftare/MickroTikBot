@@ -24,25 +24,35 @@ change_router_credentials() {
     echo "Первый запуск RouterOS. Принятие лицензионного соглашения и установка пароля..."
 
     # Используем expect для автоматического взаимодействия через SSH
+    # Используем expect для автоматического взаимодействия через SSH
     /usr/bin/expect << EOF
-    set timeout 40
+    set timeout 20
 
-    # Подключаемся к RouterOS по SSH (порт проброшен на 2222, localhost из-за проброса порта)
-    spawn ssh -o StrictHostKeyChecking=no admin@localhost -p 2222
+    # Подключаемся к RouterOS по SSH (порт проброшен на 2222)
+        spawn ssh -o StrictHostKeyChecking=no admin@chr_router -p 2222
 
     # Ожидание первого запуска и принятие лицензионного соглашения
-    expect {
-        "Do you want to see the software license?" { send "n\r"; exp_continue }
-        "new password>" { send "$NEW_ROUTER_PASS\r"; exp_continue }
-        "repeat new password>" { send "$NEW_ROUTER_PASS\r"; exp_continue }
-        "] >" { send "/user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full\r"; exp_continue }
-        "] >" { send "/user remove admin\r"; exp_continue }
-    }
+        expect "Do you want to see the software license?"
+        send "n\r"
+
+    # После принятия лицензии RouterOS предложит установить новый пароль
+        expect "new password>"
+        send "$NEW_ROUTER_PASS\r"
+
+        expect "repeat new password>"
+        send "$NEW_ROUTER_PASS\r"
+
+    # Логируем создание нового пользователя
+        expect "] >"
+        send "/user add name=$NEW_ROUTER_LOGIN password=$NEW_ROUTER_PASS group=full\r"
+
+    # Опционально, удаляем стандартного пользователя admin для безопасности
+        send "/user remove admin\r"
+        expect "] >"
 
     # Завершаем сессию
-    expect "] >"
-    send "quit\r"
-    expect eof
+        send "quit\r"
+        expect eof
 EOF
 
     echo "Учетные данные успешно изменены."
