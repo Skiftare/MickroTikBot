@@ -12,8 +12,8 @@ start_routeros() {
     qemu-system-x86_64 -drive file=chr-6.49.6.img,format=raw -boot d -m 256M -nographic \
       -device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::2222-:22 &
 
-    # Ждем, пока RouterOS полностью загрузится
-    sleep 60
+    # Увеличиваем время ожидания на 120 секунд, чтобы RouterOS успел полностью загрузиться
+    sleep 120
 
     # Изменение учетных данных
     change_router_credentials
@@ -23,6 +23,7 @@ start_routeros() {
 change_router_credentials() {
     echo "Первый запуск RouterOS. Принятие лицензионного соглашения и установка пароля..."
 
+    # Используем expect для автоматического взаимодействия через SSH
     # Используем expect для автоматического взаимодействия через SSH
     /usr/bin/expect << EOF
     set timeout 20
@@ -56,7 +57,6 @@ EOF
 
     echo "Учетные данные успешно изменены."
 }
-
 
 # Функция для запуска CentOS (оставлена без изменений)
 start_centos() {
