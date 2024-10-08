@@ -5,13 +5,24 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DataConnectConfigurator {
-    private static final String URL = "jdbc:postgresql://postgresql:5432/table";
-    private static final String USER = System.getenv("NEW_DATABASE_LOGIN");
-    private static final String PASSWORD = System.getenv("NEW_DATABASE_PASS");
+    private String url;
+    private String user;
+    private String password;
 
+    // Конструктор для тестов или другой конфигурации
+    public DataConnectConfigurator(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
+    }
+    // Конструктор для продакшн-использования (по умолчанию через env)
+    public DataConnectConfigurator() {
+        this.url = "jdbc:postgresql://postgresql:5432/table"; // или из env если нужно
+        this.user = System.getenv("NEW_DATABASE_LOGIN");
+        this.password = System.getenv("NEW_DATABASE_PASS");
+    }
 
     public Connection getConnection() throws SQLException {
-
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        return DriverManager.getConnection(url, user, password);
     }
 }
