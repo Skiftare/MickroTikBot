@@ -4,7 +4,6 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import java.util.Random;
-
 import java.util.logging.Logger;
 
 public class SecretInitialiser {
@@ -20,6 +19,7 @@ public class SecretInitialiser {
     private static final String USER = System.getenv("NEW_ROUTER_LOGIN");
     private static final String PASSWORD = System.getenv("NEW_ROUTER_PASS");
 
+    // Метод для инициализации секретного ключа (вызывается из другого класса)
     public static String initialisationSecret(Long UserID) {
         StringBuilder stateString = new StringBuilder();
         String finalLogin = "";
