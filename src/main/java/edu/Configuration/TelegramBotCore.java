@@ -1,15 +1,16 @@
 package edu.Configuration;
 
 
+import edu.Data.DataManager;
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
+import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -19,10 +20,15 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
     private static final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
     private static final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд.";
-
+    private final KeyboardMarkupBuilder keyboardMarkupBuilder;
     private final Map<String, Command> commandTable = new HashMap<>();
+    private final DataManager dataManager;
 
-    public TelegramBotCore(CommandTable coreCommandTable) {
+    public TelegramBotCore(CommandTable coreCommandTable,
+                           KeyboardMarkupBuilder keyboardMarkupBuilder,
+                           DataManager incomingDataManager) {
+        this.keyboardMarkupBuilder = keyboardMarkupBuilder;
+        this.dataManager = incomingDataManager;
         commandTable.putAll(coreCommandTable.getCommands());
     }
 
@@ -43,24 +49,48 @@ public class TelegramBotCore extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
 
             Command command = commandTable.get(messageText);
+
+            UserProfileStatus status = dataManager.getUserProfileStatus(chatId);
+            Logger.getAnonymousLogger().info("Client "
+                    + chatId
+                    + " with status "
+                    + status.toString()
+                    + " sent message: "
+                    + messageText);
             SendMessage response = new SendMessage();
-            if (command != null) {
+
+            if (command != null && command.isVisibleForKeyboard(status)) {
                 response = command.execute(update);
             } else {
                 response.setChatId(chatId);
                 response.setText(UNKNOWN_COMMAND);
             }
-            response.setReplyMarkup(getKeyboardMarkup());
+            if (response.getReplyMarkup() == null) {
+                response.setReplyMarkup(getKeyboardMarkup(status));
+            }
+            sendMessageToUser(response);
+        } else if (update.getMessage().hasContact()) {
+            Logger.getAnonymousLogger().info("User "
+                    + update.getMessage().getChatId()
+                    + " sent phone number: "
+                    + update.getMessage().getContact().getPhoneNumber());
+
+            SendMessage response = commandTable.get("/authentificate").execute(update);
+
+            UserProfileStatus status = dataManager.getUserProfileStatus(update.getMessage().getChatId());
+            if (response.getReplyMarkup() == null) {
+                response.setReplyMarkup(getKeyboardMarkup(status));
+            }
             sendMessageToUser(response);
         }
     }
 
 
-    private ReplyKeyboardMarkup getKeyboardMarkup() {
-        // Передаем список команд в сборщик
-        KeyboardMarkupBuilder keyboardBuilder = new KeyboardMarkupBuilder(new ArrayList<>(commandTable.values()));
-        return keyboardBuilder.build();
+    private ReplyKeyboardMarkup getKeyboardMarkup(UserProfileStatus status) {
+
+        return keyboardMarkupBuilder.getKeyboardByStatus(status);
     }
+
 
     public void sendMessageToUser(SendMessage message) {
         try {

@@ -6,8 +6,6 @@ services:
     container_name: MickroTikBot
     networks:
       - botnet
-    depends_on:
-      - chr
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
@@ -18,23 +16,48 @@ services:
       - "8080:8080"
     restart: always
 
-  chr:
-    build: ./docker/chr
-    container_name: chr_router
-    privileged: true
-    networks:
-      - botnet
+  postgresql:
+    image: postgres:16
     ports:
-      - "2222:2222"
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
+      - "5432:5432"
+    volumes:
+      - postgresql:/var/lib/postgresql/data
     environment:
-      - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
-      - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
+      POSTGRES_DB: table
+      POSTGRES_USER: ${NEW_DATABASE_LOGIN}
+      POSTGRES_PASSWORD: ${NEW_DATABASE_PASS}
     env_file:
       - .env
+
+    networks:
+      - botnet
+
     restart: always
+  liquibase-migrations:
+    image: liquibase/liquibase:4.25
+    depends_on:
+      - postgresql
+    environment:
+      NEW_DATABASE_LOGIN: ${NEW_DATABASE_LOGIN}
+      NEW_DATABASE_PASS: ${NEW_DATABASE_PASS}
+    env_file:
+      - .env
+    command:
+      [
+        "--changelog-file=master.xml",
+        "--driver=org.postgresql.Driver",
+        "--url=jdbc:postgresql://postgresql:5432/table",
+        "--username=${NEW_DATABASE_LOGIN}",
+        "--password=${NEW_DATABASE_PASS}",
+        "update"
+      ]
+    volumes:
+      - ./migrations:/liquibase/changelog
+    networks:
+      - botnet
+    restart:
+      on-failure
+
 
 networks:
   botnet:

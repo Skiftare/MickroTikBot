@@ -19,7 +19,7 @@ public class SSHConnection {
     private static final Logger LOGGER = Logger.getLogger(SSHConnection.class.getName());
 
     // Настройки подключения
-    private static final String HOST = "chr_router";  // Имя сервиса в docker-compose
+    private static final String HOST = System.getenv("CHR_ROUTER_IP");  // Имя сервиса в docker-compose
     private static final int PORT = 2222;             // Порт SSH
     private static final String USER = System.getenv("NEW_ROUTER_LOGIN");
     private static final String PASSWORD = System.getenv("NEW_ROUTER_PASS");

@@ -7,23 +7,27 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static edu.Configuration.SSHConnection.establishingSSH;
+import static edu.Configuration.SecretInitialiser.initialisationSecret;
 
-public class StateCommand implements Command {
+public class ProfileCommand implements Command {
 
     private static final boolean IS_VISIBLE_FOR_KEYBOARD = false;
-    private static final String COMMAND_DESCRIPTION = "Проверка работоспособности SSH соединения";
-    private static final String COMMAND_NAME = "/state";
+    private static final String COMMAND_DESCRIPTION = "Команда для получения VPN сертификата";
+    private static final String COMMAND_NAME = "/profile";
 
     @Override
     public SendMessage execute(Update update) {
 
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
-        String stateMessage = establishingSSH();
-        message.setText(stateMessage + "\n"
+        Long tgUserId = update.getMessage().getFrom().getId();
+        message.setChatId(tgUserId);
+
+        String stateMessage = initialisationSecret(tgUserId);
+
+        message.setText(stateMessage + "\n\n"
                 + "Эта команда доступна только "
                 + "зарегестрированным пользователям. "
-                + "Позволяет проверить, в каком состоянии находится наш роутер.");
+                + "Позволяет получить индивидуальный сертификат для VPN подключения.");
         return message;
     }
 
