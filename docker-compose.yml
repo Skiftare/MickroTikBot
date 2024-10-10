@@ -6,8 +6,6 @@ services:
     container_name: MickroTikBot
     networks:
       - botnet
-    depends_on:
-      - chr
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
@@ -17,25 +15,6 @@ services:
     ports:
       - "8080:8080"
     restart: always
-
-  chr:
-    build: ./docker/chr
-    container_name: chr_router
-    privileged: true
-    networks:
-      - botnet
-    ports:
-      - "2222:2222"
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
-    environment:
-      - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
-      - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
-    env_file:
-      - .env
-    restart: always
-
 
   postgresql:
     image: postgres:16

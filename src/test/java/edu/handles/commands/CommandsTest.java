@@ -2,8 +2,12 @@ package edu.handles.commands;
 
 import java.util.LinkedHashMap;
 
+import static edu.Configuration.SecretInitialiser.initialisationSecret;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import edu.Configuration.SecretInitialiser;
+import edu.handles.commands.enteties.*;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.MockedStatic;
@@ -16,11 +20,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import edu.Configuration.SSHConnection;
-import edu.handles.commands.enteties.AuthorsCommand;
-import edu.handles.commands.enteties.HelpCommand;
-import edu.handles.commands.enteties.InfoCommand;
-import edu.handles.commands.enteties.StateCommand;
 import edu.handles.tables.CommandTable;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 public class CommandsTest {
 
@@ -94,6 +95,30 @@ public class CommandsTest {
             assertNotNull(result.getText(), "SendMessage should not be null");
             assertEquals("/state", stateCommand.getCommandName());
             assertEquals("SSH connection established", result.getText());
+        }
+    }
+
+
+    @Test
+    @DisplayName("Тест, что команда ProfileCommand выполняется и возвращает правильный SendMessage")
+    public void testThatProfileCommandIsExecutedAndReturnsCorrectSendMessage() {
+        Command profileCommand = new ProfileCommand();
+        Update update = Mockito.mock(Update.class);
+        Message message = Mockito.mock(Message.class);
+        User user = Mockito.mock(User.class);
+
+        when(update.getMessage()).thenReturn(message);
+        when(message.getFrom()).thenReturn(user);
+        when(user.getId()).thenReturn(1L); // Устанавливаем ID пользователя
+
+        try (MockedStatic<SecretInitialiser> mockedSecretInitialiser = Mockito.mockStatic(SecretInitialiser.class)) {
+            mockedSecretInitialiser.when(() -> initialisationSecret(1L)).thenReturn("Secret initialized!");
+
+            SendMessage result = profileCommand.execute(update);
+
+            assertNotNull(result.getText(), "SendMessage не должен быть null");
+            assertEquals("/profile", profileCommand.getCommandName());
+            assertEquals("Secret initialized!\n\nЭта команда доступна только зарегестрированным пользователям. Позволяет получить индивидуальный сертификат для VPN подключения.", result.getText());
         }
     }
 }

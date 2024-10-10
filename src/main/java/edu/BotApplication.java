@@ -5,12 +5,7 @@ import edu.Configuration.KeyboardMarkupBuilder;
 import edu.Configuration.TelegramBotCore;
 import edu.Data.DataManager;
 import edu.handles.commands.Command;
-import edu.handles.commands.enteties.AuthentificateCommand;
-import edu.handles.commands.enteties.AuthorsCommand;
-import edu.handles.commands.enteties.InfoCommand;
-import edu.handles.commands.enteties.RegisterCommand;
-import edu.handles.commands.enteties.StateCommand;
-import edu.handles.commands.enteties.HelpCommand;
+import edu.handles.commands.enteties.*;
 import edu.handles.tables.CommandTable;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -38,13 +33,16 @@ public class BotApplication {
         Command registerCommand = new RegisterCommand(dataManager);
         Command authentificateCommand = new AuthentificateCommand(dataManager);
         Command stateCommand = new StateCommand();
+        Command profileCommand = new ProfileCommand();
 
         CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand);
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");
-        return new CommandTable(preCommandTable, helpCommand, authentificateCommand, stateCommand);
+        return new CommandTable(preCommandTable, helpCommand, authentificateCommand, stateCommand, profileCommand);
 
     }
+
+
 
 
     public static void main(String[] args) throws TelegramApiException {
