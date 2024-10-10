@@ -4,6 +4,7 @@ package edu.handles.commands.enteties;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -30,6 +31,11 @@ public class AuthorsCommand implements Command {
     @Override
     public boolean isVisibleForKeyboard() {
         return IS_VISIBLE_FOR_KEYBOARD;
+    }
+
+    @Override
+    public boolean isVisibleForKeyboard(UserProfileStatus status) {
+        return true;
     }
 
     @Override
