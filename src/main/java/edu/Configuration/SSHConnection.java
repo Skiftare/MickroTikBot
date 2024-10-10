@@ -1,11 +1,14 @@
 package edu.Configuration;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.logging.Logger;
+
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-
-import java.io.InputStream;
-import java.util.logging.Logger;
 
 @SuppressWarnings("HideUtilityClassConstructor")
 public class SSHConnection {
@@ -26,6 +29,14 @@ public class SSHConnection {
         try {
             if (USER == null || PASSWORD == null) {
                 throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
+            }
+            
+            LOGGER.info("Попытка подключения с использованием USER: " + USER);
+            
+            // Проверка доступности хоста
+            LOGGER.info("Проверка доступности хоста " + HOST + " на порту " + PORT);
+            if (!isHostReachable(HOST, PORT)) {
+                throw new IllegalStateException("Хост " + HOST + " недоступен на порту " + PORT);
             }
 
             // Создаем сессию SSH
@@ -83,5 +94,15 @@ public class SSHConnection {
         }
 
         return stateString.toString();
+    }
+
+    private static boolean isHostReachable(String host, int port) {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(host, port), 5000);
+            return true;
+        } catch (IOException e) {
+            LOGGER.warning("Не удалось подключиться к " + host + ":" + port + ". Ошибка: " + e.getMessage());
+            return false;
+        }
     }
 }
