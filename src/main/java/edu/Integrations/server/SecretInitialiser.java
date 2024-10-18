@@ -1,8 +1,11 @@
-package edu.Configuration;
+package edu.Integrations.server;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+
+import java.time.Duration;
+import java.util.Date;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -89,5 +92,9 @@ public class SecretInitialiser {
             LOGGER.severe("Ошибка: " + e);
             return stateString.toString();
         }
+    }
+
+    public static String rewriteEndDataOfSecret(Long UserID, Duration date) {
+        return "Not realized yet";
     }
 }

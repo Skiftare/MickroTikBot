@@ -3,7 +3,8 @@ package edu;
 import edu.Configuration.DataConnectConfigurator;
 import edu.Configuration.KeyboardMarkupBuilder;
 import edu.Configuration.TelegramBotCore;
-import edu.Data.DataManager;
+import edu.Data.JdbcDataManager;
+import edu.Integrations.server.SecretInitialiser;
 import edu.handles.commands.Command;
 import edu.handles.commands.enteties.*;
 import edu.handles.tables.CommandTable;
@@ -26,12 +27,12 @@ public class BotApplication {
         return dataConnection;
     }
 
-    private static CommandTable commandTableAssembling(DataManager dataManager) {
+    private static CommandTable commandTableAssembling(JdbcDataManager jdbcDataManager) {
         logger.info("Assembling command table");
         Command infoCommand = new InfoCommand();
         Command authorsCommand = new AuthorsCommand();
-        Command registerCommand = new RegisterCommand(dataManager);
-        Command authentificateCommand = new AuthentificateCommand(dataManager);
+        Command registerCommand = new RegisterCommand(jdbcDataManager);
+        Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
         Command stateCommand = new StateCommand();
         Command profileCommand = new ProfileCommand();
 
@@ -53,12 +54,12 @@ public class BotApplication {
             // Сборка бота
             //TODO: стоит ли всё в одном try хранить, или лучше растащить процесс сборки и получше прологировать его?
             DataConnectConfigurator dataConnection = dataConnectionAssembling();
-            DataManager dataManager = new DataManager(dataConnection);
-            CommandTable coreCommandTable = commandTableAssembling(dataManager);
+            JdbcDataManager jdbcDataManager = new JdbcDataManager(dataConnection);
+            CommandTable coreCommandTable = commandTableAssembling(jdbcDataManager);
             KeyboardMarkupBuilder keyboardMarkupBuilder = new KeyboardMarkupBuilder(coreCommandTable);
 
             logger.info("Registering bot");
-            botsApi.registerBot(new TelegramBotCore(coreCommandTable, keyboardMarkupBuilder, dataManager));
+            botsApi.registerBot(new TelegramBotCore(coreCommandTable, keyboardMarkupBuilder, jdbcDataManager));
             logger.info("Bot registered");
         } catch (TelegramApiException e) {
             logger.info("Bot registration failed with stacktrace: " + e.getStackTrace());

@@ -1,7 +1,7 @@
 package edu.Configuration;
 
 
-import edu.Data.DataManager;
+import edu.Data.JdbcDataManager;
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
@@ -22,13 +22,13 @@ public class TelegramBotCore extends TelegramLongPollingBot {
     private static final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд.";
     private final KeyboardMarkupBuilder keyboardMarkupBuilder;
     private final Map<String, Command> commandTable = new HashMap<>();
-    private final DataManager dataManager;
+    private final JdbcDataManager jdbcDataManager;
 
     public TelegramBotCore(CommandTable coreCommandTable,
                            KeyboardMarkupBuilder keyboardMarkupBuilder,
-                           DataManager incomingDataManager) {
+                           JdbcDataManager incomingJdbcDataManager) {
         this.keyboardMarkupBuilder = keyboardMarkupBuilder;
-        this.dataManager = incomingDataManager;
+        this.jdbcDataManager = incomingJdbcDataManager;
         commandTable.putAll(coreCommandTable.getCommands());
     }
 
@@ -50,7 +50,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
             Command command = commandTable.get(messageText);
 
-            UserProfileStatus status = dataManager.getUserProfileStatus(chatId);
+            UserProfileStatus status = jdbcDataManager.getUserProfileStatus(chatId);
             Logger.getAnonymousLogger().info("Client "
                     + chatId
                     + " with status "
@@ -77,7 +77,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
             SendMessage response = commandTable.get("/authentificate").execute(update);
 
-            UserProfileStatus status = dataManager.getUserProfileStatus(update.getMessage().getChatId());
+            UserProfileStatus status = jdbcDataManager.getUserProfileStatus(update.getMessage().getChatId());
             if (response.getReplyMarkup() == null) {
                 response.setReplyMarkup(getKeyboardMarkup(status));
             }

@@ -5,9 +5,7 @@ import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
-import static edu.Configuration.SSHConnection.establishingSSH;
-import static edu.Configuration.SecretInitialiser.initialisationSecret;
+import static edu.Integrations.server.SecretInitialiser.initialisationSecret;
 
 public class ProfileCommand implements Command {
 
@@ -17,7 +15,6 @@ public class ProfileCommand implements Command {
 
     @Override
     public SendMessage execute(Update update) {
-
         SendMessage message = new SendMessage();
         Long tgUserId = update.getMessage().getFrom().getId();
         message.setChatId(tgUserId);
@@ -39,7 +36,7 @@ public class ProfileCommand implements Command {
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
 
-        return (status == UserProfileStatus.NO_VPN || status == UserProfileStatus.ACTIVE_VPN);
+        return (status == UserProfileStatus.NO_VPN);
 
     }
 

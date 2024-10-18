@@ -2,6 +2,7 @@ package edu.handles.commands.enteties;
 
 
 import edu.Data.DataManager;
+import edu.Data.JdbcDataManager;
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,10 +12,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.logging.Logger;
 
 public class AuthentificateCommand implements Command {
-    private final DataManager dataManager;
+    private final DataManager jdbcDataManager;
 
-    public AuthentificateCommand(DataManager dataManager) {
-        this.dataManager = dataManager;
+    public AuthentificateCommand(DataManager incomeDataManger) {
+        this.jdbcDataManager = incomeDataManger;
     }
 
 
@@ -28,7 +29,7 @@ public class AuthentificateCommand implements Command {
             Logger.getAnonymousLogger().info("Client " + chatId + " sent phone number: " + phoneNumber);
             // Здесь ваш код для обработки номера телефона и аутентификации
             String responseText = "Вы успешно аутентифицированы!";
-            dataManager.updateUserPhoneByTelegramId(
+            jdbcDataManager.updateUserPhoneByTelegramId(
                     update.getMessage().getChatId(),
                     phoneNumber
             );

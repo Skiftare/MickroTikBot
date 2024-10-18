@@ -2,11 +2,10 @@ package edu.handles.commands;
 
 import java.util.LinkedHashMap;
 
-import static edu.Configuration.SecretInitialiser.initialisationSecret;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import edu.Configuration.SecretInitialiser;
+import edu.Integrations.server.SecretInitialiser;
 import edu.handles.commands.enteties.*;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +17,7 @@ import static org.mockito.Mockito.when;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import static edu.Integrations.server.SecretInitialiser.initialisationSecret;
 
 import edu.Configuration.SSHConnection;
 import edu.handles.tables.CommandTable;
