@@ -2,7 +2,6 @@ package edu.handles.commands.enteties;
 
 
 import edu.Data.DataManager;
-import edu.Data.JdbcDataManager;
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
