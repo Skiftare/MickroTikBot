@@ -94,7 +94,7 @@ public class CommandsTest {
 
             assertNotNull(result.getText(), "SendMessage should not be null");
             assertEquals("/state", stateCommand.getCommandName());
-            assertEquals("SSH connection established", result.getText());
+            assertEquals("SSH connection established\nЭта команда доступна только зарегестрированным пользователям. Позволяет проверить, в каком состоянии находится наш роутер.", result.getText());
         }
     }
 
