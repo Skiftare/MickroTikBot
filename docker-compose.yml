@@ -4,6 +4,9 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     container_name: MickroTikBot
+    depends_on:
+      - postgresql
+      - chr
     networks:
       - botnet
     environment:
@@ -57,6 +60,22 @@ services:
       - botnet
     restart:
       on-failure
+  chr:
+    build: ./docker/chr
+    container_name: chr_router
+    privileged: true
+    networks:
+      - botnet
+    ports:
+      - "2222:2222"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
+      - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
+    env_file:
+      - .env
 
 
 networks:
