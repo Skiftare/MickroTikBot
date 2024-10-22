@@ -227,10 +227,16 @@ public class JdbcDataManager implements DataManager {
             return UserProfileStatus.GUEST;
         } else if (client.phone() == null) {
             return UserProfileStatus.UNCONFIRMED;
-        } else if (client.isVpnProfileAlive()) {
-            return UserProfileStatus.ACTIVE_VPN;
-        } else {
-            return UserProfileStatus.NO_VPN;
+        }else{
+            LocalDate currentDate = LocalDate.now();
+            LocalDate expiryDate = client.expiredAt().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            if (expiryDate.isAfter(currentDate)) {
+                return UserProfileStatus.ACTIVE_VPN;
+            } else {
+                return UserProfileStatus.NO_VPN;
+            }
         }
     }
     public boolean extendVpnProfile(Long tgUserId, Duration duration) {
