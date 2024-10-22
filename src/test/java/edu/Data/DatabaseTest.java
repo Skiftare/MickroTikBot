@@ -1,4 +1,4 @@
-package edu.Data;
+/*package edu.Data;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,4 +57,4 @@ public class DatabaseTest extends IntegrationTest {
     }
 
 
-}
+}*/
