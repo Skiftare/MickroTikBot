@@ -89,7 +89,7 @@ public class SSHConnection {
             session.disconnect();
 
         } catch (Exception e) {
-            stateString.append("Не удалось установить соединение! Ошибка: ").append(e.getMessage());
+            stateString.append("Не удалось установить соединение! Ошибка!");
             LOGGER.severe("Ошибка: " + e);
         }
 
