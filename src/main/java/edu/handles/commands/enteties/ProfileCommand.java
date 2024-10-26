@@ -6,7 +6,6 @@ import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static edu.Configuration.SSHConnection.establishingSSH;
 import static edu.Configuration.SecretInitialiser.initialisationSecret;
 
 public class ProfileCommand implements Command {

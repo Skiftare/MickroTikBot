@@ -34,12 +34,13 @@ public class BotApplication {
         Command authentificateCommand = new AuthentificateCommand(dataManager);
         Command stateCommand = new StateCommand();
         Command profileCommand = new ProfileCommand();
+        Command prolongProfileCommand = new ProlongProfileCommand();
 
         CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand);
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");
-        return new CommandTable(preCommandTable, helpCommand, authentificateCommand, stateCommand, profileCommand);
-
+        return new CommandTable(preCommandTable, helpCommand, authentificateCommand, stateCommand,
+                profileCommand, prolongProfileCommand);
     }
 
 

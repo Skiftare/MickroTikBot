@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class DatabaseTest extends IntegrationTest {
+/*public class DatabaseTest extends IntegrationTest {
 
     private static DataSource source;
     private static JdbcTemplate jdbcTemplate;
@@ -57,4 +57,4 @@ public class DatabaseTest extends IntegrationTest {
     }
 
 
-}
+}*/

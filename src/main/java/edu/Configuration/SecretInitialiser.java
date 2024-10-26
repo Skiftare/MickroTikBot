@@ -8,8 +8,7 @@ import java.util.logging.Logger;
 
 public class SecretInitialiser {
 
-    private static final int BUFFER_SIZE = 1024;
-    private static final int TIMEOUT = 1000;
+    private static final int TIMEOUT = 2500;
 
     private static final Logger LOGGER = Logger.getLogger(SecretInitialiser.class.getName());
 
@@ -40,19 +39,11 @@ public class SecretInitialiser {
 
             LOGGER.info("Попытка подключения для создания ключа...");
 
-            final String loginCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    + "abcdefghijklmnopqrstuvwxyz";
             final String passwordCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     + "abcdefghijklmnopqrstuvwxyz"
                     + "0123456789@#!%";
 
-            StringBuilder loginSuffix = new StringBuilder(5);
-
             Random random = new Random();
-            for (int i = 0; i < 5; i++) {
-                int index = random.nextInt(loginCharacters.length());
-                loginSuffix.append(loginCharacters.charAt(index));
-            }
 
             StringBuilder password = new StringBuilder(10);
 
@@ -61,27 +52,38 @@ public class SecretInitialiser {
                 password.append(passwordCharacters.charAt(index));
             }
 
-            finalLogin = UserID + "_" + loginSuffix.toString();
+            finalLogin = String.valueOf(UserID);
             finalPass = password.toString();
 
             // Устанавливаем соединение
             session.connect();
             LOGGER.info("Подключение для создания ключа успешно установлено.");
 
-            // Создаем канал для выполнения команды
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            final String useProfile = "30d";
 
-            // Команда для выполнения на Mikrotik
-            String command = "/ppp secret add profile=user-profile name=" + finalLogin + " password=" + finalPass + " service=l2tp";
-            LOGGER.info(command);
-            channel.setCommand(command);
-            channel.connect();
+    // Команды для выполнения на Mikrotik
+            String[] commands = {
+                    "/tool user-manager user add customer=admin disabled=no password=" + finalPass + " shared-users=1 " +
+                            "username=" + finalLogin,
+                    "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
+                            "profile=" + useProfile
+            };
 
-            // Закрываем канал и сессию
-            channel.disconnect();
+            for (String command : commands) {
+                // Создаем новый канал для каждой команды
+                ChannelExec channel = (ChannelExec) session.openChannel("exec");
+                LOGGER.info(command);
+                channel.setCommand(command);
+
+                // Подключаем канал, выполняем команду и закрываем канал
+                channel.connect();
+                Thread.sleep(TIMEOUT);  // Даем время на выполнение команды
+                channel.disconnect();
+            }
+
             session.disconnect();
 
-            String result = "VPN профиль успешно создан!\n\nВаш логин для VPN: " + finalLogin + "\n\nВаш пароль для VPN: " + finalPass;
+            String result = "VPN профиль успешно создан!\n\nАдрес VPN-сервера: hcs088zaj9a.sn.mynetname.net\n\nSecret: vpn\n\nВаш логин для VPN: " + finalLogin + "\n\nВаш пароль для VPN: " + finalPass;
             return result;
 
         } catch (Exception e) {
