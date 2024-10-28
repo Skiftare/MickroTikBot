@@ -34,7 +34,11 @@ public class BotApplication {
         Command registerCommand = new RegisterCommand(jdbcDataManager);
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
         Command stateCommand = new StateCommand();
-        Command profileCommand = new ProfileCommand();
+        
+        StellarPaymentHandler stellarPaymentHandler = new StellarPaymentHandler(jdbcDataManager);
+        stellarPaymentHandler.startListening("GXXXXXXXXXXXXXXXXXXXXXXX"); // Замените на ваш Stellar адрес
+        
+        Command profileCommand = new ProfileCommand(jdbcDataManager, stellarPaymentHandler);
 
         CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand);
         Command helpCommand = new HelpCommand(preCommandTable);
