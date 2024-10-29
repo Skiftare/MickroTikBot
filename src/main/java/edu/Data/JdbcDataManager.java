@@ -27,8 +27,8 @@ public class JdbcDataManager implements DataManager {
     private static final String INSERT_USER_QUERY =
 
             "INSERT INTO users "
-                    + "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    + "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at, is_payment_pending) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_USER_BY_ID_QUERY =
             "SELECT * FROM users WHERE tg_user_id = ?";
     private static final String UPDATE_USER_PHONE_QUERY =
@@ -42,6 +42,7 @@ public class JdbcDataManager implements DataManager {
         this.dataConnection = dataConnection;
     }
 
+    @Override
 
     // Метод для создания записи
     public void save(ClientTransfer client) {
@@ -62,6 +63,7 @@ public class JdbcDataManager implements DataManager {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
+    @Override
 
     // Метод для чтения записи
     public ClientTransfer findById(Long tgUserId) {
@@ -83,7 +85,8 @@ public class JdbcDataManager implements DataManager {
                         resultSet.getDate("user_last_visited"),
                         resultSet.getString("vpn_profile"),
                         resultSet.getBoolean("is_vpn_profile_alive"),
-                        resultSet.getDate("expired_at")
+                        resultSet.getDate("expired_at"),
+                        resultSet.getBoolean("is_payment_pending")
                 );
             }
         } catch (SQLException e) {
@@ -91,6 +94,7 @@ public class JdbcDataManager implements DataManager {
         }
         return client;
     }
+    @Override
 
     public boolean isUserExists(Long tgUserId) {
 
@@ -107,7 +111,7 @@ public class JdbcDataManager implements DataManager {
             return false;
         }
     }
-
+    @Override
     public void addUser(ClientTransfer client) {
 
 
@@ -121,19 +125,24 @@ public class JdbcDataManager implements DataManager {
             preparedStatement.setString(5, client.vpnProfile());
             preparedStatement.setBoolean(6, client.isVpnProfileAlive());
             preparedStatement.setDate(7, new java.sql.Date(client.expiredAt().getTime()));
-
+            preparedStatement.setBoolean(8, client.isInPaymentProcess());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 
+    @Override
 
     // Метод для обновления записи
     public void update(ClientTransfer client) {
         String query = "UPDATE users SET "
                 + "phone = ?, name = ?, "
-                + "user_last_visited = ?, vpn_profile = ?, is_vpn_profile_alive = ?, expired_at = ? "
+                + "user_last_visited = ?, "
+                + "vpn_profile = ?, "
+                + "is_vpn_profile_alive = ?, "
+                + "expired_at = ?,"
+                + "is_payment_pending = ? "
                 + "WHERE tg_user_id = ?";
 
         try (Connection connection = dataConnection.getConnection();
@@ -146,13 +155,14 @@ public class JdbcDataManager implements DataManager {
             preparedStatement.setBoolean(5, client.isVpnProfileAlive());
             preparedStatement.setDate(6, new java.sql.Date(client.expiredAt().getTime()));
             preparedStatement.setLong(7, client.tgUserId());
-
+            preparedStatement.setBoolean(8, client.isInPaymentProcess());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 
+    @Override
     public void updateUserPhoneByTelegramId(Long tgUserId, String newPhone) {
         Logger.getAnonymousLogger().info("Updating phone for user with tg_user_id: " + tgUserId);
         Logger.getAnonymousLogger().info("Updating phone for user with tg_user_id: " + tgUserId);
@@ -178,6 +188,7 @@ public class JdbcDataManager implements DataManager {
     }
 
 
+    @Override
     // Метод для удаления записи
     public void deleteById(Long tgUserId) {
         String query = "DELETE FROM users WHERE tg_user_id = ?";
@@ -192,6 +203,7 @@ public class JdbcDataManager implements DataManager {
         }
     }
 
+    @Override
     // Метод для получения всех записей
     public List<ClientTransfer> getAllUsers() {
         List<ClientTransfer> clients = new ArrayList<>();
@@ -210,7 +222,8 @@ public class JdbcDataManager implements DataManager {
                         resultSet.getDate("user_last_visited"),
                         resultSet.getString("vpn_profile"),
                         resultSet.getBoolean("is_vpn_profile_alive"),
-                        resultSet.getDate("expired_at")
+                        resultSet.getDate("expired_at"),
+                        resultSet.getBoolean("is_payment_pending")
                 );
                 clients.add(client);
             }
@@ -220,19 +233,42 @@ public class JdbcDataManager implements DataManager {
         return clients;
     }
 
+    @Override
     public UserProfileStatus getUserProfileStatus(Long tgUserId) {
 
         ClientTransfer client = findById(tgUserId);
+
         if (client == null) {
             return UserProfileStatus.GUEST;
         } else if (client.phone() == null) {
             return UserProfileStatus.UNCONFIRMED;
+        } else if (client.isInPaymentProcess()) {
+            return UserProfileStatus.ACTIVE_PAYMENT;
         } else if (client.isVpnProfileAlive()) {
             return UserProfileStatus.ACTIVE_VPN;
         } else {
             return UserProfileStatus.NO_VPN;
         }
     }
+    @Override
+    public void setPaymentProcessStatus(Long tgUserId, boolean status) {
+        String query = "UPDATE users SET is_payment_pending = ? WHERE tg_user_id = ?";
+        UserProfileStatus userProfileStatus = getUserProfileStatus(tgUserId);
+        if (userProfileStatus == UserProfileStatus.GUEST || userProfileStatus == UserProfileStatus.UNCONFIRMED) {
+            Logger.getAnonymousLogger().info("User not found with tg_user_id: " + tgUserId);
+            throw new IllegalArgumentException("Only confirmed users can by VPN" + tgUserId);
+        }
+        try (Connection connection = dataConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setBoolean(1, status);
+            preparedStatement.setLong(2, tgUserId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
+        }
+    }
+    @Override
     public boolean extendVpnProfile(Long tgUserId, Duration duration) {
         String query = "UPDATE users SET expired_at = ? WHERE tg_user_id = ?";
         try (Connection connection = dataConnection.getConnection();
@@ -270,4 +306,5 @@ public class JdbcDataManager implements DataManager {
             return false;
         }
     }
+
 }

@@ -1,19 +1,25 @@
 package edu.Integrations.wallet.ctrypto.stellar;
 
+import edu.Data.PaymentDataManager;
 import org.stellar.sdk.KeyPair;
 import org.stellar.sdk.requests.EventListener;
 import org.stellar.sdk.responses.operations.OperationResponse;
+import org.stellar.sdk.responses.operations.PaymentOperationResponse;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+
 public class AccountListener {
+    public static final BigDecimal COMPARISON_AMOUNT = BigDecimal.valueOf(100);
+
 
     private StellarConnection connection;
 
-    public AccountListener() {
-        this.connection = new StellarConnection();
+    public AccountListener(StellarConnection connection) {
+        this.connection = connection;
+
     }
 
     public void startListening() {
@@ -40,14 +46,20 @@ public class AccountListener {
                                     Logger.getAnonymousLogger().info("Тип операции: " + operation.getClass().getSimpleName());
                                     Logger.getAnonymousLogger().info("ID транзакции: " + operation.getTransactionHash());
 
-                                    // Проверяем, является ли операция входящей (например, для платежей)
-                                    if (operation.getSourceAccount().equals(accountId)) {
-                                        Logger.getAnonymousLogger().info("Транзакция исходящая. Пропускаем.");
-                                    } else {
+
+                                    if (operation instanceof PaymentOperationResponse) {
+
+
                                         Logger.getAnonymousLogger().info("Получена новая входящая транзакция!");
                                         Logger.getAnonymousLogger().info("Источник: " + operation.getSourceAccount());
                                         Logger.getAnonymousLogger().info("Memo: " + operation.getTransaction().get().getMemo());
-                                        // Выводим любую дополнительную информацию о транзакции
+                                        if (operation.getTransaction().get().isSuccessful()) {
+                                            BigDecimal amount = new BigDecimal(((PaymentOperationResponse) operation).getAmount());
+                                            if (amount.compareTo(COMPARISON_AMOUNT) > 0) {
+                                                PaymentDataManager.changeStatus(operation.getTransaction().get().getMemo().toString());
+                                            }
+                                        }
+
                                     }
                                 }
 
@@ -60,9 +72,6 @@ public class AccountListener {
 
                                     }
                                 }
-
-
-
                             }
                     );
         } catch (Exception e) {

@@ -11,4 +11,7 @@
     <changeSet id="create-dtousers-table" author="Skiftare">
         <sqlFile path="tables_configuration/users.sql"/>
     </changeSet>
+    <changeSet id="Payment state added" author="Skiftare">
+        <sqlFile path="tables_configuration/payment_update.sql"/>
+    </changeSet>
 </databaseChangeLog>
