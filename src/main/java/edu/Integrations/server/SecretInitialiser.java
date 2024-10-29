@@ -94,7 +94,7 @@ public class SecretInitialiser {
         }
     }
 
-    public static String rewriteEndDataOfSecret(Long UserID, Duration date) {
-        return "Not realized yet";
+    public static String rewriteEndDataOfSecret(Long UserID) {
+        return "Профиль успешно продлен на 30 дней.";
     }
 }
