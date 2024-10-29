@@ -2,6 +2,7 @@ package edu.handles.commands.enteties;
 
 import edu.Data.DataManager;
 import edu.Data.PaymentDataManager;
+import edu.Integrations.server.SecretInitialiser;
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -34,10 +35,9 @@ public class CheckPayment implements Command {
 
         if(PaymentDataManager.isPaymentSuccess(update.getMessage().getFrom().getId())){
             dataManager.setPaymentProcessStatus(update.getMessage().getFrom().getId(), false);
-            if(dataManager.getUserProfileStatus(update.getMessage().getFrom().getId()) == UserProfileStatus.NO_VPN){
-                dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
-                message.setText("Ваш профиль успешно продлен на 30 дней.\n");
-            }
+            dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
+            message.setText(SecretInitialiser.initialisationSecret(update.getMessage().getFrom().getId()));
+
 
             message.setText("Ваша оплата успешно обработана.");
 
