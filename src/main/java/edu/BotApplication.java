@@ -35,12 +35,16 @@ public class BotApplication {
         Command registerCommand = new RegisterCommand(jdbcDataManager);
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
         Command stateCommand = new StateCommand();
+        Command profileCommand = new ProfileCommand();
+        Command getProfileCommand = new GetProfileCommand(jdbcDataManager);
+        Command checkPayment = new CheckPayment(jdbcDataManager);
+
 
         AccountListener accountListener = new AccountListener( new StellarConnection());
         accountListener.startListening();
-        Command profileCommand = new ProfileCommand();
 
-        CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand);
+
+        CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand, getProfileCommand, checkPayment);
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");
         return new CommandTable(preCommandTable, helpCommand, authentificateCommand, stateCommand, profileCommand);
