@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 # Функция для запуска RouterOS
 start_routeros() {

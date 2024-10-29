@@ -2,7 +2,6 @@ package edu.handles.commands.enteties;
 
 import edu.Data.DataManager;
 import edu.Data.PaymentDataManager;
-import edu.Integrations.server.SecretInitialiser;
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,6 +9,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.xml.crypto.Data;
 import java.time.Duration;
+
+import static edu.Integrations.chr.RouterConnector.initialisationSecret;
+import static edu.Integrations.chr.RouterConnector.prolongSecret;
 
 public class CheckPayment implements Command {
     private DataManager dataManager;
@@ -38,13 +40,14 @@ public class CheckPayment implements Command {
             if(dataManager.getUserProfileStatus(update.getMessage().getFrom().getId()) == UserProfileStatus.ACTIVE_VPN){
                 dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
                 message.setText("Ваш профиль успешно продлен на 30 дней.\n"+
-                        SecretInitialiser.initialisationSecret(update.getMessage().getChatId()));
+                        initialisationSecret(update.getMessage().getChatId()));
 
             }
             else{
                 dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
                 message.setText("Ваш профиль успешно создан на 30 дней.\n"+
-                        SecretInitialiser.initialisationSecret(update.getMessage().getChatId()));
+                        prolongSecret(update.getMessage().getChatId()));
+
             }
 
             message.setText("Ваша оплата успешно обработана.");

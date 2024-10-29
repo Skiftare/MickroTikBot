@@ -1,26 +1,24 @@
-package edu.Integrations.server;
+package edu.Integrations.chr;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
-import java.time.Duration;
-import java.util.Date;
 import java.util.Random;
 import java.util.logging.Logger;
 
-public class SecretInitialiser {
-
+public class RouterConnector {
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;
 
-    private static final Logger LOGGER = Logger.getLogger(SecretInitialiser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RouterConnector.class.getName());
 
     // Настройки подключения
     private static final String HOST = System.getenv("CHR_ROUTER_IP");  // Имя сервиса в docker-compose
     private static final int PORT = 2222;             // Порт SSH
     private static final String USER = System.getenv("NEW_ROUTER_LOGIN");
     private static final String PASSWORD = System.getenv("NEW_ROUTER_PASS");
+    private static final String SERVER_IP = System.getenv("SERVER_IP");
 
     // Метод для инициализации секретного ключа (вызывается из другого класса)
     public static String initialisationSecret(Long UserID) {
@@ -84,7 +82,9 @@ public class SecretInitialiser {
             channel.disconnect();
             session.disconnect();
 
-            String result = "VPN профиль успешно создан!\n\nВаш логин для VPN: " + finalLogin + "\n\nВаш пароль для VPN: " + finalPass;
+            String result = "VPN профиль успешно создан!\n" +
+                    "Адрес VPN-сервера: "+SERVER_IP+"\n" +
+                    "\nВаш логин для VPN: " + finalLogin + "\n\nВаш пароль для VPN: " + finalPass;
             return result;
 
         } catch (Exception e) {
@@ -93,8 +93,57 @@ public class SecretInitialiser {
             return stateString.toString();
         }
     }
+    public static String prolongSecret(Long UserID) {
+        StringBuilder stateString = new StringBuilder();
 
-    public static String rewriteEndDataOfSecret(Long UserID) {
-        return "Профиль успешно продлен на 30 дней.";
+        String finalLogin = String.valueOf(UserID);
+        try {
+            if (USER == null || PASSWORD == null) {
+                throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
+            }
+
+            // Создаем сессию SSH
+            JSch jsch = new JSch();
+            Session session = jsch.getSession(USER, HOST, PORT);
+            session.setPassword(PASSWORD);
+
+            // Отключаем проверку хоста
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("PreferredAuthentications", "publickey,password");
+
+            LOGGER.info("Попытка подключения для продления аккаунта...");
+
+            Random random = new Random();
+
+            // Устанавливаем соединение
+            session.connect();
+            LOGGER.info("Подключение для создания ключа успешно установлено.");
+
+            final String useProfile = "30d";
+
+
+            // Команды для выполнения на Mikrotik
+            String command = "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
+                    "profile=" + useProfile;
+
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            LOGGER.info(command);
+            channel.setCommand(command);
+
+            // Подключаем канал, выполняем команду и закрываем канал
+            channel.connect();
+            Thread.sleep(TIMEOUT);  // Даем время на выполнение команды
+            channel.disconnect();
+            session.disconnect();
+
+            String result = "VPN профиль успешно продлён!\n\nАдрес VPN-сервера: " +
+                    SERVER_IP+"\nSecret: vpn";
+            return result;
+
+        } catch (Exception e) {
+            stateString.append("Не удалось установить соединение! Ошибка: ").append(e.getMessage());
+            LOGGER.severe("Ошибка: " + e);
+            return stateString.toString();
+        }
     }
 }
