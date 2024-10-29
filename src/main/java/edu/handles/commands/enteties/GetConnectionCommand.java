@@ -41,8 +41,6 @@ public class GetConnectionCommand implements Command {
         } catch (NoSuchAlgorithmException e) {
             res = randomValue;
             e.printStackTrace();
-        } finally {
-            res = randomValue;
         }
 
         return res;
