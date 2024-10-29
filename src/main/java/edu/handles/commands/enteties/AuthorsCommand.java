@@ -15,7 +15,7 @@ public class AuthorsCommand implements Command {
     private  final boolean IS_VISIBLE_FOR_KEYBOARD = true;
     private  final String COMMAND_NAME = "/authors";
     private  final String COMMAND_DESCRIPTION = "Получить список авторов этого проекта";
-    private  final List<String> AUTHORS = Arrays.asList("skif", "artem");
+    private  final List<String> AUTHORS = Arrays.asList("artem");
 
     @Override
     public SendMessage execute(Update update) {

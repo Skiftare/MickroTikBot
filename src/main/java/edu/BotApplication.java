@@ -4,7 +4,6 @@ import edu.Configuration.DataConnectConfigurator;
 import edu.Configuration.KeyboardMarkupBuilder;
 import edu.Configuration.TelegramBotCore;
 import edu.Data.JdbcDataManager;
-import edu.Integrations.server.SecretInitialiser;
 import edu.Integrations.wallet.ctrypto.stellar.AccountListener;
 import edu.Integrations.wallet.ctrypto.stellar.StellarConnection;
 import edu.handles.commands.Command;
