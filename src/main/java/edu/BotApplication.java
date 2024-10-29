@@ -5,6 +5,7 @@ import edu.Configuration.KeyboardMarkupBuilder;
 import edu.Configuration.TelegramBotCore;
 import edu.Data.JdbcDataManager;
 import edu.Integrations.server.SecretInitialiser;
+import edu.Integrations.wallet.ctrypto.stellar.AccountListener;
 import edu.handles.commands.Command;
 import edu.handles.commands.enteties.*;
 import edu.handles.tables.CommandTable;
@@ -34,11 +35,10 @@ public class BotApplication {
         Command registerCommand = new RegisterCommand(jdbcDataManager);
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
         Command stateCommand = new StateCommand();
-        
-        StellarPaymentHandler stellarPaymentHandler = new StellarPaymentHandler(jdbcDataManager);
-        stellarPaymentHandler.startListening("GXXXXXXXXXXXXXXXXXXXXXXX"); // Замените на ваш Stellar адрес
-        
-        Command profileCommand = new ProfileCommand(jdbcDataManager, stellarPaymentHandler);
+
+        AccountListener accountListener = new AccountListener();
+        accountListener.startListening();
+        Command profileCommand = new ProfileCommand();
 
         CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand);
         Command helpCommand = new HelpCommand(preCommandTable);
@@ -53,7 +53,6 @@ public class BotApplication {
     public static void main(String[] args) throws TelegramApiException {
 
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-
         try {
             // Сборка бота
             //TODO: стоит ли всё в одном try хранить, или лучше растащить процесс сборки и получше прологировать его?

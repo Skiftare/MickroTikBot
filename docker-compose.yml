@@ -13,11 +13,13 @@ services:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
       - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
+      - STELLAR_PUBLIC_KEY=${STELLAR_PUBLIC_KEY}
+      - STELLAR_SECRET_KEY=${STELLAR_SECRET_KEY}
     env_file:
       - .env
     ports:
       - "8080:8080"
-    restart: always
+
 
   postgresql:
     image: postgres:16

@@ -1,47 +1,73 @@
 package edu.Integrations.wallet.ctrypto.stellar;
 
-import edu.Data.PaymentDataManager;
+import org.stellar.sdk.KeyPair;
 import org.stellar.sdk.requests.EventListener;
 import org.stellar.sdk.responses.operations.OperationResponse;
-import org.stellar.sdk.responses.operations.PaymentOperationResponse;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class AccountListener {
 
     private StellarConnection connection;
-    private Consumer<PaymentInfo> paymentProcessor;
 
-    public AccountListener(Consumer<PaymentInfo> paymentProcessor) {
+    public AccountListener() {
         this.connection = new StellarConnection();
-        this.paymentProcessor = paymentProcessor;
     }
 
-    public void listenToAccount(String accountId) {
-        connection.getServer().operations().forAccount(accountId).stream(new EventListener<OperationResponse>() {
-            @Override
-            public void onEvent(OperationResponse operation) {
-                if (operation instanceof PaymentOperationResponse) {
-                    PaymentOperationResponse payment = (PaymentOperationResponse) operation;
-                    paymentProcessor.accept(new PaymentInfo(
-                        payment.getFrom(),
-                        payment.getTo(),
-                        payment.getTransaction().get().getMemo().toString(),
-                        new BigDecimal(payment.getAmount()),
-                        payment.getAsset().getType()
-                    ));
-                    String memo = payment.getTransaction().get().getMemo().toString();
-                    PaymentDataManager.changeStatus(memo);
-                }
-            }
+    public void startListening() {
+        KeyPair keyPair = connection.getKeyPair();
+        if (keyPair == null) {
+            throw new IllegalStateException("Не настроены ключи Stellar.");
+        }
 
-            @Override
-            public void onFailure(Optional<Throwable> error, Optional<Integer> responseCode) {
-                System.out.println("Не удалось получить информацию о платеже: " + error.orElse(null));
-            }
-        });
+        String accountId = keyPair.getAccountId();
+        Logger.getAnonymousLogger().info("Начинаем прослушивание аккаунта: " + accountId);
+
+        try {
+            connection
+                    .getServer()
+                    .operations()
+                    .forAccount(accountId)
+                    .includeTransactions(true)
+
+                    .stream(new EventListener<OperationResponse>() {
+                                @Override
+                                public void onEvent(OperationResponse operation) {
+                                    // Обработка каждого события транзакции
+                                    Logger.getAnonymousLogger().info("Новая транзакция обнаружена!");
+                                    Logger.getAnonymousLogger().info("Тип операции: " + operation.getClass().getSimpleName());
+                                    Logger.getAnonymousLogger().info("ID транзакции: " + operation.getTransactionHash());
+
+                                    // Проверяем, является ли операция входящей (например, для платежей)
+                                    if (operation.getSourceAccount().equals(accountId)) {
+                                        Logger.getAnonymousLogger().info("Транзакция исходящая. Пропускаем.");
+                                    } else {
+                                        Logger.getAnonymousLogger().info("Получена новая входящая транзакция!");
+                                        Logger.getAnonymousLogger().info("Источник: " + operation.getSourceAccount());
+                                        Logger.getAnonymousLogger().info("Memo: " + operation.getTransaction().get().getMemo());
+                                        // Выводим любую дополнительную информацию о транзакции
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Optional<Throwable> optional, Optional<Integer> optional1) {
+                                    if (optional instanceof Optional) {
+                                        Logger.getAnonymousLogger().severe("Ошибка при обработке транзакции: " + optional.get().getMessage());
+                                    } else {
+                                        Logger.getAnonymousLogger().severe("Случилось что-то страшное " + optional1);
+
+                                    }
+                                }
+
+
+
+                            }
+                    );
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().severe("Ошибка при настройке прослушивания: " + e.getMessage());
+        }
     }
 
     public static class PaymentInfo {

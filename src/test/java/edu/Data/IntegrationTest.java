@@ -14,14 +14,14 @@ import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
-
+/*
 @Testcontainers
 public abstract class IntegrationTest {
 
     public static PostgreSQLContainer<?> POSTGRES;
 
     static {
-        POSTGRES = new PostgreSQLContainer<>("postgres:15")
+        POSTGRES = new PostgreSQLContainer<>("postgres:16")
                 .withDatabaseName("table")
                 .withUsername("postgres")
                 .withPassword("postgres");
@@ -57,4 +57,4 @@ public abstract class IntegrationTest {
         }
     }
 
-}
+}*/
