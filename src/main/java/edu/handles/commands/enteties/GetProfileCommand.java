@@ -35,7 +35,7 @@ public class GetProfileCommand implements Command {
                     "бота для получения ссылки в течение 1 часа. " +
                     "Обязательно проверяйте, прошёл ли ваш платёж. " +
                     "В целях защиты от брутфорса ваша оплата не проверяется автоматически.\n\n\n" +
-                    "```"+PUBLIC_KEY+"```");
+                    "```"+PUBLIC_KEY+"```"+"\n"+"```"+checkSum+"```");
             jdbcDataManager.setPaymentProcessStatus(update.getMessage().getFrom().getId(), true);
 
         }
