@@ -35,9 +35,17 @@ public class CheckPayment implements Command {
 
         if(PaymentDataManager.isPaymentSuccess(update.getMessage().getFrom().getId())){
             dataManager.setPaymentProcessStatus(update.getMessage().getFrom().getId(), false);
-            dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
-            message.setText(SecretInitialiser.initialisationSecret(update.getMessage().getFrom().getId()));
+            if(dataManager.getUserProfileStatus(update.getMessage().getFrom().getId()) == UserProfileStatus.ACTIVE_VPN){
+                dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
+                message.setText("Ваш профиль успешно продлен на 30 дней.\n"+
+                        SecretInitialiser.initialisationSecret(update.getMessage().getChatId()));
 
+            }
+            else{
+                dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
+                message.setText("Ваш профиль успешно создан на 30 дней.\n"+
+                        SecretInitialiser.initialisationSecret(update.getMessage().getChatId()));
+            }
 
             message.setText("Ваша оплата успешно обработана.");
 
