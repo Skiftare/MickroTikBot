@@ -55,7 +55,7 @@ public class GetProfileCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return "Купить/продлить профиль за 100 XLM";
+        return "/buy";
     }
 
     @Override
