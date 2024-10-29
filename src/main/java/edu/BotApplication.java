@@ -6,6 +6,7 @@ import edu.Configuration.TelegramBotCore;
 import edu.Data.JdbcDataManager;
 import edu.Integrations.server.SecretInitialiser;
 import edu.Integrations.wallet.ctrypto.stellar.AccountListener;
+import edu.Integrations.wallet.ctrypto.stellar.StellarConnection;
 import edu.handles.commands.Command;
 import edu.handles.commands.enteties.*;
 import edu.handles.tables.CommandTable;
@@ -36,7 +37,7 @@ public class BotApplication {
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
         Command stateCommand = new StateCommand();
 
-        AccountListener accountListener = new AccountListener();
+        AccountListener accountListener = new AccountListener( new StellarConnection());
         accountListener.startListening();
         Command profileCommand = new ProfileCommand();
 

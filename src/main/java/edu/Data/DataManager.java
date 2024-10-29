@@ -16,6 +16,8 @@ public interface DataManager {
     // Проверка, существует ли пользователь с данным Telegram ID
     boolean isUserExists(Long tgUserId);
 
+    void addUser(ClientTransfer client);
+
     // Обновление данных пользователя
     void update(ClientTransfer client);
 
@@ -24,9 +26,14 @@ public interface DataManager {
 
     // Получение списка всех пользователей
     List<ClientTransfer> getAllUsers();
+
     void updateUserPhoneByTelegramId(Long tgUserId, String phoneNumber);
 
     // Получение статуса профиля пользователя
     UserProfileStatus getUserProfileStatus(Long tgUserId);
+
+    void setPaymentProcessStatus(Long tgUserId, boolean status);
+
     boolean extendVpnProfile(Long tgUserId, Duration duration);
+
 }

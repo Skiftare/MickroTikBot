@@ -12,7 +12,7 @@ public class StellarConnection {
     private Server server;
     private Network network;
     private KeyPair keyPair;  // добавляем KeyPair
-    private static final String publicKey = System.getenv("STELLAR_PUBLIC_KEY");
+    static final String publicKey = System.getenv("STELLAR_PUBLIC_KEY");
     private static final String secretKey = System.getenv("STELLAR_SECRET_KEY");
     private static final String networkName = System.getenv("STELLAR_NETWORK");
 
