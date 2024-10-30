@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -285,18 +284,19 @@ public class JdbcDataManager implements DataManager {
             LocalDate today = LocalDate.now();
 
             if (currentExpiryDate == null || 
-                currentExpiryDate.toInstant()
-                               .atZone(ZoneId.systemDefault())
-                               .toLocalDate()
-                               .isBefore(today)) {
-                // Если дата истекла или null, начинаем отсчет от сегодня
+                currentExpiryDate.getTime() == 0 || 
+                currentExpiryDate.equals(new Date(0))) {
                 newExpiryDate = today.plusDays(duration.toDays());
+                Logger.getAnonymousLogger().info("Starting from today due to null or epoch date");
             } else {
-                // Иначе добавляем дни к существующей дате
-                newExpiryDate = currentExpiryDate.toInstant()
-                                               .atZone(ZoneId.systemDefault())
-                                               .toLocalDate()
-                                               .plusDays(duration.toDays());
+                LocalDate currentExpiryLocalDate = new java.sql.Date(currentExpiryDate.getTime()).toLocalDate();
+                if (currentExpiryLocalDate.isBefore(today)) {
+                    newExpiryDate = today.plusDays(duration.toDays());
+                    Logger.getAnonymousLogger().info("Starting from today due to expired date");
+                } else {
+                    newExpiryDate = currentExpiryLocalDate.plusDays(duration.toDays());
+                    Logger.getAnonymousLogger().info("Extending from current expiry date");
+                }
             }
 
             preparedStatement.setDate(1, java.sql.Date.valueOf(newExpiryDate));
@@ -312,7 +312,6 @@ public class JdbcDataManager implements DataManager {
             }
 
         } catch (SQLException e) {
-            Logger.getAnonymousLogger().info("Error extending VPN profile for tg_user_id: " + tgUserId);
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
             return false;
         }
