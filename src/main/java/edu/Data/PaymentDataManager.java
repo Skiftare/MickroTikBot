@@ -1,22 +1,26 @@
 package edu.Data;
 
+import org.apache.commons.logging.Log;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class PaymentDataManager {
-    private static final HashMap<Long, String> IdToComment = new HashMap<>();
-    private static final HashMap<String, Long> CommentToId = new HashMap<>();
-    private static final HashMap<Long, Long> CommentToAmount = new HashMap<>();
-    private static final HashMap<String, Boolean> CommentToStatus = new HashMap<>();
-    private static final HashMap<Long, LocalDateTime> IdToCreationTime = new HashMap<>();
+    private static HashMap<Long, String> IdToComment = new HashMap<>();
+    private static HashMap<String, Long> CommentToId = new HashMap<>();
+    private static HashMap<Long, Long> CommentToAmount = new HashMap<>();
+    private static HashMap<String, Boolean> CommentToStatus = new HashMap<>();
+    private static HashMap<Long, LocalDateTime> IdToCreationTime = new HashMap<>();
     
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     
     static {
+
         initializeCleanupTask();
     }
 
@@ -88,7 +92,12 @@ public class PaymentDataManager {
     }
     public static synchronized boolean isPaymentSuccess(Long id) {
         String comment = IdToComment.get(id);
-        return CommentToStatus.get(comment);
+        Logger.getAnonymousLogger().info("Checking payment status for comment: " + comment);
+        if(CommentToStatus.containsKey(comment)) {
+            Logger.getAnonymousLogger().info("Payment status for comment: " + comment + " is " + CommentToStatus.get(comment));
+            return CommentToStatus.get(comment);
+        }
+        return false;
 
     }
     public static synchronized void changeStatus(String comment) {

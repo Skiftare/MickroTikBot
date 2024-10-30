@@ -270,28 +270,38 @@ public class JdbcDataManager implements DataManager {
     }
     @Override
     public boolean extendVpnProfile(Long tgUserId, Duration duration) {
-        String query = "UPDATE users SET expired_at = ? WHERE tg_user_id = ?";
+        String query = "UPDATE users SET expired_at = ?, is_vpn_profile_alive = true WHERE tg_user_id = ?";
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            // Get the current expiry date
             ClientTransfer client = findById(tgUserId);
             if (client == null) {
                 Logger.getAnonymousLogger().info("User not found with tg_user_id: " + tgUserId);
                 return false;
             }
 
+            LocalDate newExpiryDate;
             Date currentExpiryDate = client.expiredAt();
-            LocalDate newExpiryDate = currentExpiryDate.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .plusDays(duration.toDays());
+            LocalDate today = LocalDate.now();
 
-            // Set new parameters for the query
+            if (currentExpiryDate == null || 
+                currentExpiryDate.toInstant()
+                               .atZone(ZoneId.systemDefault())
+                               .toLocalDate()
+                               .isBefore(today)) {
+                // Если дата истекла или null, начинаем отсчет от сегодня
+                newExpiryDate = today.plusDays(duration.toDays());
+            } else {
+                // Иначе добавляем дни к существующей дате
+                newExpiryDate = currentExpiryDate.toInstant()
+                                               .atZone(ZoneId.systemDefault())
+                                               .toLocalDate()
+                                               .plusDays(duration.toDays());
+            }
+
             preparedStatement.setDate(1, java.sql.Date.valueOf(newExpiryDate));
             preparedStatement.setLong(2, tgUserId);
 
-            // Execute the update
             int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
                 Logger.getAnonymousLogger().info("VPN profile extended successfully for tg_user_id: " + tgUserId);
@@ -302,6 +312,7 @@ public class JdbcDataManager implements DataManager {
             }
 
         } catch (SQLException e) {
+            Logger.getAnonymousLogger().info("Error extending VPN profile for tg_user_id: " + tgUserId);
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
             return false;
         }
