@@ -38,20 +38,23 @@ public class BotApplication {
         Command profileCommand = new ProfileCommand();
         Command getProfileCommand = new GetProfileCommand(jdbcDataManager);
         Command checkPayment = new CheckPayment(jdbcDataManager);
+        Command userProfileCommand = new UserProfileCommand(jdbcDataManager);
 
-
-        AccountListener accountListener = new AccountListener( new StellarConnection());
+        AccountListener accountListener = new AccountListener(new StellarConnection());
         accountListener.startListening();
 
 
-        CommandTable preCommandTable = new CommandTable(infoCommand, authorsCommand, registerCommand, getProfileCommand, checkPayment);
+        CommandTable preCommandTable = new CommandTable(infoCommand,
+                authorsCommand, registerCommand,
+                getProfileCommand, checkPayment,
+                authentificateCommand, stateCommand,
+                profileCommand, userProfileCommand
+        );
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");
-        return new CommandTable(preCommandTable, helpCommand, authentificateCommand, stateCommand, profileCommand);
+        return new CommandTable(preCommandTable, helpCommand);
 
     }
-
-
 
 
     public static void main(String[] args) throws TelegramApiException {

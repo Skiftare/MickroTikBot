@@ -9,9 +9,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.xml.crypto.Data;
 import java.time.Duration;
+import java.util.logging.Logger;
 
 import static edu.Integrations.chr.RouterConnector.initialisationSecret;
 import static edu.Integrations.chr.RouterConnector.prolongSecret;
+import static java.lang.Thread.sleep;
 
 public class CheckPayment implements Command {
     private DataManager dataManager;
@@ -38,21 +40,18 @@ public class CheckPayment implements Command {
         if(PaymentDataManager.isPaymentSuccess(update.getMessage().getFrom().getId())){
             dataManager.setPaymentProcessStatus(update.getMessage().getFrom().getId(), false);
             if(dataManager.getUserProfileStatus(update.getMessage().getFrom().getId()) == UserProfileStatus.ACTIVE_VPN){
+                Logger.getAnonymousLogger().info("User " + update.getMessage().getFrom().getId() + " has extended his VPN profile.");
                 dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
                 message.setText("Ваш профиль успешно продлен на 30 дней.\n"+
                         initialisationSecret(update.getMessage().getChatId()));
-
             }
             else{
+                Logger.getAnonymousLogger().info("User " + update.getMessage().getFrom().getId() + " has created his VPN profile.");
                 dataManager.extendVpnProfile(update.getMessage().getFrom().getId(), Duration.ofDays(30));
                 message.setText("Ваш профиль успешно создан на 30 дней.\n"+
                         prolongSecret(update.getMessage().getChatId()));
 
             }
-
-            message.setText("Ваша оплата успешно обработана.");
-
-
         }
         message.setText("Пока что Вашей оплаты нет в базе данных. Попробуйте позже.");
         return message;
