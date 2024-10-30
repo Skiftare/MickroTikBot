@@ -31,6 +31,10 @@ public class CryptoGenerator {
             res = randomValue;
             e.printStackTrace();
         }
+        if (res.length() >= 28) {
+            //cc9ea69e10bbd2322e727eb11e359f8e
+            res = res.substring(0, 27);
+        }
 
         return res;
 

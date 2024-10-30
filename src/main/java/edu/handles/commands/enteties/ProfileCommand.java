@@ -7,7 +7,6 @@ import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static edu.Integrations.chr.RouterConnector.initialisationSecret;
 
 public class ProfileCommand implements Command {
 

@@ -1,6 +1,7 @@
 package edu.Integrations.wallet.ctrypto.stellar;
 
 import edu.Data.PaymentDataManager;
+import org.apache.commons.logging.Log;
 import org.stellar.sdk.KeyPair;
 import org.stellar.sdk.requests.EventListener;
 import org.stellar.sdk.responses.operations.OperationResponse;
@@ -55,7 +56,9 @@ public class AccountListener {
                                         Logger.getAnonymousLogger().info("Memo: " + operation.getTransaction().get().getMemo());
                                         if (operation.getTransaction().get().isSuccessful()) {
                                             BigDecimal amount = new BigDecimal(((PaymentOperationResponse) operation).getAmount());
-                                            if (amount.compareTo(COMPARISON_AMOUNT) > 0) {
+                                            Logger.getAnonymousLogger().info("Сумма: " + amount);
+                                            if (amount.compareTo(COMPARISON_AMOUNT) >= 0) {
+                                                Logger.getAnonymousLogger().info("Сумма больше 100 XLM");
                                                 PaymentDataManager.changeStatus(operation.getTransaction().get().getMemo().toString());
                                             }
                                         }
