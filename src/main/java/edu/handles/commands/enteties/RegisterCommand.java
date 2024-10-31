@@ -1,7 +1,7 @@
 package edu.handles.commands.enteties;
 
 
-import edu.Data.DataManager;
+import edu.Data.JdbcDataManager;
 import edu.Data.dto.ClientTransfer;
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class RegisterCommand implements Command {
-    private final DataManager dataManager;
+    private final JdbcDataManager jdbcDataManager;
 
-    public RegisterCommand(DataManager dataManager) {
-        this.dataManager = dataManager;
+    public RegisterCommand(JdbcDataManager jdbcDataManager) {
+        this.jdbcDataManager = jdbcDataManager;
     }
 
     Logger logger = Logger.getLogger(RegisterCommand.class.getName());
@@ -38,15 +38,15 @@ public class RegisterCommand implements Command {
 
         try {
             // Попытка зарегистрировать пользователя в БД
-            if (dataManager.isUserExists(tgUserId)) {
+            if (jdbcDataManager.isUserExists(tgUserId)) {
                 response.setText("Для подтверждения телефона воспользуйтесь кнопкой ниже");
             } else {
                 ClientTransfer clientProfile = getClientTransfer(tgUserId, name);
-                dataManager.addUser(clientProfile);
+                jdbcDataManager.addUser(clientProfile);
                 response.setText("Вам необходимо подтвердить номер телефона для дальнейшего использования сервиса.");
 
 
-                List<ClientTransfer> l = dataManager.getAllUsers();
+                List<ClientTransfer> l = jdbcDataManager.getAllUsers();
                 logger.info("Кол-во пользователей - " + l.size());
             }
         } catch (Exception e) {
