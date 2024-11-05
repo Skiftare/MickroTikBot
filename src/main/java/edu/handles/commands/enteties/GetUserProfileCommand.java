@@ -13,7 +13,7 @@ import edu.models.UserProfileStatus;
 public class GetUserProfileCommand implements Command {
     DataManager dataManager;
     UserProfileFormatter userProfileFormatter;
-    GetUserProfileCommand(DataManager incomingDataManager, UserProfileFormatter incomingUserProfileFormatter){
+    public GetUserProfileCommand(DataManager incomingDataManager, UserProfileFormatter incomingUserProfileFormatter){
         dataManager = incomingDataManager;
         userProfileFormatter = incomingUserProfileFormatter;
     }

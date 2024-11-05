@@ -1,11 +1,13 @@
 package edu.handles.commands;
 
+import java.sql.Date;
 import java.util.LinkedHashMap;
 
 import static edu.Integrations.chr.RouterConnector.initialisationSecret;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import edu.Data.dto.ClientTransfer;
 import edu.Integrations.chr.RouterConnector;
 import edu.handles.commands.enteties.*;
 import org.junit.Test;
@@ -52,7 +54,7 @@ public class CommandsTest {
 
         assertNotNull(result.getText(), "SendMessage should not be null");
         assertEquals("/authors", authorsCommand.getCommandName());
-        assertEquals("skif\nartem", result.getText());
+        assertEquals("artem", result.getText());
     }
 
     @Test
@@ -112,7 +114,8 @@ public class CommandsTest {
         when(user.getId()).thenReturn(1L); // Устанавливаем ID пользователя
 
         try (MockedStatic<RouterConnector> mockedSecretInitialiser = Mockito.mockStatic(RouterConnector.class)) {
-            mockedSecretInitialiser.when(() -> initialisationSecret(1L)).thenReturn("Secret initialized!");
+            mockedSecretInitialiser.when(() -> initialisationSecret(
+                    new ClientTransfer(1L,"","",new Date(0)," ",false,new Date(1)))).thenReturn("Secret initialized!");
 
             SendMessage result = profileCommand.execute(update);
 

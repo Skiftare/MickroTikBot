@@ -24,7 +24,6 @@ public interface DataManager {
     boolean isUserExists(Long tgUserId);
 
     void addUser(ClientTransfer client);
-
     // Обновление данных пользователя
     void update(ClientTransfer client);
 

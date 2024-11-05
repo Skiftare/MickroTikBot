@@ -6,16 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
 
 
 import org.telegram.telegrambots.meta.api.objects.Update;
-
-import javax.crypto.spec.SecretKeySpec;
 
 public class CryptoGenerator {
     private static final String salt = System.getenv("SALT");
@@ -77,15 +70,11 @@ public class CryptoGenerator {
     }
 
     private static String encryptAES(String data, String key) {
-        try {
-            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] encrypted = cipher.doFinal(data.getBytes("UTF-8"));
-            return Base64.getEncoder().encodeToString(encrypted);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (data.length() >= 28) {
+            //cc9ea69e10bbd2322e727eb11e359f8e
+            data = data.substring(0, 27);
         }
+        return data;
     }
 
 

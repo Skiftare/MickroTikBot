@@ -14,6 +14,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.logging.Logger;
 
 @Testcontainers
 public abstract class IntegrationTest {
@@ -43,6 +44,7 @@ public abstract class IntegrationTest {
             Path changelogPath = new File("").toPath()
                     .toAbsolutePath()
                     .resolve("migrations");
+            Logger.getAnonymousLogger().info("Running migrations from " + changelogPath);
 
             var liquibase =
                     new Liquibase(
