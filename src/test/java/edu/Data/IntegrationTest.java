@@ -14,7 +14,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
-/*
+
 @Testcontainers
 public abstract class IntegrationTest {
 
@@ -57,4 +57,4 @@ public abstract class IntegrationTest {
         }
     }
 
-}*/
+}

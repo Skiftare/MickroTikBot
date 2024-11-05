@@ -2,38 +2,46 @@ package edu.Data;
 
 
 import edu.Configuration.DataConnectConfigurator;
+import edu.Data.PaymentDataManager.TransactionRecord;
 import edu.Data.dto.ClientTransfer;
+import edu.Data.dto.TransactionRecord;
+import edu.Data.dto.UserInfo;
 import edu.models.UserProfileStatus;
+import javassist.compiler.ast.Pair;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import edu.Data.dto.TransactionRecord;
+import org.stellar.sdk.responses.operations.PaymentOperationResponse;
 
-//TODO: пускай мы будем хранить лишь зарегестрированных пользователей БД,
-// а тех, кто пока только проходят регистрацию,
-// будем держать в памяти (LinkedHashMap какая-то подойдёт)
+
 @SuppressWarnings({"MultipleStringLiterals", "MagicNumber"})
-public class JdbcDataManager implements DataManager {
+public class JdbcDataManager implements DataManager,PaymentDataManager {
     private final DataConnectConfigurator dataConnection;
     private static final String INSERT_USER_QUERY =
 
             "INSERT INTO users "
-                    + "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at, is_payment_pending) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "(tg_user_id, phone, name, user_last_visited, vpn_profile, is_vpn_profile_alive, expired_at, is_payment_pending, key_for_recognizing, balance) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?)";
     private static final String SELECT_USER_BY_ID_QUERY =
             "SELECT * FROM users WHERE tg_user_id = ?";
     private static final String UPDATE_USER_PHONE_QUERY =
             "UPDATE users SET phone = ? WHERE tg_user_id = ?";
     private static final String DELETE_USER_QUERY =
             "DELETE FROM users WHERE tg_user_id = ?";
+    private static final String UPDATE_USER_PHONE_AND_HASH_QUERY =
+            "UPDATE users SET phone = ?, key_for_recognizing = ? WHERE tg_user_id = ?";
 
 
 
@@ -56,7 +64,9 @@ public class JdbcDataManager implements DataManager {
             preparedStatement.setString(5, client.vpnProfile());
             preparedStatement.setBoolean(6, client.isVpnProfileAlive());
             preparedStatement.setDate(7, new java.sql.Date(client.expiredAt().getTime()));
-
+            preparedStatement.setBoolean(8, client.isInPaymentProcess());
+            preparedStatement.setString(9, client.paymentKey());
+            preparedStatement.setBigDecimal(10, client.balance());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
@@ -85,7 +95,25 @@ public class JdbcDataManager implements DataManager {
                         resultSet.getString("vpn_profile"),
                         resultSet.getBoolean("is_vpn_profile_alive"),
                         resultSet.getDate("expired_at"),
-                        resultSet.getBoolean("is_payment_pending")
+                        resultSet.getBoolean("is_payment_pending"),
+                        resultSet.getString("key_for_recognizing"),
+                        resultSet.getBigDecimal("balance")
+                );
+            }
+            else{
+                Logger.getAnonymousLogger().info("No user found with tg_user_id: " + tgUserId);
+                client=new ClientTransfer(
+                        -1L,
+                        -1L,
+                        "-",
+                        null,
+                        new java.sql.Date(0),
+                        "not found",
+                        false,
+                        new java.sql.Date(0),
+                        false,
+                        "0",
+                        BigDecimal.ZERO
                 );
             }
         } catch (SQLException e) {
@@ -93,6 +121,24 @@ public class JdbcDataManager implements DataManager {
         }
         return client;
     }
+    @Override
+    public UserInfo getInfoById(Long tgUserId) {
+        ClientTransfer client = findById(tgUserId);
+        UserProfileStatus userProfileStatus;
+        if (client == null) {
+            userProfileStatus = UserProfileStatus.GUEST;
+        } else if (client.phone() == null) {
+            userProfileStatus = UserProfileStatus.UNCONFIRMED;
+        } else if (client.isInPaymentProcess()) {
+            userProfileStatus = UserProfileStatus.ACTIVE_PAYMENT;
+        } else if (client.isVpnProfileAlive()) {
+            userProfileStatus = UserProfileStatus.ACTIVE_VPN;
+        } else {
+            userProfileStatus = UserProfileStatus.NO_VPN;
+        }
+        return new UserInfo(client, userProfileStatus);
+    }
+
     @Override
 
     public boolean isUserExists(Long tgUserId) {
@@ -125,6 +171,8 @@ public class JdbcDataManager implements DataManager {
             preparedStatement.setBoolean(6, client.isVpnProfileAlive());
             preparedStatement.setDate(7, new java.sql.Date(client.expiredAt().getTime()));
             preparedStatement.setBoolean(8, client.isInPaymentProcess());
+            preparedStatement.setString(9, client.paymentKey());
+            preparedStatement.setBigDecimal(10, client.balance());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
@@ -141,7 +189,9 @@ public class JdbcDataManager implements DataManager {
                 + "vpn_profile = ?, "
                 + "is_vpn_profile_alive = ?, "
                 + "expired_at = ?,"
-                + "is_payment_pending = ? "
+                + "is_payment_pending = ?,"
+                + "key_for_recognizing = ?,"
+                + "balance = ? "
                 + "WHERE tg_user_id = ?";
 
         try (Connection connection = dataConnection.getConnection();
@@ -155,6 +205,8 @@ public class JdbcDataManager implements DataManager {
             preparedStatement.setDate(6, new java.sql.Date(client.expiredAt().getTime()));
             preparedStatement.setLong(7, client.tgUserId());
             preparedStatement.setBoolean(8, client.isInPaymentProcess());
+            preparedStatement.setString(9, client.paymentKey());
+            preparedStatement.setBigDecimal(10, client.balance());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
@@ -222,7 +274,9 @@ public class JdbcDataManager implements DataManager {
                         resultSet.getString("vpn_profile"),
                         resultSet.getBoolean("is_vpn_profile_alive"),
                         resultSet.getDate("expired_at"),
-                        resultSet.getBoolean("is_payment_pending")
+                        resultSet.getBoolean("is_payment_pending"),
+                        resultSet.getString("key_for_recognizing"),
+                        resultSet.getBigDecimal("balance")
                 );
                 clients.add(client);
             }
@@ -316,5 +370,39 @@ public class JdbcDataManager implements DataManager {
             return false;
         }
     }
+
+    @Override
+    public void updateUserPhoneAndHash(Long tgUserId, String newPhone, String hash) {
+        Logger.getAnonymousLogger().info("Updating phone and hash for user with tg_user_id: " + tgUserId);
+        try (Connection connection = dataConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_PHONE_AND_HASH_QUERY)) {
+
+            preparedStatement.setString(1, newPhone);
+            preparedStatement.setString(2, hash);
+            preparedStatement.setLong(3, tgUserId);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                Logger.getAnonymousLogger().info("User phone and hash updated successfully for tg_user_id: " + tgUserId);
+            } else {
+                Logger.getAnonymousLogger().info("No user found with tg_user_id: " + tgUserId);
+            }
+
+        } catch (SQLException e) {
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    public void addIncomingTransaction(PaymentOperationResponse paymentOperation){
+
+        TransactionRecord transaction = TransactionRecord(
+                paymentOperation.getTransactionHash(),
+                paymentOperation.getTransaction().get().getMemo().toString(),
+                new BigDecimal(paymentOperation.getAmount()),
+                paymentOperation.getSourceAccount()
+        );
+
+    }
+    
 
 }

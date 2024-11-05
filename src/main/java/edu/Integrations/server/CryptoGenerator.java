@@ -5,10 +5,21 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.Base64;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
+
+import org.telegram.telegrambots.meta.api.objects.Update;
+
+import javax.crypto.spec.SecretKeySpec;
 
 public class CryptoGenerator {
     private static final String salt = System.getenv("SALT");
-
+    private static final String key = System.getenv("KEY_FOR_AES");
     public static synchronized String generateCheckSum(Long userId) {
 
         // Получаем текущее время
@@ -41,10 +52,54 @@ public class CryptoGenerator {
 
     }
     private static String bytesToHex(byte[] bytes) {
+
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
+    }
+    private static String generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] saltBytes = new byte[8];
+        random.nextBytes(saltBytes);
+        return Base64.getEncoder().encodeToString(saltBytes);
+    }
+
+    private static String sha256(String data) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(data.getBytes("UTF-8"));
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String encryptAES(String data, String key) {
+        try {
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] encrypted = cipher.doFinal(data.getBytes("UTF-8"));
+            return Base64.getEncoder().encodeToString(encrypted);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static String generateUsersHash(Update update){
+        Long tgUserId = update.getMessage().getFrom().getId();
+        String phoneNumber = update.getMessage().getContact().getPhoneNumber();
+        String name = update.getMessage().getFrom().getFirstName() + " " + update.getMessage().getFrom().getLastName();
+        String rawData = tgUserId + "_" + phoneNumber + "_" + name;
+        String salt = generateSalt();
+        long timestamp = System.currentTimeMillis();
+        String saltedData = rawData + "_" + salt + "_" + timestamp;
+        String hash = sha256(saltedData);
+        String encryptedData = encryptAES(hash, key);
+
+        return encryptedData;
     }
 }

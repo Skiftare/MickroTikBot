@@ -14,4 +14,8 @@
     <changeSet id="Payment state added" author="Skiftare">
         <sqlFile path="tables_configuration/payment_update.sql"/>
     </changeSet>
+    <changeSet id="create-payments-table" author="Skiftare">
+        <sqlFile path="tables_configuration/stellar_transactions.sql"/>
+    </changeSet>
+
 </databaseChangeLog>
