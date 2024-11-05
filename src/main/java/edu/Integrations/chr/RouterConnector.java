@@ -3,6 +3,7 @@ package edu.Integrations.chr;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import edu.Data.dto.ClientTransfer;
 
 import java.util.Random;
 import java.util.logging.Logger;
@@ -21,13 +22,12 @@ public class RouterConnector {
     private static final String SERVER_IP = System.getenv("SERVER_IP");
 
 
-
-
     // Метод для инициализации секретного ключа (вызывается из другого класса)
-    public static String initialisationSecret(Long UserID) {
+    public static String initialisationSecret(ClientTransfer clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String finalLogin = "";
         String finalPass = "";
+        Long userId = clientTransfer.tgUserId();
         try {
             if (USER == null || PASSWORD == null) {
                 throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
@@ -65,7 +65,7 @@ public class RouterConnector {
                 password.append(passwordCharacters.charAt(index));
             }
 
-            finalLogin = UserID + "_" + loginSuffix.toString();
+            finalLogin = userId + "_" + loginSuffix;
             finalPass = password.toString();
 
             // Устанавливаем соединение
@@ -86,8 +86,8 @@ public class RouterConnector {
             session.disconnect();
 
             String result = "VPN профиль успешно создан!\n" +
-                    "Адрес VPN-сервера: "+SERVER_IP+"\n" +
-                    "\nВаш логин для VPN: " + finalLogin + "\n\nВаш пароль для VPN: " + finalPass;
+                    "Адрес VPN-сервера: " + SERVER_IP + "\n" +
+                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass;
             return result;
 
         } catch (Exception e) {
@@ -96,10 +96,18 @@ public class RouterConnector {
             return stateString.toString();
         }
     }
-    public static String prolongSecret(Long UserID) {
-        StringBuilder stateString = new StringBuilder();
 
-        String finalLogin = String.valueOf(UserID);
+    public static String
+    prolongSecret(ClientTransfer clientTransfer) {
+        StringBuilder stateString = new StringBuilder();
+        String profileData = clientTransfer.vpnProfile();
+        // Извлекаем логин из profileData
+        String finalLogin = profileData.lines()
+                .filter(line -> line.startsWith("Login for l2tp:"))
+                .map(line -> line.replace("Login for l2tp:", "").trim())
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Не удалось найти логин в VPN профиле"));
+
         try {
             if (USER == null || PASSWORD == null) {
                 throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
@@ -116,7 +124,6 @@ public class RouterConnector {
 
             LOGGER.info("Попытка подключения для продления аккаунта...");
 
-            Random random = new Random();
 
             // Устанавливаем соединение
             session.connect();
@@ -140,7 +147,7 @@ public class RouterConnector {
             session.disconnect();
 
             String result = "VPN профиль успешно продлён!\n\nАдрес VPN-сервера: " +
-                    SERVER_IP+"\nSecret: vpn";
+                    SERVER_IP + "\nSecret: vpn";
             return result;
 
         } catch (Exception e) {

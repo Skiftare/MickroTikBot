@@ -20,7 +20,7 @@ public class UserProfileFormatter {
         StringBuilder result = new StringBuilder();
         result.append("📋 Ваш профиль:\n\n");
         result.append("🆔 ID: ").append(client.tgUserId()).append("\n");
-        result.append("Ваш статус в Системе: ").append(userInfo.status().toString()).append("\n");
+        result.append("😎 Ваш статус в Системе: ").append(userInfo.status().toString()).append("\n");
 
         if (client.name() != null) {
             result.append("👤 Имя: ").append(client.name()).append("\n");

@@ -2,7 +2,6 @@ package edu.Data;
 
 
 import edu.Configuration.DataConnectConfigurator;
-import edu.Data.PaymentDataManager.TransactionRecord;
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.TransactionRecord;
 import edu.Data.dto.UserInfo;
@@ -72,9 +71,9 @@ public class JdbcDataManager implements DataManager,PaymentDataManager {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
-    @Override
 
     // Метод для чтения записи
+    @Override
     public ClientTransfer findById(Long tgUserId) {
 
         ClientTransfer client = null;
@@ -105,7 +104,7 @@ public class JdbcDataManager implements DataManager,PaymentDataManager {
                 client=new ClientTransfer(
                         -1L,
                         -1L,
-                        "-",
+                        null,
                         null,
                         new java.sql.Date(0),
                         "not found",
@@ -188,27 +187,45 @@ public class JdbcDataManager implements DataManager,PaymentDataManager {
                 + "user_last_visited = ?, "
                 + "vpn_profile = ?, "
                 + "is_vpn_profile_alive = ?, "
-                + "expired_at = ?,"
-                + "is_payment_pending = ?,"
-                + "key_for_recognizing = ?,"
+                + "expired_at = ?, "
+                + "is_payment_pending = ?, "
+                + "key_for_recognizing = ?, "
                 + "balance = ? "
                 + "WHERE tg_user_id = ?";
 
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
+            Logger.getAnonymousLogger().info("Updating user with tg_user_id: " + client.tgUserId());
+            Logger.getAnonymousLogger().info("Phone: " + client.phone());
+            Logger.getAnonymousLogger().info("Name: " + client.name());
+            Logger.getAnonymousLogger().info("VPN Profile: " + client.vpnProfile());
+            Logger.getAnonymousLogger().info("Balance: " + client.balance());
+
+            // Проверяем, что client не null
+            if (client == null) {
+                throw new IllegalArgumentException("Client cannot be null");
+            }
+
             preparedStatement.setString(1, client.phone());
             preparedStatement.setString(2, client.name());
-            preparedStatement.setDate(3, new java.sql.Date(client.userLastVisited().getTime()));
+            preparedStatement.setDate(3, client.userLastVisited() != null ? 
+                new java.sql.Date(client.userLastVisited().getTime()) : null);
             preparedStatement.setString(4, client.vpnProfile());
             preparedStatement.setBoolean(5, client.isVpnProfileAlive());
-            preparedStatement.setDate(6, new java.sql.Date(client.expiredAt().getTime()));
-            preparedStatement.setLong(7, client.tgUserId());
-            preparedStatement.setBoolean(8, client.isInPaymentProcess());
-            preparedStatement.setString(9, client.paymentKey());
-            preparedStatement.setBigDecimal(10, client.balance());
-            preparedStatement.executeUpdate();
+            preparedStatement.setDate(6, client.expiredAt() != null ? 
+                new java.sql.Date(client.expiredAt().getTime()) : null);
+            preparedStatement.setBoolean(7, client.isInPaymentProcess());
+            preparedStatement.setString(8, client.paymentKey());
+            preparedStatement.setBigDecimal(9, client.balance() != null ? 
+                client.balance() : BigDecimal.ZERO);
+            preparedStatement.setLong(10, client.tgUserId());
+
+            int updatedRows = preparedStatement.executeUpdate();
+            Logger.getAnonymousLogger().info("Updated rows: " + updatedRows);
+
         } catch (SQLException e) {
+            Logger.getAnonymousLogger().info("Error updating user: " + e.getMessage());
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
@@ -291,9 +308,9 @@ public class JdbcDataManager implements DataManager,PaymentDataManager {
 
         ClientTransfer client = findById(tgUserId);
 
-        if (client == null) {
+        if (client == null || client.tgUserId() == -1) {
             return UserProfileStatus.GUEST;
-        } else if (client.phone() == null) {
+        } else if (client.phone() == null ) {
             return UserProfileStatus.UNCONFIRMED;
         } else if (client.isInPaymentProcess()) {
             return UserProfileStatus.ACTIVE_PAYMENT;
@@ -326,7 +343,7 @@ public class JdbcDataManager implements DataManager,PaymentDataManager {
         String query = "UPDATE users SET expired_at = ?, is_vpn_profile_alive = true WHERE tg_user_id = ?";
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
+            
             ClientTransfer client = findById(tgUserId);
             if (client == null) {
                 Logger.getAnonymousLogger().info("User not found with tg_user_id: " + tgUserId);
@@ -392,17 +409,69 @@ public class JdbcDataManager implements DataManager,PaymentDataManager {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
-
-    public void addIncomingTransaction(PaymentOperationResponse paymentOperation){
-
-        TransactionRecord transaction = TransactionRecord(
-                paymentOperation.getTransactionHash(),
-                paymentOperation.getTransaction().get().getMemo().toString(),
-                new BigDecimal(paymentOperation.getAmount()),
-                paymentOperation.getSourceAccount()
-        );
-
-    }
     
+    @Override
+    public void addIncomingTransaction(PaymentOperationResponse paymentOperation) {
+        // Проверяем существование транзакции
+        String checkTransactionQuery = "SELECT transaction_hash FROM stellar_transactions WHERE transaction_hash = ?";
+        // Проверяем существование пользователя
+        String checkUserQuery = "SELECT tg_user_id FROM users WHERE key_for_recognizing = ?";
+        // Добавляем транзакцию
+        String insertTransactionQuery = "INSERT INTO stellar_transactions (transaction_hash, memo, amount, source_account) VALUES (?, ?, ?, ?)";
+        // Обновляем баланс пользователя
+        String updateBalanceQuery = "UPDATE users SET balance = balance + ? WHERE key_for_recognizing = ?";
+
+        try (Connection connection = dataConnection.getConnection()) {
+            // Проверяем существование транзакции
+            try (PreparedStatement checkTx = connection.prepareStatement(checkTransactionQuery)) {
+                checkTx.setString(1, paymentOperation.getTransactionHash());
+                if (checkTx.executeQuery().next()) {
+                    Logger.getAnonymousLogger().info("Transaction already exists: " + paymentOperation.getTransactionHash());
+                    return;
+                }
+                Logger.getAnonymousLogger().info("Transaction does not exist: " + paymentOperation.getTransactionHash());
+            }
+
+            // Проверяем существование пользователя
+            String memo = paymentOperation.getTransaction().get().getMemo().toString();
+            try (PreparedStatement checkUser = connection.prepareStatement(checkUserQuery)) {
+                checkUser.setString(1, memo);
+                if (!checkUser.executeQuery().next()) {
+                    Logger.getAnonymousLogger().info("User not found for memo: " + memo);
+                    return;
+                }
+                Logger.getAnonymousLogger().info("User found for memo: " + memo);
+            }
+
+            try {
+                // Добавляем транзакцию
+                try (PreparedStatement insertTx = connection.prepareStatement(insertTransactionQuery)) {
+                    insertTx.setString(1, paymentOperation.getTransactionHash());
+                    insertTx.setString(2, memo);
+                    insertTx.setBigDecimal(3, new BigDecimal(paymentOperation.getAmount()));
+                    insertTx.setString(4, paymentOperation.getSourceAccount());
+                    insertTx.executeUpdate();
+                    Logger.getAnonymousLogger().info("Transaction added: " + paymentOperation.getTransactionHash());
+                }
+
+                // Обновляем баланс пользователя
+                try (PreparedStatement updateBalance = connection.prepareStatement(updateBalanceQuery)) {
+                    updateBalance.setBigDecimal(1, new BigDecimal(paymentOperation.getAmount()));
+                    updateBalance.setString(2, memo);
+                    updateBalance.executeUpdate();
+                    Logger.getAnonymousLogger().info("Balance updated for memo: " + memo);
+                }
+
+                //connection.commit();
+                Logger.getAnonymousLogger().info("Transaction processed successfully: " + paymentOperation.getTransactionHash());
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            Logger.getAnonymousLogger().info("Error processing transaction: " + Arrays.toString(e.getStackTrace()));
+        }
+    }
 
 }

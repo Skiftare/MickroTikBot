@@ -4,6 +4,7 @@ import edu.Configuration.DataConnectConfigurator;
 import edu.Configuration.KeyboardMarkupBuilder;
 import edu.Configuration.TelegramBotCore;
 import edu.Data.JdbcDataManager;
+import edu.Data.formatters.UserProfileFormatter;
 import edu.Integrations.wallet.ctrypto.stellar.AccountListener;
 import edu.Integrations.wallet.ctrypto.stellar.StellarConnection;
 import edu.handles.commands.Command;
@@ -36,19 +37,20 @@ public class BotApplication {
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
         Command stateCommand = new StateCommand();
         Command profileCommand = new ProfileCommand();
-        Command getProfileCommand = new GetProfileCommand(jdbcDataManager);
-        Command checkPayment = new CheckPayment(jdbcDataManager);
         Command userProfileCommand = new UserProfileCommand(jdbcDataManager);
-
-        AccountListener accountListener = new AccountListener(new StellarConnection());
+        Command buyCommand = new BuyConnectionCommand(jdbcDataManager);
+        Command getUserProfileCommand = new GetUserProfileCommand(jdbcDataManager, new UserProfileFormatter());
+        AccountListener accountListener = new AccountListener(new StellarConnection(),
+                jdbcDataManager
+        );
         accountListener.startListening();
 
 
         CommandTable preCommandTable = new CommandTable(infoCommand,
                 authorsCommand, registerCommand,
-                getProfileCommand, checkPayment,
                 authentificateCommand, stateCommand,
-                profileCommand, userProfileCommand
+                profileCommand, userProfileCommand,
+                buyCommand, getUserProfileCommand
         );
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");
@@ -58,16 +60,13 @@ public class BotApplication {
 
 
     public static void main(String[] args) throws TelegramApiException {
-        var c = "2";
-        var w = 2;
-        System.out.println(c == String.valueOf(w)); // false
-        System.out.println(c.equals(String.valueOf(w))); // true
-        System.out.println(Integer.parseInt(c)==w); // true
+
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
             // Сборка бота
             //TODO: стоит ли всё в одном try хранить, или лучше растащить процесс сборки и получше прологировать его?
             DataConnectConfigurator dataConnection = dataConnectionAssembling();
+
             JdbcDataManager jdbcDataManager = new JdbcDataManager(dataConnection);
             CommandTable coreCommandTable = commandTableAssembling(jdbcDataManager);
             KeyboardMarkupBuilder keyboardMarkupBuilder = new KeyboardMarkupBuilder(coreCommandTable);
