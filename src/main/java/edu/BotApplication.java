@@ -58,7 +58,11 @@ public class BotApplication {
 
 
     public static void main(String[] args) throws TelegramApiException {
-
+        var c = "2";
+        var w = 2;
+        System.out.println(c == String.valueOf(w)); // false
+        System.out.println(c.equals(String.valueOf(w))); // true
+        System.out.println(Integer.parseInt(c)==w); // true
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
             // Сборка бота

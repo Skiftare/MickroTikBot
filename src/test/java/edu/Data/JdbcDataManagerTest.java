@@ -10,7 +10,7 @@ import java.sql.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
-/*
+
 public class JdbcDataManagerTest extends IntegrationTest {
     private static final String url = POSTGRES.getJdbcUrl();
     private static final String user = POSTGRES.getUsername();
@@ -113,7 +113,4 @@ public class JdbcDataManagerTest extends IntegrationTest {
         assertEquals("Updated User", foundClient.name());
         assertFalse(foundClient.isVpnProfileAlive());
     }
-
-
 }
-*/

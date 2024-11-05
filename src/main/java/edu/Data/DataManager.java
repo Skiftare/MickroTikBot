@@ -1,10 +1,16 @@
 package edu.Data;
 
 import edu.Data.dto.ClientTransfer;
+import edu.Data.dto.UserInfo;
 import edu.models.UserProfileStatus;
 
+
 import java.time.Duration;
+import java.util.AbstractMap;
 import java.util.List;
+
+import org.stellar.sdk.responses.operations.PaymentOperationResponse;
+
 
 public interface DataManager {
     // Сохранение нового пользователя
@@ -12,6 +18,7 @@ public interface DataManager {
 
     // Поиск пользователя по Telegram ID
     ClientTransfer findById(Long tgUserId);
+    UserInfo getInfoById(Long tgUserId);
 
     // Проверка, существует ли пользователь с данным Telegram ID
     boolean isUserExists(Long tgUserId);
@@ -35,5 +42,7 @@ public interface DataManager {
     void setPaymentProcessStatus(Long tgUserId, boolean status);
 
     boolean extendVpnProfile(Long tgUserId, Duration duration);
+    void updateUserPhoneAndHash(Long tgUserId, String newPhone, String hash);
+
 
 }

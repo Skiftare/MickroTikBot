@@ -20,6 +20,9 @@ public class RouterConnector {
     private static final String PASSWORD = System.getenv("NEW_ROUTER_PASS");
     private static final String SERVER_IP = System.getenv("SERVER_IP");
 
+
+
+
     // Метод для инициализации секретного ключа (вызывается из другого класса)
     public static String initialisationSecret(Long UserID) {
         StringBuilder stateString = new StringBuilder();

@@ -13,13 +13,15 @@ import java.util.logging.Logger;
 
 
 public class AccountListener {
-    public static final BigDecimal COMPARISON_AMOUNT = BigDecimal.valueOf(100);
+    public static final BigDecimal COMPARISON_AMOUNT = BigDecimal.valueOf(0);
 
 
     private StellarConnection connection;
+    private PaymentDataManager paymentDataManager;
 
-    public AccountListener(StellarConnection connection) {
+    public AccountListener(StellarConnection connection, PaymentDataManager paymentDataManager) {
         this.connection = connection;
+        this.paymentDataManager = paymentDataManager;
 
     }
 
@@ -57,15 +59,10 @@ public class AccountListener {
                                         if (operation.getTransaction().get().isSuccessful()) {
                                             BigDecimal amount = new BigDecimal(((PaymentOperationResponse) operation).getAmount());
                                             Logger.getAnonymousLogger().info("Сумма: " + amount);
-                                            if (amount.compareTo(COMPARISON_AMOUNT) >= 0) {
-                                                Logger.getAnonymousLogger().info("Сумма больше 100 XLM");
-                                                PaymentDataManager.changeStatus(operation.getTransaction().get().getMemo().toString());
-                                            }
+                                            paymentDataManager.addIncomingTransaction((PaymentOperationResponse) operation);
                                         }
-
                                     }
                                 }
-
                                 @Override
                                 public void onFailure(Optional<Throwable> optional, Optional<Integer> optional1) {
                                     if (optional instanceof Optional) {
