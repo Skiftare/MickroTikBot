@@ -145,8 +145,7 @@ public class RouterConnector {
             channel.disconnect();
             session.disconnect();
 
-            String result = "VPN профиль успешно продлён!\n\nАдрес VPN-сервера: " +
-                    SERVER_IP + "\nSecret: vpn";
+            String result = profileData;
             return result;
 
         } catch (Exception e) {
