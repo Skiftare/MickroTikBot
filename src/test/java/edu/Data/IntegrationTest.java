@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 
 @Testcontainers
 public abstract class IntegrationTest {
+        private static final String DATABASE_LOGIN = System.getenv("NEW_DATABASE_LOGIN");
+        private static final String DATABASE_PASSWORD = System.getenv("NEW_DATABASE_PASS");
 
     public static PostgreSQLContainer<?> POSTGRES;
 
