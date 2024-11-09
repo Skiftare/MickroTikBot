@@ -4,17 +4,24 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     container_name: MickroTikBot
+    depends_on:
+      - postgresql
+      - chr
     networks:
       - botnet
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
       - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
+      - STELLAR_PUBLIC_KEY=${STELLAR_PUBLIC_KEY}
+      - STELLAR_SECRET_KEY=${STELLAR_SECRET_KEY}
+      - SERVER_IP=${SERVER_IP}
+      - STELLAR_NETWORK=${STELLAR_NETWORK}
     env_file:
       - .env
     ports:
       - "8080:8080"
-    restart: always
+
 
   postgresql:
     image: postgres:16
@@ -57,6 +64,22 @@ services:
       - botnet
     restart:
       on-failure
+  chr:
+    build: ./docker/chr
+    container_name: chr_router
+    privileged: true
+    networks:
+      - botnet
+    ports:
+      - "2222:2222"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
+      - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
+    env_file:
+      - .env
 
 
 networks:

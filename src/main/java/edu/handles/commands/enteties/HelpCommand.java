@@ -12,9 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class HelpCommand implements Command {
 
-    private static final boolean IS_VISIBLE_FOR_KEYBOARD = true;
-    private static final String COMMAND_NAME = "/help";
-    private static final String COMMAND_DESCRIPTION = "Получить список всех доступных команд";
+    private final boolean IS_VISIBLE_FOR_KEYBOARD = true;
+    private final String COMMAND_NAME = "/help";
+    private final String COMMAND_DESCRIPTION = "Получить список всех доступных команд";
 
 
 

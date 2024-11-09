@@ -52,3 +52,17 @@
 1. Склонируйте репозиторий:
    ```bash
    git clone https://github.com/Skiftare/MickroTikBot.git
+    ```
+   2. Создайте .env файл в корне проекта и добавьте в него переменные окружения:
+      ```bash
+      BOT_TOKEN=your_bot_token
+      BOT_USERNAME=your_bot_username
+      NEW_ROUTER_LOGIN=your_login_to_chr
+      NEW_ROUTER_PASS=your_password_to_chr
+      NEW_DATABASE_LOGIN=your_login_to_db
+      NEW_DATABASE_PASS=your_password_to_db
+      CHR_ROUTER_IP=your_mac_adress_of_chr
+      STELLAR_PUBLIC_KEY=your_public_key
+      STELLAR_SECRET_KEY=your_secret_key 
+      STELLAR_NETWORK=network (testnet/real)
+      ```

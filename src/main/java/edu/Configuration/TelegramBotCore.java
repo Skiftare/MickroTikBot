@@ -1,7 +1,6 @@
 package edu.Configuration;
 
-
-import edu.Data.DataManager;
+import edu.Data.JdbcDataManager;
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
@@ -15,20 +14,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-
 public class TelegramBotCore extends TelegramLongPollingBot {
 
     private static final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
     private static final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд.";
     private final KeyboardMarkupBuilder keyboardMarkupBuilder;
     private final Map<String, Command> commandTable = new HashMap<>();
-    private final DataManager dataManager;
+    private final JdbcDataManager jdbcDataManager;
 
     public TelegramBotCore(CommandTable coreCommandTable,
                            KeyboardMarkupBuilder keyboardMarkupBuilder,
-                           DataManager incomingDataManager) {
+                           JdbcDataManager incomingJdbcDataManager) {
         this.keyboardMarkupBuilder = keyboardMarkupBuilder;
-        this.dataManager = incomingDataManager;
+        this.jdbcDataManager = incomingJdbcDataManager;
         commandTable.putAll(coreCommandTable.getCommands());
     }
 
@@ -50,7 +48,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
             Command command = commandTable.get(messageText);
 
-            UserProfileStatus status = dataManager.getUserProfileStatus(chatId);
+            UserProfileStatus status = jdbcDataManager.getUserProfileStatus(chatId);
             Logger.getAnonymousLogger().info("Client "
                     + chatId
                     + " with status "
@@ -58,14 +56,11 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + " sent message: "
                     + messageText);
             SendMessage response = new SendMessage();
-
             if (command != null && command.isVisibleForKeyboard(status)) {
                 response = command.execute(update);
             } else {
                 response.setChatId(chatId);
                 response.setText(UNKNOWN_COMMAND);
-            }
-            if (response.getReplyMarkup() == null) {
                 response.setReplyMarkup(getKeyboardMarkup(status));
             }
             sendMessageToUser(response);
@@ -75,32 +70,23 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + " sent phone number: "
                     + update.getMessage().getContact().getPhoneNumber());
 
-            SendMessage response = commandTable.get("/authentificate").execute(update);
-
-            UserProfileStatus status = dataManager.getUserProfileStatus(update.getMessage().getChatId());
-            if (response.getReplyMarkup() == null) {
-                response.setReplyMarkup(getKeyboardMarkup(status));
-            }
-            sendMessageToUser(response);
+            Command authentificateCommand = commandTable.get("/authentificate");
+            authentificateCommand.execute(update);
         }
     }
 
 
     private ReplyKeyboardMarkup getKeyboardMarkup(UserProfileStatus status) {
-
         return keyboardMarkupBuilder.getKeyboardByStatus(status);
     }
-
 
     public void sendMessageToUser(SendMessage message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
             Logger.getAnonymousLogger().severe("Error while sending message to user: " + e.getMessage());
-
         }
     }
 
 
 }
-

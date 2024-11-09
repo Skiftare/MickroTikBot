@@ -1,0 +1,8 @@
+ALTER TABLE users
+ADD COLUMN is_payment_pending BOOLEAN DEFAULT false;
+
+ALTER TABLE users
+ADD COLUMN key_for_recognizing VARCHAR(255) DEFAULT '0';
+
+ALTER TABLE users
+ADD COLUMN balance DECIMAL(13, 7) DEFAULT 0.0000000 NOT NULL

@@ -159,10 +159,17 @@
             <artifactId>postgresql</artifactId>
             <version>1.19.4</version>
         </dependency>
-
-
-
-
+        <dependency>
+            <groupId>network.lightsail</groupId>
+            <artifactId>stellar-sdk</artifactId>
+            <version>0.44.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
