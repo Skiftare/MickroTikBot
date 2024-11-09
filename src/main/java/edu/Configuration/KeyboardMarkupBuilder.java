@@ -12,10 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static edu.models.UserProfileStatus.GUEST;
-import static edu.models.UserProfileStatus.UNCONFIRMED;
-import static edu.models.UserProfileStatus.ACTIVE_VPN;
-import static edu.models.UserProfileStatus.NO_VPN;
+import static edu.models.UserProfileStatus.*;
 
 public class KeyboardMarkupBuilder {
 
@@ -30,7 +27,15 @@ public class KeyboardMarkupBuilder {
         mapOfKeyboards.put(UNCONFIRMED, buildUnconfirmedKeyboard());
         mapOfKeyboards.put(ACTIVE_VPN, buildActiveVPNKeyboard());
         mapOfKeyboards.put(NO_VPN, buildNoVPNKeyboard());
+        mapOfKeyboards.put(ACTIVE_PAYMENT, buildActivePaymentKeyboard());
 
+    }
+    private ReplyKeyboardMarkup buildActivePaymentKeyboard() {
+        ReplyKeyboardMarkup rezultKeyboard = new ReplyKeyboardMarkup();
+        rezultKeyboard.setKeyboard(generateKeyboardByPrivelege(ACTIVE_PAYMENT));
+        rezultKeyboard.setResizeKeyboard(true);
+        rezultKeyboard.setOneTimeKeyboard(true);
+        return rezultKeyboard;
     }
 
     private List<KeyboardRow> generateKeyboardByPrivelege(UserProfileStatus status) {

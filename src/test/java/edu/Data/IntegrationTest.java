@@ -14,14 +14,17 @@ import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.logging.Logger;
 
 @Testcontainers
 public abstract class IntegrationTest {
+        private static final String DATABASE_LOGIN = System.getenv("NEW_DATABASE_LOGIN");
+        private static final String DATABASE_PASSWORD = System.getenv("NEW_DATABASE_PASS");
 
     public static PostgreSQLContainer<?> POSTGRES;
 
     static {
-        POSTGRES = new PostgreSQLContainer<>("postgres:15")
+        POSTGRES = new PostgreSQLContainer<>("postgres:16")
                 .withDatabaseName("table")
                 .withUsername("postgres")
                 .withPassword("postgres");
@@ -43,6 +46,7 @@ public abstract class IntegrationTest {
             Path changelogPath = new File("").toPath()
                     .toAbsolutePath()
                     .resolve("migrations");
+            Logger.getAnonymousLogger().info("Running migrations from " + changelogPath);
 
             var liquibase =
                     new Liquibase(

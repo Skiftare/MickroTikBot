@@ -12,10 +12,10 @@ import edu.handles.commands.Command;
 
 
 public class AuthorsCommand implements Command {
-    private static final boolean IS_VISIBLE_FOR_KEYBOARD = true;
-    private static final String COMMAND_NAME = "/authors";
-    private static final String COMMAND_DESCRIPTION = "Получить список авторов этого проекта";
-    private static final List<String> AUTHORS = Arrays.asList("skif", "artem");
+    private  final boolean IS_VISIBLE_FOR_KEYBOARD = true;
+    private  final String COMMAND_NAME = "/authors";
+    private  final String COMMAND_DESCRIPTION = "Получить список авторов этого проекта";
+    private  final List<String> AUTHORS = Arrays.asList("artem");
 
     @Override
     public SendMessage execute(Update update) {

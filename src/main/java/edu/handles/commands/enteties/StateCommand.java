@@ -19,6 +19,7 @@ public class StateCommand implements Command {
 
         SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId());
+
         String stateMessage = establishingSSH();
         message.setText(stateMessage + "\n"
                 + "Эта команда доступна только "

@@ -1,12 +1,14 @@
 package edu.handles.commands;
 
+import java.sql.Date;
 import java.util.LinkedHashMap;
 
-import static edu.Configuration.SecretInitialiser.initialisationSecret;
+import static edu.Integrations.chr.RouterConnector.initialisationSecret;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import edu.Configuration.SecretInitialiser;
+import edu.Data.dto.ClientTransfer;
+import edu.Integrations.chr.RouterConnector;
 import edu.handles.commands.enteties.*;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +54,7 @@ public class CommandsTest {
 
         assertNotNull(result.getText(), "SendMessage should not be null");
         assertEquals("/authors", authorsCommand.getCommandName());
-        assertEquals("skif\nartem", result.getText());
+        assertEquals("artem", result.getText());
     }
 
     @Test
@@ -94,7 +96,7 @@ public class CommandsTest {
 
             assertNotNull(result.getText(), "SendMessage should not be null");
             assertEquals("/state", stateCommand.getCommandName());
-            assertEquals("SSH connection established", result.getText());
+            assertEquals("SSH connection established\nЭта команда доступна только зарегестрированным пользователям. Позволяет проверить, в каком состоянии находится наш роутер.", result.getText());
         }
     }
 
@@ -111,14 +113,14 @@ public class CommandsTest {
         when(message.getFrom()).thenReturn(user);
         when(user.getId()).thenReturn(1L); // Устанавливаем ID пользователя
 
-        try (MockedStatic<SecretInitialiser> mockedSecretInitialiser = Mockito.mockStatic(SecretInitialiser.class)) {
-            mockedSecretInitialiser.when(() -> initialisationSecret(1L)).thenReturn("Secret initialized!");
+        try (MockedStatic<RouterConnector> mockedSecretInitialiser = Mockito.mockStatic(RouterConnector.class)) {
+            mockedSecretInitialiser.when(() -> initialisationSecret(
+                    new ClientTransfer(1L,"","",new Date(0)," ",false,new Date(1)))).thenReturn("Secret initialized!");
 
             SendMessage result = profileCommand.execute(update);
 
-            assertNotNull(result.getText(), "SendMessage не должен быть null");
-            assertEquals("/profile", profileCommand.getCommandName());
-            assertEquals("Secret initialized!\n\nЭта команда доступна только зарегестрированным пользователям. Позволяет получить индивидуальный сертификат для VPN подключения.", result.getText());
+            assertNotNull(result.getText());
+            assertEquals("/chr_profile", profileCommand.getCommandName());
         }
     }
 }

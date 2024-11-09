@@ -10,11 +10,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.logging.Logger;
 
-public class AuthentificateCommand implements Command {
-    private final DataManager dataManager;
+import static edu.Integrations.server.CryptoGenerator.generateUsersHash;
 
-    public AuthentificateCommand(DataManager dataManager) {
-        this.dataManager = dataManager;
+public class AuthentificateCommand implements Command {
+    private final DataManager jdbcDataManager;
+
+    public AuthentificateCommand(DataManager incomeDataManger) {
+        this.jdbcDataManager = incomeDataManger;
     }
 
 
@@ -27,12 +29,17 @@ public class AuthentificateCommand implements Command {
             String phoneNumber = contact.getPhoneNumber();
             Logger.getAnonymousLogger().info("Client " + chatId + " sent phone number: " + phoneNumber);
             // Здесь ваш код для обработки номера телефона и аутентификации
-            String responseText = "Вы успешно аутентифицированы!";
-            dataManager.updateUserPhoneByTelegramId(
-                    update.getMessage().getChatId(),
-                    phoneNumber
-            );
-            Logger.getAnonymousLogger().info("User " + chatId + " was successfully authenticated");
+            String userHash = generateUsersHash(update);
+            String responseText;
+            try {
+                jdbcDataManager.updateUserPhoneAndHash(chatId, phoneNumber, userHash);
+                Logger.getAnonymousLogger().info("User " + chatId + " was successfully authenticated with "+ userHash+" hash");
+                responseText = "Вы успешно аутентифицированы!";
+
+            }
+            catch (Exception e){
+                responseText = "Что-то пошло не так. Скорее всего, БД не отвечает. Попробуйте позже.";
+            }
             return new SendMessage(chatId.toString(), responseText);
         }
 
