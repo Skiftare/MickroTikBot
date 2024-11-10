@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.sql.Date;
 import java.util.logging.Logger;
 
-import static edu.Integrations.chr.RouterConnector.initialisationSecret;
+import static edu.Integrations.chr.RouterConnector.initialisationTrial;
 
 public class GetFreeVpnCommand implements Command {
     private final DataManager dataManager;
@@ -37,10 +37,10 @@ public class GetFreeVpnCommand implements Command {
             // Проверка подписки на канал
             if (isUserSubscribedToChannel(update.getMessage().getFrom().getId())) {
                 // Пользователь подписан на канал, выдаем VPN профиль
-                String vpnProfile = initialisationSecret(clientTransfer);
+                String vpnProfile = initialisationTrial(clientTransfer);
 
-                // Устанавливаем новый срок действия VPN на месяц
-                Date newDateExpiredAt = new Date(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000);
+                // Устанавливаем новый срок действия VPN на день
+                Date newDateExpiredAt = new Date(System.currentTimeMillis() + 1L * 24 * 60 * 60 * 1000);
 
                 ClientTransfer updatedClient = new ClientTransfer(
                         clientTransfer.id(),
@@ -57,10 +57,10 @@ public class GetFreeVpnCommand implements Command {
                 );
 
                 dataManager.update(updatedClient);
-                stringBuilder.append("Ваш VPN профиль успешно создан:\n").append(vpnProfile);
+                stringBuilder.append("Ваш пробный VPN профиль успешно создан:\n").append(vpnProfile);
             } else {
                 // Пользователь не подписан на канал
-                stringBuilder.append("Для получения бесплатного VPN профиля подпишитесь на наш канал и повторите команду.");
+                stringBuilder.append("Для получения пробного VPN профиля подпишитесь на наш канал и повторите команду.");
             }
         } catch (Exception e) {
             Logger.getAnonymousLogger().info("Ошибка при выдаче VPN профиля: " + e.getMessage());
@@ -99,11 +99,11 @@ public class GetFreeVpnCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return "/get_free_vpn";
+        return "/try_vpn";
     }
 
     @Override
     public String getCommandDescription() {
-        return "Выдаёт VPN профиль бесплатно, если пользователь подписан на канал.";
+        return "Выдаёт VPN профиль бесплатно на пробный период в 1 день, если пользователь подписан на канал.";
     }
 }
