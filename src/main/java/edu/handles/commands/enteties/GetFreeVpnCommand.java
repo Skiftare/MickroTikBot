@@ -3,6 +3,7 @@ package edu.handles.commands.enteties;
 import edu.Data.DataManager;
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
+import edu.Integrations.telegram.SubscriptionChecker;
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,11 +13,11 @@ import java.sql.Date;
 import java.util.logging.Logger;
 
 import static edu.Integrations.chr.RouterConnector.initialisationSecret;
-import static edu.Integrations.telegram.SubscriptionChecker.*;
 
 public class GetFreeVpnCommand implements Command {
     private final DataManager dataManager;
     private static final String TELEGRAM_CHANNEL_ID = System.getenv("TELEGRAM_CHANNEL_ID");
+    private static final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
 
     public GetFreeVpnCommand(DataManager incomingDataManager) {
         this.dataManager = incomingDataManager;
@@ -74,9 +75,10 @@ public class GetFreeVpnCommand implements Command {
      * Проверяет, подписан ли пользователь на канал.
      */
     private boolean isUserSubscribedToChannel(Long userId) {
+        SubscriptionChecker subscriptionChecker = new SubscriptionChecker(BOT_TOKEN);
         try {
             // Используем метод для проверки подписки на канал
-            return isUserSubscribed(userId, TELEGRAM_CHANNEL_ID);
+            return subscriptionChecker.isUserSubscribed(userId, TELEGRAM_CHANNEL_ID);
         } catch (Exception e) {
             // Логируем ошибку, если что-то пошло не так
             Logger.getAnonymousLogger().warning("Ошибка при проверке подписки на канал: " + e.getMessage());
