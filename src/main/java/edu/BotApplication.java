@@ -40,6 +40,7 @@ public class BotApplication {
         Command userProfileCommand = new UserProfileCommand(jdbcDataManager);
         Command buyCommand = new BuyConnectionCommand(jdbcDataManager);
         Command getUserProfileCommand = new GetUserProfileCommand(jdbcDataManager, new UserProfileFormatter());
+        Command getFreeVpnCommand = new GetFreeVpnCommand(jdbcDataManager);
         AccountListener accountListener = new AccountListener(new StellarConnection(),
                 jdbcDataManager
         );
@@ -50,7 +51,8 @@ public class BotApplication {
                 authorsCommand, registerCommand,
                 authentificateCommand, stateCommand,
                 profileCommand, userProfileCommand,
-                buyCommand, getUserProfileCommand
+                buyCommand, getUserProfileCommand,
+                getFreeVpnCommand
         );
         Command helpCommand = new HelpCommand(preCommandTable);
         logger.info("Command table assembled");

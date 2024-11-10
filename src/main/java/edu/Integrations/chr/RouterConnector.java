@@ -87,7 +87,8 @@ public class RouterConnector {
 
             String result = "VPN профиль успешно создан!\n" +
                     "Адрес VPN-сервера: " + SERVER_IP + "\n" +
-                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass;
+                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass+
+                    "\n\nSecret: vpn";
             return result;
 
         } catch (Exception e) {
@@ -146,8 +147,7 @@ public class RouterConnector {
             channel.disconnect();
             session.disconnect();
 
-            String result = "VPN профиль успешно продлён!\n\nАдрес VPN-сервера: " +
-                    SERVER_IP + "\nSecret: vpn";
+            String result = profileData;
             return result;
 
         } catch (Exception e) {
