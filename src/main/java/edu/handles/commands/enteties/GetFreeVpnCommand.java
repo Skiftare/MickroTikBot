@@ -60,7 +60,9 @@ public class GetFreeVpnCommand implements Command {
                 stringBuilder.append("Ваш пробный VPN профиль успешно создан:\n").append(vpnProfile);
             } else {
                 // Пользователь не подписан на канал
-                stringBuilder.append("Для получения пробного VPN профиля подпишитесь на наш канал и повторите команду.");
+                stringBuilder.append("Для получения пробного VPN профиля подпишитесь на наш канал " +
+                        "(https://t.me/MikroTikBotTGC) " +
+                        "и повторите команду.");
             }
         } catch (Exception e) {
             Logger.getAnonymousLogger().info("Ошибка при выдаче VPN профиля: " + e.getMessage());

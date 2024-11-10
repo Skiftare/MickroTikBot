@@ -74,19 +74,26 @@ public class RouterConnector {
 
             final String useProfile = "30d";
 
-
             // Команды для выполнения на Mikrotik
-            String command = "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
-                    "profile=" + useProfile;
+            String[] commands = {
+                    "/tool user-manager user add customer=admin disabled=no password=" + finalPass + " shared-users=1 " +
+                            "username=" + finalLogin,
+                    "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
+                            "profile=" + useProfile
+            };
 
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
-            LOGGER.info(command);
-            channel.setCommand(command);
+            for (String command : commands) {
+                // Создаем новый канал для каждой команды
+                ChannelExec channel = (ChannelExec) session.openChannel("exec");
+                LOGGER.info(command);
+                channel.setCommand(command);
 
-            // Подключаем канал, выполняем команду и закрываем канал
-            channel.connect();
-            Thread.sleep(TIMEOUT);  // Даем время на выполнение команды
-            channel.disconnect();
+                // Подключаем канал, выполняем команду и закрываем канал
+                channel.connect();
+                Thread.sleep(TIMEOUT);  // Даем время на выполнение команды
+                channel.disconnect();
+            }
+
             session.disconnect();
 
             String result = "VPN профиль успешно создан!\n" +
@@ -155,17 +162,25 @@ public class RouterConnector {
             final String useProfile = "1d";
 
             // Команды для выполнения на Mikrotik
-            String command = "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
-                    "profile=" + useProfile;
+            String[] commands = {
+                    "/tool user-manager user add customer=admin disabled=no password=" + finalPass + " shared-users=1 " +
+                            "username=" + finalLogin,
+                    "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
+                            "profile=" + useProfile
+            };
 
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
-            LOGGER.info(command);
-            channel.setCommand(command);
+            for (String command : commands) {
+                // Создаем новый канал для каждой команды
+                ChannelExec channel = (ChannelExec) session.openChannel("exec");
+                LOGGER.info(command);
+                channel.setCommand(command);
 
-            // Подключаем канал, выполняем команду и закрываем канал
-            channel.connect();
-            Thread.sleep(TIMEOUT);  // Даем время на выполнение команды
-            channel.disconnect();
+                // Подключаем канал, выполняем команду и закрываем канал
+                channel.connect();
+                Thread.sleep(TIMEOUT);  // Даем время на выполнение команды
+                channel.disconnect();
+            }
+
             session.disconnect();
 
             String result = "VPN профиль успешно создан!\n" +
