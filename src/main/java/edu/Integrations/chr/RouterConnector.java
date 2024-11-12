@@ -8,6 +8,8 @@ import edu.Data.dto.ClientTransfer;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import static edu.Data.formatters.EncryptionUtil.decrypt;
+
 public class RouterConnector {
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;
@@ -199,7 +201,12 @@ public class RouterConnector {
     public static String
     prolongSecret(ClientTransfer clientTransfer) {
         StringBuilder stateString = new StringBuilder();
-        String profileData = clientTransfer.vpnProfile();
+        String profileData = null;
+        try {
+            profileData = decrypt(clientTransfer.vpnProfile());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         // Извлекаем логин из profileData
         String finalLogin = profileData.lines()
                 .filter(line -> line.startsWith("Login for l2tp:"))

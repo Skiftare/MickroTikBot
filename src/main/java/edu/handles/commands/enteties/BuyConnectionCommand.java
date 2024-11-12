@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.logging.Logger;
 
+import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.Integrations.chr.RouterConnector.initialisationSecret;
 import static edu.Integrations.chr.RouterConnector.prolongSecret;
 import static edu.utility.Constants.CONNECTION_PRICE;
@@ -67,13 +68,19 @@ public class BuyConnectionCommand implements Command {
             if (vpnProfile.startsWith("!Не удалось установить")) {
                 stringBuilder = new StringBuilder(vpnProfile);
             } else {
+                String encryptedVpnProfile = null;
+                try {
+                    encryptedVpnProfile = encrypt(vpnProfile);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 ClientTransfer updatedClient = new ClientTransfer(
                         clientTransfer.id(),
                         clientTransfer.tgUserId(),
                         clientTransfer.phone(),
                         clientTransfer.name(),
                         clientTransfer.userLastVisited(),
-                        vpnProfile,
+                        encryptedVpnProfile,
                         true,
                         newDateExpiredAt,
                         clientTransfer.isInPaymentProcess(),

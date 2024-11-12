@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.sql.Date;
 import java.util.logging.Logger;
 
+import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.Integrations.chr.RouterConnector.initialisationTrial;
 
 public class GetFreeVpnCommand implements Command {
@@ -42,13 +43,14 @@ public class GetFreeVpnCommand implements Command {
                 // Устанавливаем новый срок действия VPN на день
                 Date newDateExpiredAt = new Date(System.currentTimeMillis() + 1L * 24 * 60 * 60 * 1000);
 
+                String encryptedVpnProfile = encrypt(vpnProfile);
                 ClientTransfer updatedClient = new ClientTransfer(
                         clientTransfer.id(),
                         clientTransfer.tgUserId(),
                         clientTransfer.phone(),
                         clientTransfer.name(),
                         clientTransfer.userLastVisited(),
-                        vpnProfile,
+                        encryptedVpnProfile,
                         true,
                         newDateExpiredAt,
                         clientTransfer.isInPaymentProcess(),
@@ -73,9 +75,6 @@ public class GetFreeVpnCommand implements Command {
         return message;
     }
 
-    /**
-     * Проверяет, подписан ли пользователь на канал.
-     */
     private boolean isUserSubscribedToChannel(Long userId) {
         SubscriptionChecker subscriptionChecker = new SubscriptionChecker(BOT_TOKEN);
         try {
