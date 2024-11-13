@@ -95,7 +95,7 @@ public class GetFreeVpnCommand implements Command {
 
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
-        return status == UserProfileStatus.GUEST || status == UserProfileStatus.NO_VPN;
+        return status == UserProfileStatus.NO_VPN;
     }
 
     @Override
