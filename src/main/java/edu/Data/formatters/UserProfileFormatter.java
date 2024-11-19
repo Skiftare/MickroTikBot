@@ -29,7 +29,7 @@ public class UserProfileFormatter {
         if (client.phone() != null) {
             result.append("📱 Телефон: ").append(client.phone()).append("\n");
         }
-        if(client.balance() != null){
+        if (client.balance() != null) {
             result.append("💰 Баланс: ").append(client.balance()).append("\n");
         }
 
@@ -37,12 +37,11 @@ public class UserProfileFormatter {
             result.append("\n🔐 VPN профиль: ").append(client.vpnProfile());
             result.append("\nСтатус: ").append(client.isVpnProfileAlive() ? "✅ Активен" : "❌ Неактивен");
 
-            if (client.expiredAt() != null && client.expiredAt().getTime() != 0 &&
-                    !(client.expiredAt().equals(new Date(0)))) {
+            if (client.expiredAt() != null && client.expiredAt().getTime() != 0
+                    && !(client.expiredAt().equals(new Date(0)))) {
                 result.append("\n⏰ Действует до: ").append(client.expiredAt());
             }
         }
-
         return result.toString();
     }
-} 
+}

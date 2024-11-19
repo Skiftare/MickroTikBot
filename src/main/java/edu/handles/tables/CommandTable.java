@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 
 public class CommandTable {
-    private LinkedHashMap<String, Command> commandHashMap = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Command> commandHashMap = new LinkedHashMap<>();
 
     public CommandTable(Command... commands) {
         for (Command command : commands) {

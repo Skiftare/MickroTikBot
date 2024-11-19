@@ -4,9 +4,14 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+
 public class EncryptionUtil {
     private static final String ALGORITHM = "AES";
     private static final byte[] SECRET_KEY = System.getenv("DB_ENCRYPTION_KEY").getBytes();
+
+    private EncryptionUtil() {
+        throw new UnsupportedOperationException("Utility class");
+    }
 
     public static String encrypt(String data) throws Exception {
         SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY, ALGORITHM);

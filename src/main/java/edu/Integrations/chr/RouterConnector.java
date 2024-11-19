@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import static edu.Data.formatters.EncryptionUtil.decrypt;
 
+@SuppressWarnings("HideUtilityClassConstructor")
 public class RouterConnector {
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;
@@ -23,6 +24,23 @@ public class RouterConnector {
     private static final String PASSWORD = System.getenv("NEW_ROUTER_PASS");
     private static final String SERVER_IP = System.getenv("SERVER_IP");
 
+    private static final String ERROR_AT_CREDENTIALS_ARE_NULL = "NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены";
+    private static final String LOG_MESSAGE_FOR_CONNECT = "Попытка подключения для создания ключа...";
+    private static final String LOG_SUCCESSFUL_CONNECT = "Подключение для создания ключа успешно установлено.";
+
+    private static final String STRICT_HOST_KEY_CHECKING = "StrictHostKeyChecking";
+    private static final String PREFERRED_AUTHENTICATIONS = "PreferredAuthentications";
+    private static final String PUBLICKEY_PASSWORD = "publickey,password";
+
+    private static final String LOGIN_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            + "abcdefghijklmnopqrstuvwxyz";
+    private static final Integer USERS_LOGIN_LENGTH = 5;
+    private static final String PASSWORD_CHARACTERS = LOGIN_CHARACTERS
+            + "0123456789@#!%";
+    private static final Integer USERS_PASSWORD_LENGTH = 10;
+
+    private static final String MONTHLY_PROFILE = "30d";
+    private static final String TRIAL_PROFILE = "1d";
 
     // Метод для инициализации секретного ключа (вызывается из другого класса)
     public static String initialisationSecret(ClientTransfer clientTransfer) {
@@ -32,7 +50,7 @@ public class RouterConnector {
         Long userId = clientTransfer.tgUserId();
         try {
             if (USER == null || PASSWORD == null) {
-                throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
+                throw new IllegalStateException(ERROR_AT_CREDENTIALS_ARE_NULL);
             }
 
             // Создаем сессию SSH
@@ -41,30 +59,25 @@ public class RouterConnector {
             session.setPassword(PASSWORD);
 
             // Отключаем проверку хоста
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,password");
+            session.setConfig(STRICT_HOST_KEY_CHECKING, "no");
+            session.setConfig(PREFERRED_AUTHENTICATIONS, PUBLICKEY_PASSWORD);
 
-            LOGGER.info("Попытка подключения для создания ключа...");
+            LOGGER.info(LOG_MESSAGE_FOR_CONNECT);
 
-            final String loginCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    + "abcdefghijklmnopqrstuvwxyz";
-            final String passwordCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    + "abcdefghijklmnopqrstuvwxyz"
-                    + "0123456789@#!%";
 
-            StringBuilder loginSuffix = new StringBuilder(5);
+            StringBuilder loginSuffix = new StringBuilder(USERS_LOGIN_LENGTH);
 
             Random random = new Random();
-            for (int i = 0; i < 5; i++) {
-                int index = random.nextInt(loginCharacters.length());
-                loginSuffix.append(loginCharacters.charAt(index));
+            for (int i = 0; i < USERS_LOGIN_LENGTH; i++) {
+                int index = random.nextInt(LOGIN_CHARACTERS.length());
+                loginSuffix.append(LOGIN_CHARACTERS.charAt(index));
             }
 
-            StringBuilder password = new StringBuilder(10);
+            StringBuilder password = new StringBuilder(USERS_PASSWORD_LENGTH);
 
-            for (int i = 0; i < 10; i++) {
-                int index = random.nextInt(passwordCharacters.length());
-                password.append(passwordCharacters.charAt(index));
+            for (int i = 0; i < USERS_PASSWORD_LENGTH; i++) {
+                int index = random.nextInt(PASSWORD_CHARACTERS.length());
+                password.append(PASSWORD_CHARACTERS.charAt(index));
             }
 
             finalLogin = userId + "_" + loginSuffix;
@@ -72,16 +85,17 @@ public class RouterConnector {
 
             // Устанавливаем соединение
             session.connect();
-            LOGGER.info("Подключение для создания ключа успешно установлено.");
+            LOGGER.info(LOG_SUCCESSFUL_CONNECT);
 
-            final String useProfile = "30d";
 
             // Команды для выполнения на Mikrotik
             String[] commands = {
-                    "/tool user-manager user add customer=admin disabled=no password=" + finalPass + " shared-users=1 " +
-                            "username=" + finalLogin,
-                    "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
-                            "profile=" + useProfile
+                    "/tool user-manager user add customer=admin disabled=no password="
+                            + finalPass + " shared-users=1 "
+                            + "username=" + finalLogin,
+                    "/tool user-manager user create-and-activate-profile \""
+                            + finalLogin + "\" customer=admin "
+                            + "profile=" + MONTHLY_PROFILE
             };
 
             for (String command : commands) {
@@ -100,7 +114,7 @@ public class RouterConnector {
 
             String result = "VPN профиль успешно создан!\n" +
                     "Адрес VPN-сервера: " + SERVER_IP + "\n" +
-                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass+
+                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass +
                     "\n\nSecret: vpn";
             return result;
 
@@ -119,7 +133,7 @@ public class RouterConnector {
         Long userId = clientTransfer.tgUserId();
         try {
             if (USER == null || PASSWORD == null) {
-                throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
+                throw new IllegalStateException(ERROR_AT_CREDENTIALS_ARE_NULL);
             }
 
             // Создаем сессию SSH
@@ -128,30 +142,25 @@ public class RouterConnector {
             session.setPassword(PASSWORD);
 
             // Отключаем проверку хоста
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,password");
+            session.setConfig(STRICT_HOST_KEY_CHECKING, "no");
+            session.setConfig(PREFERRED_AUTHENTICATIONS, PUBLICKEY_PASSWORD);
 
-            LOGGER.info("Попытка подключения для создания ключа...");
+            LOGGER.info(LOG_MESSAGE_FOR_CONNECT);
 
-            final String loginCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    + "abcdefghijklmnopqrstuvwxyz";
-            final String passwordCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    + "abcdefghijklmnopqrstuvwxyz"
-                    + "0123456789@#!%";
 
-            StringBuilder loginSuffix = new StringBuilder(5);
+            StringBuilder loginSuffix = new StringBuilder(USERS_LOGIN_LENGTH);
 
             Random random = new Random();
-            for (int i = 0; i < 5; i++) {
-                int index = random.nextInt(loginCharacters.length());
-                loginSuffix.append(loginCharacters.charAt(index));
+            for (int i = 0; i < USERS_LOGIN_LENGTH; i++) {
+                int index = random.nextInt(LOGIN_CHARACTERS.length());
+                loginSuffix.append(LOGIN_CHARACTERS.charAt(index));
             }
 
-            StringBuilder password = new StringBuilder(10);
+            StringBuilder password = new StringBuilder(USERS_PASSWORD_LENGTH);
 
-            for (int i = 0; i < 10; i++) {
-                int index = random.nextInt(passwordCharacters.length());
-                password.append(passwordCharacters.charAt(index));
+            for (int i = 0; i < USERS_PASSWORD_LENGTH; i++) {
+                int index = random.nextInt(PASSWORD_CHARACTERS.length());
+                password.append(PASSWORD_CHARACTERS.charAt(index));
             }
 
             finalLogin = userId + "_" + loginSuffix;
@@ -159,16 +168,16 @@ public class RouterConnector {
 
             // Устанавливаем соединение
             session.connect();
-            LOGGER.info("Подключение для создания ключа успешно установлено.");
+            LOGGER.info(LOG_SUCCESSFUL_CONNECT);
 
-            final String useProfile = "1d";
+
 
             // Команды для выполнения на Mikrotik
             String[] commands = {
                     "/tool user-manager user add customer=admin disabled=no password=" + finalPass + " shared-users=1 " +
                             "username=" + finalLogin,
                     "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
-                            "profile=" + useProfile
+                            "profile=" + TRIAL_PROFILE
             };
 
             for (String command : commands) {
@@ -187,7 +196,7 @@ public class RouterConnector {
 
             String result = "VPN профиль успешно создан!\n" +
                     "Адрес VPN-сервера: " + SERVER_IP + "\n" +
-                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass+
+                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass +
                     "\n\nSecret: vpn";
             return result;
 
@@ -216,7 +225,7 @@ public class RouterConnector {
 
         try {
             if (USER == null || PASSWORD == null) {
-                throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
+                throw new IllegalStateException(ERROR_AT_CREDENTIALS_ARE_NULL);
             }
 
             // Создаем сессию SSH
@@ -225,22 +234,23 @@ public class RouterConnector {
             session.setPassword(PASSWORD);
 
             // Отключаем проверку хоста
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,password");
+            session.setConfig(STRICT_HOST_KEY_CHECKING, "no");
+            session.setConfig(PREFERRED_AUTHENTICATIONS, PUBLICKEY_PASSWORD);
 
             LOGGER.info("Попытка подключения для продления аккаунта...");
 
 
             // Устанавливаем соединение
             session.connect();
-            LOGGER.info("Подключение для создания ключа успешно установлено.");
+            LOGGER.info(LOG_SUCCESSFUL_CONNECT);
 
-            final String useProfile = "30d";
+
 
 
             // Команды для выполнения на Mikrotik
-            String command = "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
-                    "profile=" + useProfile;
+            String command = "/tool user-manager user create-and-activate-profile \""
+                    + finalLogin + "\" customer=admin "
+                    + "profile=" + MONTHLY_PROFILE;
 
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
             LOGGER.info(command);

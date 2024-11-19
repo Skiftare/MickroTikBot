@@ -1,20 +1,21 @@
 package edu.Configuration;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.logging.Logger;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-
 @SuppressWarnings("HideUtilityClassConstructor")
 public class SSHConnection {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;
+    private static final int EXTRA_TIMEOUT = 5000;
 
     private static final Logger LOGGER = Logger.getLogger(SSHConnection.class.getName());
 
@@ -30,9 +31,9 @@ public class SSHConnection {
             if (USER == null || PASSWORD == null) {
                 throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
             }
-            
+
             LOGGER.info("Попытка подключения с использованием USER: " + USER);
-            
+
             // Проверка доступности хоста
             LOGGER.info("Проверка доступности хоста " + HOST + " на порту " + PORT);
             if (!isHostReachable(HOST, PORT)) {
@@ -98,7 +99,7 @@ public class SSHConnection {
 
     private static boolean isHostReachable(String host, int port) {
         try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(host, port), 5000);
+            socket.connect(new InetSocketAddress(host, port), EXTRA_TIMEOUT);
             return true;
         } catch (IOException e) {
             LOGGER.warning("Не удалось подключиться к " + host + ":" + port + ". Ошибка: " + e.getMessage());

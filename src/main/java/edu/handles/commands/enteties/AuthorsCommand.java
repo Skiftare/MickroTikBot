@@ -1,21 +1,19 @@
 package edu.handles.commands.enteties;
 
 
-import java.util.Arrays;
-import java.util.List;
-
+import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import edu.handles.commands.Command;
+import java.util.List;
 
 
 public class AuthorsCommand implements Command {
-    private  final boolean IS_VISIBLE_FOR_KEYBOARD = true;
-    private  final String COMMAND_NAME = "/authors";
-    private  final String COMMAND_DESCRIPTION = "Получить список авторов этого проекта";
-    private  final List<String> AUTHORS = Arrays.asList("artem");
+    private final static boolean IS_VISIBLE_FOR_KEYBOARD = true;
+    private final static String COMMAND_NAME = "/authors";
+    private final static String COMMAND_DESCRIPTION = "Получить список авторов этого проекта";
+    private final static List<String> AUTHORS = List.of("artem");
 
     @Override
     public SendMessage execute(Update update) {

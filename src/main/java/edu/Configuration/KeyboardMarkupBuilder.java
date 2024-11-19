@@ -12,12 +12,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static edu.models.UserProfileStatus.*;
+import static edu.models.UserProfileStatus.NO_VPN;
+import static edu.models.UserProfileStatus.GUEST;
+import static edu.models.UserProfileStatus.ACTIVE_PAYMENT;
+import static edu.models.UserProfileStatus.ACTIVE_VPN;
+import static edu.models.UserProfileStatus.UNCONFIRMED;
 
+@SuppressWarnings("AvoidStarImport")
 public class KeyboardMarkupBuilder {
 
-    private LinkedHashMap<UserProfileStatus, ReplyKeyboardMarkup> mapOfKeyboards = new LinkedHashMap<>();
     private final CommandTable commandTable;
+    private final LinkedHashMap<UserProfileStatus, ReplyKeyboardMarkup> mapOfKeyboards = new LinkedHashMap<>();
 
     public KeyboardMarkupBuilder(CommandTable commandTable) {
 
@@ -30,6 +35,7 @@ public class KeyboardMarkupBuilder {
         mapOfKeyboards.put(ACTIVE_PAYMENT, buildActivePaymentKeyboard());
 
     }
+
     private ReplyKeyboardMarkup buildActivePaymentKeyboard() {
         ReplyKeyboardMarkup rezultKeyboard = new ReplyKeyboardMarkup();
         rezultKeyboard.setKeyboard(generateKeyboardByPrivelege(ACTIVE_PAYMENT));
