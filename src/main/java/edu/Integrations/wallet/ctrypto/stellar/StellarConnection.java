@@ -9,9 +9,7 @@ import java.util.logging.Logger;
 //Этот класс по идее не должен быть публичным - слишком много интересной информации в нём.
 //Пользуемся им только для поднятия AccountListener.
 public class StellarConnection {
-    public static final String STELLAR_PUBLIC_KEY = System.getenv("STELLAR_PUBLIC_KEY");
-    private static final String STELLAR_SECRET_KEY = System.getenv("STELLAR_SECRET_KEY");
-    private static final String STELLAR_NETWORK = System.getenv("STELLAR_NETWORK");
+
     private final Server server;
     private final Network network;
     private KeyPair keyPair;  // добавляем KeyPair
@@ -19,20 +17,23 @@ public class StellarConnection {
 
     public StellarConnection() {
 
+        String stellarPublicKey = System.getenv("STELLAR_PUBLIC_KEY");
+        String stellarSecretKey = System.getenv("STELLAR_SECRET_KEY");
+        String stellarNetwork = System.getenv("STELLAR_NETWORK");
 
-        if (STELLAR_SECRET_KEY != null && !STELLAR_SECRET_KEY.isEmpty()) {
-            keyPair = KeyPair.fromSecretSeed(STELLAR_SECRET_KEY.toCharArray());
-        } else if (STELLAR_PUBLIC_KEY != null && !STELLAR_PUBLIC_KEY.isEmpty()) {
-            keyPair = KeyPair.fromAccountId(STELLAR_PUBLIC_KEY);
+        if (stellarSecretKey != null && !stellarSecretKey.isEmpty()) {
+            keyPair = KeyPair.fromSecretSeed(stellarSecretKey.toCharArray());
+        } else if (stellarPublicKey != null && !stellarPublicKey.isEmpty()) {
+            keyPair = KeyPair.fromAccountId(stellarPublicKey);
         }
-
-        if ("testnet".equals(STELLAR_NETWORK)) {
+        Logger.getAnonymousLogger().info("Stellar network: " + stellarNetwork);
+        if ("testnet".equals(stellarNetwork)) {
             network = Network.TESTNET;
             server = new Server("https://horizon-testnet.stellar.org/");
             Logger.getAnonymousLogger().info("Testnet connection established");
         } else {
             Logger.getAnonymousLogger().info("Public network connection established");
-            Logger.getAnonymousLogger().info(STELLAR_NETWORK);
+            Logger.getAnonymousLogger().info(stellarNetwork);
             network = Network.PUBLIC;
             server = new Server("https://horizon.stellar.org/");
         }
