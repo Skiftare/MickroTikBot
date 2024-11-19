@@ -25,6 +25,8 @@ public class RouterConnector {
     private static final String SERVER_IP = System.getenv("SERVER_IP");
 
     private static final String ERROR_AT_CREDENTIALS_ARE_NULL = "NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены";
+    private static final String ERROR_AT_CONNECTION = "Не удалось установить соединение! Ошибка: ";
+    private static final String ERROR_FOR_MORE_INFO = "Ошибка: ";
     private static final String LOG_MESSAGE_FOR_CONNECT = "Попытка подключения для создания ключа...";
     private static final String LOG_SUCCESSFUL_CONNECT = "Подключение для создания ключа успешно установлено.";
 
@@ -41,6 +43,27 @@ public class RouterConnector {
 
     private static final String MONTHLY_PROFILE = "30d";
     private static final String TRIAL_PROFILE = "1d";
+
+    private static final String COMMAND_FOR_ADDING_USER_TO_USER_MANAGER =
+            "/tool user-manager user add customer=admin disabled=no password=";
+    private static final String AMOUNT_OF_SHARED_USERS_IN_USER_MANAGER = " shared-users=1";
+    private static final String COMMAND_FOR_ACTIVATING_USER_TO_USER_MANAGER =
+            "/tool user-manager user create-and-activate-profile \"";
+    private static final String USERNAME_STRING_AS_PART_OF_COMMAND = "username=";
+    private static final String PROFILE_STRING_AS_PART_OF_COMMAND = " profile=";
+    private static final String CUSTOMER_ADMIN_STRING_AS_PART_OF_COMMAND = "\" customer=admin ";
+    private static final String EXEC_COMMAND = "exec";
+    private static final String LOGIN_STRING_FOR_PARSING = "Login for l2tp:";
+
+
+    private static String generateSuccessMessageForUser(String finalLogin, String finalPass) {
+        String res =  "VPN профиль успешно создан!\n"
+                + "Адрес VPN-сервера: " + SERVER_IP + "\n"
+                + "\nLogin for l2tp: " + finalLogin
+                + "\n\nPassword for l2tp: " + finalPass
+                + "\n\nSecret: vpn";
+        return res;
+    }
 
     // Метод для инициализации секретного ключа (вызывается из другого класса)
     public static String initialisationSecret(ClientTransfer clientTransfer) {
@@ -90,17 +113,17 @@ public class RouterConnector {
 
             // Команды для выполнения на Mikrotik
             String[] commands = {
-                    "/tool user-manager user add customer=admin disabled=no password="
-                            + finalPass + " shared-users=1 "
-                            + "username=" + finalLogin,
-                    "/tool user-manager user create-and-activate-profile \""
-                            + finalLogin + "\" customer=admin "
-                            + "profile=" + MONTHLY_PROFILE
+                    COMMAND_FOR_ADDING_USER_TO_USER_MANAGER
+                            + finalPass + AMOUNT_OF_SHARED_USERS_IN_USER_MANAGER
+                            + USERNAME_STRING_AS_PART_OF_COMMAND + finalLogin,
+                    COMMAND_FOR_ACTIVATING_USER_TO_USER_MANAGER
+                            + finalLogin + CUSTOMER_ADMIN_STRING_AS_PART_OF_COMMAND
+                            + PROFILE_STRING_AS_PART_OF_COMMAND + MONTHLY_PROFILE
             };
 
             for (String command : commands) {
                 // Создаем новый канал для каждой команды
-                ChannelExec channel = (ChannelExec) session.openChannel("exec");
+                ChannelExec channel = (ChannelExec) session.openChannel(EXEC_COMMAND);
                 LOGGER.info(command);
                 channel.setCommand(command);
 
@@ -112,15 +135,12 @@ public class RouterConnector {
 
             session.disconnect();
 
-            String result = "VPN профиль успешно создан!\n" +
-                    "Адрес VPN-сервера: " + SERVER_IP + "\n" +
-                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass +
-                    "\n\nSecret: vpn";
+            String result = generateSuccessMessageForUser(finalLogin, finalPass);
             return result;
 
         } catch (Exception e) {
-            stateString.append("Не удалось установить соединение! Ошибка: ").append(e.getMessage());
-            LOGGER.severe("Ошибка: " + e);
+            stateString.append(ERROR_AT_CONNECTION).append(e.getMessage());
+            LOGGER.severe(ERROR_FOR_MORE_INFO + e);
             return stateString.toString();
         }
     }
@@ -174,15 +194,17 @@ public class RouterConnector {
 
             // Команды для выполнения на Mikrotik
             String[] commands = {
-                    "/tool user-manager user add customer=admin disabled=no password=" + finalPass + " shared-users=1 " +
-                            "username=" + finalLogin,
-                    "/tool user-manager user create-and-activate-profile \"" + finalLogin + "\" customer=admin " +
-                            "profile=" + TRIAL_PROFILE
+                    COMMAND_FOR_ADDING_USER_TO_USER_MANAGER + finalPass
+                            + AMOUNT_OF_SHARED_USERS_IN_USER_MANAGER
+                            + USERNAME_STRING_AS_PART_OF_COMMAND + finalLogin,
+                    COMMAND_FOR_ACTIVATING_USER_TO_USER_MANAGER + finalLogin
+                            + CUSTOMER_ADMIN_STRING_AS_PART_OF_COMMAND
+                            + PROFILE_STRING_AS_PART_OF_COMMAND + TRIAL_PROFILE
             };
 
             for (String command : commands) {
                 // Создаем новый канал для каждой команды
-                ChannelExec channel = (ChannelExec) session.openChannel("exec");
+                ChannelExec channel = (ChannelExec) session.openChannel(EXEC_COMMAND);
                 LOGGER.info(command);
                 channel.setCommand(command);
 
@@ -194,15 +216,12 @@ public class RouterConnector {
 
             session.disconnect();
 
-            String result = "VPN профиль успешно создан!\n" +
-                    "Адрес VPN-сервера: " + SERVER_IP + "\n" +
-                    "\nLogin for l2tp: " + finalLogin + "\n\nPassword for l2tp: " + finalPass +
-                    "\n\nSecret: vpn";
+            String result = generateSuccessMessageForUser(finalLogin, finalPass);
             return result;
 
         } catch (Exception e) {
-            stateString.append("Не удалось установить соединение! Ошибка: ").append(e.getMessage());
-            LOGGER.severe("Ошибка: " + e);
+            stateString.append(ERROR_AT_CONNECTION).append(e.getMessage());
+            LOGGER.severe(ERROR_FOR_MORE_INFO + e);
             return stateString.toString();
         }
     }
@@ -218,8 +237,8 @@ public class RouterConnector {
         }
         // Извлекаем логин из profileData
         String finalLogin = profileData.lines()
-                .filter(line -> line.startsWith("Login for l2tp:"))
-                .map(line -> line.replace("Login for l2tp:", "").trim())
+                .filter(line -> line.startsWith(LOGIN_STRING_FOR_PARSING))
+                .map(line -> line.replace(LOGIN_STRING_FOR_PARSING, "").trim())
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Не удалось найти логин в VPN профиле"));
 
@@ -248,11 +267,11 @@ public class RouterConnector {
 
 
             // Команды для выполнения на Mikrotik
-            String command = "/tool user-manager user create-and-activate-profile \""
-                    + finalLogin + "\" customer=admin "
-                    + "profile=" + MONTHLY_PROFILE;
+            String command = COMMAND_FOR_ACTIVATING_USER_TO_USER_MANAGER
+                    + finalLogin + CUSTOMER_ADMIN_STRING_AS_PART_OF_COMMAND
+                    + PROFILE_STRING_AS_PART_OF_COMMAND + MONTHLY_PROFILE;
 
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            ChannelExec channel = (ChannelExec) session.openChannel(EXEC_COMMAND);
             LOGGER.info(command);
             channel.setCommand(command);
 
@@ -266,8 +285,8 @@ public class RouterConnector {
             return result;
 
         } catch (Exception e) {
-            stateString.append("Не удалось установить соединение! Ошибка: ").append(e.getMessage());
-            LOGGER.severe("Ошибка: " + e);
+            stateString.append(ERROR_AT_CONNECTION).append(e.getMessage());
+            LOGGER.severe(ERROR_FOR_MORE_INFO + e);
             return stateString.toString();
         }
     }
