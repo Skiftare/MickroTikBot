@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DataConnectConfigurator {
-    private String url;
-    private String user;
-    private String password;
+    private final String url;
+    private final String user;
+    private final String password;
 
     // Конструктор для тестов или другой конфигурации
     public DataConnectConfigurator(String url, String user, String password) {
@@ -15,6 +15,7 @@ public class DataConnectConfigurator {
         this.user = user;
         this.password = password;
     }
+
     // Конструктор для продакшн-использования (по умолчанию через env)
     public DataConnectConfigurator() {
         this.url = "jdbc:postgresql://postgresql:5432/table"; // или из env если нужно

@@ -1,15 +1,15 @@
 package edu.Integrations.telegram;
 
+import org.telegram.telegrambots.bots.DefaultAbsSender;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.bots.DefaultAbsSender;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
 
 import java.util.logging.Logger;
 
 public class SubscriptionChecker extends DefaultAbsSender {
-    private static final Logger logger = Logger.getLogger(SubscriptionChecker.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SubscriptionChecker.class.getName());
     private final String botToken;
 
     public SubscriptionChecker(String botToken) {
@@ -34,7 +34,7 @@ public class SubscriptionChecker extends DefaultAbsSender {
             String status = chatMember.getStatus();
             return status.equals("member") || status.equals("administrator") || status.equals("creator");
         } catch (TelegramApiException e) {
-            logger.warning("Ошибка при проверке подписки пользователя: " + e.getMessage());
+            LOGGER.warning("Ошибка при проверке подписки пользователя: " + e.getMessage());
             return false;
         }
     }

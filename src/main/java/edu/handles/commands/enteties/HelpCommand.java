@@ -2,20 +2,18 @@ package edu.handles.commands.enteties;
 
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
-import java.util.stream.Collectors;
-
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.stream.Collectors;
 
 
 public class HelpCommand implements Command {
 
-    private final boolean IS_VISIBLE_FOR_KEYBOARD = true;
-    private final String COMMAND_NAME = "/help";
-    private final String COMMAND_DESCRIPTION = "Получить список всех доступных команд";
-
+    private final static boolean IS_VISIBLE_FOR_KEYBOARD = true;
+    private final static String COMMAND_NAME = "/help";
+    private final static String COMMAND_DESCRIPTION = "Получить список всех доступных команд";
 
 
     private String responseText;

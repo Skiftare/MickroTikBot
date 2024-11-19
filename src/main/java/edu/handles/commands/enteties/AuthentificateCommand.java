@@ -33,11 +33,11 @@ public class AuthentificateCommand implements Command {
             String responseText;
             try {
                 jdbcDataManager.updateUserPhoneAndHash(chatId, phoneNumber, userHash);
-                Logger.getAnonymousLogger().info("User " + chatId + " was successfully authenticated with "+ userHash+" hash");
+                Logger.getAnonymousLogger().info("User " + chatId
+                        + " was successfully authenticated with " + userHash + " hash");
                 responseText = "Вы успешно аутентифицированы!";
 
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 responseText = "Что-то пошло не так. Скорее всего, БД не отвечает. Попробуйте позже.";
             }
             return new SendMessage(chatId.toString(), responseText);

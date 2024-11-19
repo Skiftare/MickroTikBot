@@ -14,11 +14,12 @@ import java.util.logging.Logger;
 
 import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.Integrations.chr.RouterConnector.initialisationTrial;
+import static edu.utility.Constants.DAY_LENGTH_IN_MILLISECONDS;
 
 public class GetFreeVpnCommand implements Command {
-    private final DataManager dataManager;
     private static final String TELEGRAM_CHANNEL_ID = System.getenv("TELEGRAM_CHANNEL_ID");
     private static final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
+    private final DataManager dataManager;
 
     public GetFreeVpnCommand(DataManager incomingDataManager) {
         this.dataManager = incomingDataManager;
@@ -41,7 +42,7 @@ public class GetFreeVpnCommand implements Command {
                 String vpnProfile = initialisationTrial(clientTransfer);
 
                 // Устанавливаем новый срок действия VPN на день
-                Date newDateExpiredAt = new Date(System.currentTimeMillis() + 1L * 24 * 60 * 60 * 1000);
+                Date newDateExpiredAt = new Date(System.currentTimeMillis() + DAY_LENGTH_IN_MILLISECONDS);
 
                 String encryptedVpnProfile = encrypt(vpnProfile);
                 ClientTransfer updatedClient = new ClientTransfer(
@@ -62,9 +63,9 @@ public class GetFreeVpnCommand implements Command {
                 stringBuilder.append("Ваш пробный VPN профиль успешно создан:\n").append(vpnProfile);
             } else {
                 // Пользователь не подписан на канал
-                stringBuilder.append("Для получения пробного VPN профиля подпишитесь на наш канал " +
-                        "(https://t.me/MikroTikBotTGC) " +
-                        "и повторите команду.");
+                stringBuilder.append("Для получения пробного VPN профиля подпишитесь на наш канал "
+                        + "(https://t.me/MikroTikBotTGC) "
+                        + "и повторите команду.");
             }
         } catch (Exception e) {
             Logger.getAnonymousLogger().info("Ошибка при выдаче VPN профиля: " + e.getMessage());

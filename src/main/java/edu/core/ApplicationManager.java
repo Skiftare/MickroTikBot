@@ -14,6 +14,7 @@ public class ApplicationManager {
     JdbcDataManager dataManager;
     PaymentDataManager paymentDataManager;
     AccountListener stellarAccountListener;
+
     ApplicationManager(TelegramBotCore bot,
                        JdbcDataManager dataManager,
                        PaymentDataManager paymentDataManager,
