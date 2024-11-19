@@ -12,8 +12,6 @@ import java.util.logging.Logger;
 
 
 public class AccountListener {
-    public static final BigDecimal COMPARISON_AMOUNT = BigDecimal.valueOf(0);
-
 
     private final StellarConnection connection;
     private final PaymentDataManager paymentDataManager;

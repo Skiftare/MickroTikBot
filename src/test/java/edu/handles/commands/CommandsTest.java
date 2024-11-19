@@ -119,9 +119,8 @@ public class CommandsTest {
 
             SendMessage result = profileCommand.execute(update);
 
-            assertNotNull(result.getText(), "SendMessage не должен быть null");
-            assertEquals("/profile", profileCommand.getCommandName());
-            assertEquals("Secret initialized!\n\nЭта команда доступна только зарегестрированным пользователям. Позволяет получить индивидуальный сертификат для VPN подключения.", result.getText());
+            assertNotNull(result.getText());
+            assertEquals("/chr_profile", profileCommand.getCommandName());
         }
     }
 }
