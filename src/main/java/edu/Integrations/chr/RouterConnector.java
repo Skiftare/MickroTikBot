@@ -226,8 +226,7 @@ public class RouterConnector {
         }
     }
 
-    public static String
-    prolongSecret(ClientTransfer clientTransfer) {
+    public static String prolongSecret(ClientTransfer clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String profileData = null;
         try {

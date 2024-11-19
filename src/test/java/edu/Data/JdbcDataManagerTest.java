@@ -5,13 +5,22 @@ import edu.Data.dto.ClientTransfer;
 import edu.models.UserProfileStatus;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.stellar.sdk.Memo;
+import org.stellar.sdk.Transaction;
+import org.stellar.sdk.responses.TransactionResponse;
+import org.stellar.sdk.responses.operations.PaymentOperationResponse;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.sql.*;
+import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
-/*
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class JdbcDataManagerTest extends IntegrationTest {
     private static final String url = POSTGRES.getJdbcUrl();
     private static final String user = POSTGRES.getUsername();
@@ -20,13 +29,12 @@ public class JdbcDataManagerTest extends IntegrationTest {
     private static DataConnectConfigurator dataConnection = new DataConnectConfigurator(url, user, password);
     private static JdbcDataManager jdbcDataManager = new JdbcDataManager(dataConnection);
     private static ClientTransfer clientTransferUserFirst = new ClientTransfer(
-            null, 12345L, "1234567890", "Test User", new Date(System.currentTimeMillis()), "vpn_profile_1", true, new Date(System.currentTimeMillis() + 123444)
+            null, 12345L, "1234567890", "Test User", new Date(System.currentTimeMillis()), "vpn_profile_1", true, new Date(System.currentTimeMillis() + 123444), false, "test memo mock", BigDecimal.ZERO
     );
 
     @AfterEach
     public void tearDown() {
-        // Test code for tearDown method
-        jdbcDataManager.deleteById(clientTransferUserFirst.tgUserId());
+        jdbcDataManager.getAllUsers().forEach(user -> jdbcDataManager.deleteById(user.tgUserId()));
     }
 
 
@@ -80,7 +88,7 @@ public class JdbcDataManagerTest extends IntegrationTest {
     public void testGetUserProfileStatus() {
         jdbcDataManager.save(clientTransferUserFirst);
         jdbcDataManager.update(clientTransferUserFirst);
-        assertEquals(UserProfileStatus.UNCONFIRMED, jdbcDataManager.getUserProfileStatus(clientTransferUserFirst.tgUserId()));
+        assertEquals(UserProfileStatus.ACTIVE_VPN, jdbcDataManager.getUserProfileStatus(clientTransferUserFirst.tgUserId()));
     }
 
     @Test
@@ -114,7 +122,88 @@ public class JdbcDataManagerTest extends IntegrationTest {
         jdbcDataManager.update(updatedClientTransfer);
         ClientTransfer foundClient = jdbcDataManager.findById(clientTransferUserFirst.tgUserId());
         assertNotNull(foundClient);
-        assertEquals("Test User", foundClient.name());
+        assertEquals("Updated User", foundClient.name());
     }
+
+
+    @Test
+    public void testExtendVpnProfile() {
+        // Создаем клиента с истекшим VPN
+        Date expiredDate = new Date(System.currentTimeMillis() - 86400000); // вчера
+        ClientTransfer expiredClient = new ClientTransfer(
+            null, 12346L, "1234567890", "Test User", 
+            new Date(System.currentTimeMillis()), 
+            "vpn_profile_1", false, 
+            expiredDate, false, "test_key", BigDecimal.ZERO
+        );
+        jdbcDataManager.save(expiredClient);
+
+        // Продлеваем VPN на 30 дней
+        boolean extended = jdbcDataManager.extendVpnProfile(
+            expiredClient.tgUserId(), 
+            Duration.ofDays(30)
+        );
+        
+        assertTrue(extended);
+        ClientTransfer updatedClient = jdbcDataManager.findById(expiredClient.tgUserId());
+        assertTrue(updatedClient.isVpnProfileAlive());
+    }
+
+    @Test
+    public void testUpdateUserPhoneAndHash() {
+        jdbcDataManager.save(clientTransferUserFirst);
+        String newPhone = "9876543210";
+        String newHash = "new_hash_value";
+        
+        jdbcDataManager.updateUserPhoneAndHash(
+            clientTransferUserFirst.tgUserId(), 
+            newPhone, 
+            newHash
+        );
+        
+        ClientTransfer updatedClient = jdbcDataManager.findById(clientTransferUserFirst.tgUserId());
+        assertEquals(newPhone, updatedClient.phone());
+        assertEquals(newHash, updatedClient.paymentKey());
+    }
+
+    @Test
+    public void testAddIncomingTransaction() {
+        Memo mockMemo = mock(Memo.class);
+        jdbcDataManager.getAllUsers().forEach(user -> jdbcDataManager.deleteById(user.tgUserId()));
+        when(mockMemo.toString()).thenReturn("test memo mock");
+        jdbcDataManager.save(clientTransferUserFirst);
+
+        // Создаем мок PaymentOperationResponse
+        PaymentOperationResponse mockPayment = mock(PaymentOperationResponse.class);
+        TransactionResponse mockTransactionResponse = mock(TransactionResponse.class);
+
+
+        Logger.getAnonymousLogger().info("Mock memo: " + mockMemo.toString());
+
+        when(mockPayment.getTo()).thenReturn("test_destination");
+        when(mockPayment.getTransactionHash()).thenReturn("test_hash");
+        when(mockPayment.getSourceAccount()).thenReturn("test_source");
+        when(mockPayment.getAmount()).thenReturn("100.0000000");
+        when(mockPayment.getTransaction()).thenReturn(Optional.of(mockTransactionResponse));
+        when(mockTransactionResponse.isSuccessful()).thenReturn(true);
+        when(mockPayment.getTransaction().get().getMemo()).thenReturn(mockMemo);
+
+        jdbcDataManager.addIncomingTransaction(mockPayment);
+        
+        // Проверяем, что транзакция добавлена
+        try (Connection conn = dataConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                 "SELECT * FROM stellar_transactions WHERE transaction_hash = ?"
+             )) {
+            stmt.setString(1, "test_hash");
+            ResultSet rs = stmt.executeQuery();
+            assertTrue(rs.next());
+            assertEquals("test memo mock", rs.getString("memo"));
+        } catch (SQLException e) {
+            fail("SQL Exception: " + e.getMessage());
+        }
+    }
+
+    // Вспомогательный метод для создания мока PaymentOperationResponse
+
 }
-*/
