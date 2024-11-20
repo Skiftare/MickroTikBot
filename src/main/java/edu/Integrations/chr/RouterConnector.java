@@ -280,8 +280,7 @@ public class RouterConnector {
             channel.disconnect();
             session.disconnect();
 
-            String result = profileData;
-            return result;
+            return profileData;
 
         } catch (Exception e) {
             stateString.append(ERROR_AT_CONNECTION).append(e.getMessage());
