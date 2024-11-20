@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 //Этот класс по идее не должен быть публичным - слишком много интересной информации в нём.
 //Пользуемся им только для поднятия AccountListener.
 public class StellarConnection {
-    public static final String STELLAR_PUBLIC_KEY = System.getenv("STELLAR_PUBLIC_KEY");
-    private static final String STELLAR_SECRET_KEY = System.getenv("STELLAR_SECRET_KEY");
-    private static final String STELLAR_NETWORK = System.getenv("STELLAR_NETWORK");
+    public static String publicKey = System.getenv("STELLAR_PUBLIC_KEY");
+    private static String secretKey = System.getenv("STELLAR_SECRET_KEY");
+    private static String networkName = System.getenv("STELLAR_NETWORK");
     private final Server server;
     private final Network network;
     private KeyPair keyPair;  // добавляем KeyPair
@@ -21,18 +21,18 @@ public class StellarConnection {
         publicKey = System.getenv("STELLAR_PUBLIC_KEY");
         secretKey = System.getenv("STELLAR_SECRET_KEY");
         networkName = System.getenv("STELLAR_NETWORK");
-        if(networkName == null) {
+        if (networkName == null) {
             Logger.getAnonymousLogger().info("Network name is null");
             networkName = System.getProperty("STELLAR_NETWORK");
         }
 
-        if (STELLAR_SECRET_KEY != null && !STELLAR_SECRET_KEY.isEmpty()) {
-            keyPair = KeyPair.fromSecretSeed(STELLAR_SECRET_KEY.toCharArray());
-        } else if (STELLAR_PUBLIC_KEY != null && !STELLAR_PUBLIC_KEY.isEmpty()) {
-            keyPair = KeyPair.fromAccountId(STELLAR_PUBLIC_KEY);
+        if (secretKey != null && !secretKey.isEmpty()) {
+            keyPair = KeyPair.fromSecretSeed(secretKey.toCharArray());
+        } else if (publicKey != null && !publicKey.isEmpty()) {
+            keyPair = KeyPair.fromAccountId(publicKey);
         }
 
-        if ("testnet".equals(STELLAR_NETWORK)) {
+        if ("testnet".equals(networkName)) {
             network = Network.TESTNET;
             server = new Server("https://horizon-testnet.stellar.org/");
             Logger.getAnonymousLogger().info("Testnet connection established");
