@@ -11,8 +11,6 @@ import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import com.google.common.collect.LinkedHashMultimap;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
