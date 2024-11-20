@@ -18,7 +18,13 @@ public class StellarConnection {
 
 
     public StellarConnection() {
-
+        publicKey = System.getenv("STELLAR_PUBLIC_KEY");
+        secretKey = System.getenv("STELLAR_SECRET_KEY");
+        networkName = System.getenv("STELLAR_NETWORK");
+        if(networkName == null) {
+            Logger.getAnonymousLogger().info("Network name is null");
+            networkName = System.getProperty("STELLAR_NETWORK");
+        }
 
         if (STELLAR_SECRET_KEY != null && !STELLAR_SECRET_KEY.isEmpty()) {
             keyPair = KeyPair.fromSecretSeed(STELLAR_SECRET_KEY.toCharArray());
@@ -32,7 +38,7 @@ public class StellarConnection {
             Logger.getAnonymousLogger().info("Testnet connection established");
         } else {
             Logger.getAnonymousLogger().info("Public network connection established");
-            Logger.getAnonymousLogger().info(STELLAR_NETWORK);
+            Logger.getAnonymousLogger().info(networkName);
             network = Network.PUBLIC;
             server = new Server("https://horizon.stellar.org/");
         }
