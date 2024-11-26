@@ -49,9 +49,9 @@ public class RouterConnector {
     private static final String AMOUNT_OF_SHARED_USERS_IN_USER_MANAGER = " shared-users=1";
     private static final String COMMAND_FOR_ACTIVATING_USER_TO_USER_MANAGER =
             "/tool user-manager user create-and-activate-profile \"";
-    private static final String USERNAME_STRING_AS_PART_OF_COMMAND = "username=";
+    private static final String USERNAME_STRING_AS_PART_OF_COMMAND = " username=";
     private static final String PROFILE_STRING_AS_PART_OF_COMMAND = " profile=";
-    private static final String CUSTOMER_ADMIN_STRING_AS_PART_OF_COMMAND = "\" customer=admin ";
+    private static final String CUSTOMER_ADMIN_STRING_AS_PART_OF_COMMAND = "\" customer=admin";
     private static final String EXEC_COMMAND = "exec";
     private static final String LOGIN_STRING_FOR_PARSING = "Login for l2tp:";
 
