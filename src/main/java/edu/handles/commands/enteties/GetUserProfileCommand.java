@@ -3,21 +3,19 @@ package edu.handles.commands.enteties;
 import edu.Data.DataManager;
 import edu.Data.dto.UserInfo;
 import edu.Data.formatters.UserProfileFormatter;
-
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class GetUserProfileCommand implements Command {
     DataManager dataManager;
     UserProfileFormatter userProfileFormatter;
-    public GetUserProfileCommand(DataManager incomingDataManager, UserProfileFormatter incomingUserProfileFormatter){
+
+    public GetUserProfileCommand(DataManager incomingDataManager, UserProfileFormatter incomingUserProfileFormatter) {
         dataManager = incomingDataManager;
         userProfileFormatter = incomingUserProfileFormatter;
     }
-
 
 
     @Override

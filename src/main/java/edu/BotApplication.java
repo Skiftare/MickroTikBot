@@ -8,7 +8,17 @@ import edu.Data.formatters.UserProfileFormatter;
 import edu.Integrations.wallet.ctrypto.stellar.AccountListener;
 import edu.Integrations.wallet.ctrypto.stellar.StellarConnection;
 import edu.handles.commands.Command;
-import edu.handles.commands.enteties.*;
+import edu.handles.commands.enteties.HelpCommand;
+import edu.handles.commands.enteties.GetFreeVpnCommand;
+import edu.handles.commands.enteties.UserProfileCommand;
+import edu.handles.commands.enteties.AuthorsCommand;
+import edu.handles.commands.enteties.AuthentificateCommand;
+import edu.handles.commands.enteties.BuyConnectionCommand;
+import edu.handles.commands.enteties.GetUserProfileCommand;
+import edu.handles.commands.enteties.InfoCommand;
+import edu.handles.commands.enteties.ProfileCommand;
+import edu.handles.commands.enteties.StateCommand;
+import edu.handles.commands.enteties.RegisterCommand;
 import edu.handles.tables.CommandTable;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -17,20 +27,20 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.util.logging.Logger;
 
 
-@SuppressWarnings("HideUtilityClassConstructor")
+@SuppressWarnings({"HideUtilityClassConstructor"})
 public class BotApplication {
-    private static Logger logger = Logger.getLogger(BotApplication.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BotApplication.class.getName());
 
     private static DataConnectConfigurator dataConnectionAssembling() {
-        logger.info("Assembling data connection");
+        LOGGER.info("Assembling data connection");
         DataConnectConfigurator dataConnection = new DataConnectConfigurator();
 
-        logger.info("Data connection assembled");
+        LOGGER.info("Data connection assembled");
         return dataConnection;
     }
 
     private static CommandTable commandTableAssembling(JdbcDataManager jdbcDataManager) {
-        logger.info("Assembling command table");
+        LOGGER.info("Assembling command table");
         Command infoCommand = new InfoCommand();
         Command authorsCommand = new AuthorsCommand();
         Command registerCommand = new RegisterCommand(jdbcDataManager);
@@ -40,6 +50,7 @@ public class BotApplication {
         Command userProfileCommand = new UserProfileCommand(jdbcDataManager);
         Command buyCommand = new BuyConnectionCommand(jdbcDataManager);
         Command getUserProfileCommand = new GetUserProfileCommand(jdbcDataManager, new UserProfileFormatter());
+        Command getFreeVpnCommand = new GetFreeVpnCommand(jdbcDataManager);
         AccountListener accountListener = new AccountListener(new StellarConnection(),
                 jdbcDataManager
         );
@@ -50,10 +61,11 @@ public class BotApplication {
                 authorsCommand, registerCommand,
                 authentificateCommand, stateCommand,
                 profileCommand, userProfileCommand,
-                buyCommand, getUserProfileCommand
+                buyCommand, getUserProfileCommand,
+                getFreeVpnCommand
         );
         Command helpCommand = new HelpCommand(preCommandTable);
-        logger.info("Command table assembled");
+        LOGGER.info("Command table assembled");
         return new CommandTable(preCommandTable, helpCommand);
 
     }
@@ -71,11 +83,11 @@ public class BotApplication {
             CommandTable coreCommandTable = commandTableAssembling(jdbcDataManager);
             KeyboardMarkupBuilder keyboardMarkupBuilder = new KeyboardMarkupBuilder(coreCommandTable);
 
-            logger.info("Registering bot");
+            LOGGER.info("Registering bot");
             botsApi.registerBot(new TelegramBotCore(coreCommandTable, keyboardMarkupBuilder, jdbcDataManager));
-            logger.info("Bot registered");
+            LOGGER.info("Bot registered");
         } catch (TelegramApiException e) {
-            logger.info("Bot registration failed with stacktrace: " + e.getStackTrace());
+            LOGGER.info("Bot registration failed with stacktrace: " + e.getStackTrace());
         }
     }
 }

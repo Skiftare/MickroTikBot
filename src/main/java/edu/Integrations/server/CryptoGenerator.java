@@ -1,18 +1,23 @@
 package edu.Integrations.server;
 
+import org.telegram.telegrambots.meta.api.objects.Update;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.logging.Logger;
 
-
-import org.telegram.telegrambots.meta.api.objects.Update;
-
+@SuppressWarnings("HideUtilityClassConstructor")
 public class CryptoGenerator {
-    private static final String salt = System.getenv("SALT");
-    private static final String key = System.getenv("KEY_FOR_AES");
+    private static final String SALT = System.getenv("SALT");
+    private static final String KEY_FOR_AES = System.getenv("KEY_FOR_AES");
+    private static final Integer LENGTH_OF_RANDOM_BYTES = 16;
+    private static final Integer LENGTH_OF_SALT = 8;
+    private static final Integer LENGTH_OF_CHECK_SUM = 28;
+
     public static synchronized String generateCheckSum(Long userId) {
 
         // Получаем текущее время
@@ -20,12 +25,13 @@ public class CryptoGenerator {
 
         // Генерируем криптографически стойкое случайное число
         SecureRandom random = new SecureRandom();
-        byte[] randomBytes = new byte[16]; // длина массива может быть изменена
+        byte[] randomBytes = new byte[LENGTH_OF_RANDOM_BYTES]; // длина массива может быть изменена
+
         random.nextBytes(randomBytes);
         String randomValue = bytesToHex(randomBytes);
 
         // Объединяем время запроса, id пользователя, случайное значение и соль в одну строку
-        String input = requestTime + userId + randomValue + salt;
+        String input = requestTime + userId + randomValue + SALT;
         String res;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -33,17 +39,18 @@ public class CryptoGenerator {
             res = bytesToHex(hashInBytes);
         } catch (NoSuchAlgorithmException e) {
             res = randomValue;
-            e.printStackTrace();
+            Logger.getAnonymousLogger().info("MD5 algorithm is not available: " + e.getMessage());
         }
-        if (res.length() >= 28) {
+        if (res.length() >= LENGTH_OF_CHECK_SUM) {
             //cc9ea69e10bbd2322e727eb11e359f8e
-            res = res.substring(0, 27);
+            res = res.substring(0, LENGTH_OF_CHECK_SUM - 1);
         }
 
         return res;
 
 
     }
+
     private static String bytesToHex(byte[] bytes) {
 
         StringBuilder sb = new StringBuilder();
@@ -52,9 +59,10 @@ public class CryptoGenerator {
         }
         return sb.toString();
     }
+
     private static String generateSalt() {
         SecureRandom random = new SecureRandom();
-        byte[] saltBytes = new byte[8];
+        byte[] saltBytes = new byte[LENGTH_OF_SALT];
         random.nextBytes(saltBytes);
         return Base64.getEncoder().encodeToString(saltBytes);
     }
@@ -62,7 +70,7 @@ public class CryptoGenerator {
     private static String sha256(String data) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(data.getBytes("UTF-8"));
+            byte[] hash = digest.digest(data.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -70,15 +78,16 @@ public class CryptoGenerator {
     }
 
     private static String encryptAES(String data, String key) {
-        if (data.length() >= 28) {
+        if (data.length() >= LENGTH_OF_CHECK_SUM) {
             //cc9ea69e10bbd2322e727eb11e359f8e
-            data = data.substring(0, 27);
+            return data.substring(0, LENGTH_OF_CHECK_SUM - 1);
         }
         return data;
+
     }
 
 
-    public static String generateUsersHash(Update update){
+    public static String generateUsersHash(Update update) {
         Long tgUserId = update.getMessage().getFrom().getId();
         String phoneNumber = update.getMessage().getContact().getPhoneNumber();
         String name = update.getMessage().getFrom().getFirstName() + " " + update.getMessage().getFrom().getLastName();
@@ -87,7 +96,7 @@ public class CryptoGenerator {
         long timestamp = System.currentTimeMillis();
         String saltedData = rawData + "_" + salt + "_" + timestamp;
         String hash = sha256(saltedData);
-        String encryptedData = encryptAES(hash, key);
+        String encryptedData = encryptAES(hash, KEY_FOR_AES);
 
         return encryptedData;
     }

@@ -13,8 +13,8 @@ public class InfoCommand implements Command {
     private static final String COMMAND_NAME = "/info";
     private static final String INFO_MESSAGE =
             "Этот бот помогает установить безопасное приватное VPN-соединение, "
-            + "что особенно полезно для повышения уровня конфиденциальности в "
-            + "общественных местах, таких как кофейни.";
+                    + "что особенно полезно для повышения уровня конфиденциальности в "
+                    + "общественных местах, таких как кофейни.";
 
     @Override
     public SendMessage execute(Update update) {

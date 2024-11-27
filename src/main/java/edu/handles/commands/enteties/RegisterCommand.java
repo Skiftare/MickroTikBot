@@ -18,12 +18,26 @@ import java.util.logging.Logger;
 
 public class RegisterCommand implements Command {
     private final JdbcDataManager jdbcDataManager;
+    Logger logger = Logger.getLogger(RegisterCommand.class.getName());
 
     public RegisterCommand(JdbcDataManager jdbcDataManager) {
         this.jdbcDataManager = jdbcDataManager;
     }
 
-    Logger logger = Logger.getLogger(RegisterCommand.class.getName());
+    private static ClientTransfer getClientTransfer(Long tgUserId, String name) {
+        Date currentDate = new Date(System.currentTimeMillis());
+        ClientTransfer clientProfile = new ClientTransfer(
+                null, // id, можно оставить null, так как он сгенерируется автоматически
+                tgUserId, // Telegram User ID
+                null, // Телефон, если неизвестен, можно оставить null
+                name, // Имя пользователя
+                currentDate, // Дата последнего визита (текущая дата)
+                null, // VPN-профиль, если отсутствует
+                false, // Статус VPN-профиля, можно оставить null
+                new Date(0) //Пускай так
+        );
+        return clientProfile;
+    }
 
     @Override
     public SendMessage execute(Update update) {
@@ -59,7 +73,7 @@ public class RegisterCommand implements Command {
         keyboardRow.add(contactButton);
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        keyboardMarkup.setKeyboard(Arrays.asList(keyboardRow));
+        keyboardMarkup.setKeyboard(List.of(keyboardRow));
         keyboardMarkup.setResizeKeyboard(true);  // Подстройка клавиатуры под экран
         keyboardMarkup.setOneTimeKeyboard(true);  // Клавиатура исчезнет после нажатия
 
@@ -67,21 +81,6 @@ public class RegisterCommand implements Command {
 
 
         return response;
-    }
-
-    private static ClientTransfer getClientTransfer(Long tgUserId, String name) {
-        Date currentDate = new Date(System.currentTimeMillis());
-        ClientTransfer clientProfile = new ClientTransfer(
-                null, // id, можно оставить null, так как он сгенерируется автоматически
-                tgUserId, // Telegram User ID
-                null, // Телефон, если неизвестен, можно оставить null
-                name, // Имя пользователя
-                currentDate, // Дата последнего визита (текущая дата)
-                null, // VPN-профиль, если отсутствует
-                false, // Статус VPN-профиля, можно оставить null
-                new Date(0) //Пускай так
-        );
-        return clientProfile;
     }
 
     @Override
@@ -92,7 +91,7 @@ public class RegisterCommand implements Command {
 
     @Override
     public boolean isVisibleForKeyboard(UserProfileStatus status) {
-        return  (status == UserProfileStatus.GUEST || status == UserProfileStatus.UNCONFIRMED);
+        return (status == UserProfileStatus.GUEST || status == UserProfileStatus.UNCONFIRMED);
     }
 
     @Override
