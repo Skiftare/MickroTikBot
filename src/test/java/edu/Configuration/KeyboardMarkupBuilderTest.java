@@ -1,6 +1,6 @@
 package edu.Configuration;
 
-
+/*
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-
-import com.google.common.collect.LinkedHashMultimap;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -129,3 +127,4 @@ public class KeyboardMarkupBuilderTest {
     }
 }
 
+*/

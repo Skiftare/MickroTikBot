@@ -6,15 +6,12 @@ import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
-
-import javax.ws.rs.client.Client;
-import javax.xml.crypto.Data;
 
 public class UserProfileCommand implements Command {
     private static final boolean IS_VISIBLE_FOR_KEYBOARD = false;
-    private DataManager dataManager;
-    public UserProfileCommand(DataManager dataManager){
+    private final DataManager dataManager;
+
+    public UserProfileCommand(DataManager dataManager) {
         this.dataManager = dataManager;
     }
 
@@ -24,10 +21,10 @@ public class UserProfileCommand implements Command {
         SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId());
         ClientTransfer clientTransfer = dataManager.findById(update.getMessage().getFrom().getId());
-        message.setText("Ваш статус: " + status + "\n" +
-                "Есть ли у вас ВПН: "+ clientTransfer.isVpnProfileAlive() +
-                "\n" +
-                "Коннекшн будет жив до: " + clientTransfer.expiredAt()
+        message.setText("Ваш статус: " + status + "\n"
+                + "Есть ли у вас ВПН: " + clientTransfer.isVpnProfileAlive()
+                + "\n"
+                + "Коннекшн будет жив до: " + clientTransfer.expiredAt()
         );
 
         return message;

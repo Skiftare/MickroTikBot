@@ -17,7 +17,8 @@ import java.util.logging.Logger;
 public class TelegramBotCore extends TelegramLongPollingBot {
 
     private static final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
-    private static final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд.";
+    private static final String UNKNOWN_COMMAND = "Неизвестная команда. Введите /help для списка доступных команд "
+            + "или зарегистрируйтесь (/register).";
     private final KeyboardMarkupBuilder keyboardMarkupBuilder;
     private final Map<String, Command> commandTable = new HashMap<>();
     private final JdbcDataManager jdbcDataManager;

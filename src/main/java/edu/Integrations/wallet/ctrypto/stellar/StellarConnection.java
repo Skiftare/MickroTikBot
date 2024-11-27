@@ -9,19 +9,19 @@ import java.util.logging.Logger;
 //Этот класс по идее не должен быть публичным - слишком много интересной информации в нём.
 //Пользуемся им только для поднятия AccountListener.
 public class StellarConnection {
-    private Server server;
-    private Network network;
+    public static String publicKey = System.getenv("STELLAR_PUBLIC_KEY");
+    private static String secretKey = System.getenv("STELLAR_SECRET_KEY");
+    private static String networkName = System.getenv("STELLAR_NETWORK");
+    private final Server server;
+    private final Network network;
     private KeyPair keyPair;  // добавляем KeyPair
-    public final String publicKey;
-    private final String secretKey;
-    private String networkName;
 
 
     public StellarConnection() {
         publicKey = System.getenv("STELLAR_PUBLIC_KEY");
         secretKey = System.getenv("STELLAR_SECRET_KEY");
         networkName = System.getenv("STELLAR_NETWORK");
-        if(networkName == null) {
+        if (networkName == null) {
             Logger.getAnonymousLogger().info("Network name is null");
             networkName = System.getProperty("STELLAR_NETWORK");
         }
@@ -33,7 +33,6 @@ public class StellarConnection {
         }
 
         if ("testnet".equals(networkName)) {
-            Logger.getAnonymousLogger().info("Testnet connection established");
             network = Network.TESTNET;
             server = new Server("https://horizon-testnet.stellar.org/");
             Logger.getAnonymousLogger().info("Testnet connection established");

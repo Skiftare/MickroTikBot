@@ -5,4 +5,5 @@ public record PaymentRecord(
         String comment,
         Boolean status,
         Long amount
-) {}
+) {
+}

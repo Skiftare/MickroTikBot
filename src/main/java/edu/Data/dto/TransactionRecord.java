@@ -7,4 +7,5 @@ public record TransactionRecord(
         String paymentKey,
         BigDecimal amount,
         String sourceAccount
-) {}
+) {
+}
