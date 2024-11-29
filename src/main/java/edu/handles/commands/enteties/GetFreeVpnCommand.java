@@ -3,6 +3,7 @@ package edu.handles.commands.enteties;
 import edu.Data.DataManager;
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
+import edu.Data.formatters.UserProfileFormatter;
 import edu.Integrations.telegram.SubscriptionChecker;
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
@@ -69,8 +70,10 @@ public class GetFreeVpnCommand implements Command {
             Logger.getAnonymousLogger().info("Ошибка при выдаче VPN профиля: " + e.getMessage());
             stringBuilder.append("Произошла ошибка при выдаче VPN профиля. Пожалуйста, попробуйте позже.");
         }
-
-        message.setText(stringBuilder.toString());
+        String responseText = stringBuilder.toString();
+        String markdownWrappedTest = UserProfileFormatter.formatCredentialsForConnection(responseText);
+        message.setText(markdownWrappedTest);
+        message.enableMarkdown(true);
         return message;
     }
 
