@@ -119,6 +119,7 @@ public class JdbcDataManagerTest extends IntegrationTest {
                 "0",
                 new BigDecimal(0)
         );
+
         jdbcDataManager.update(updatedClientTransfer);
         ClientTransfer foundClient = jdbcDataManager.findById(clientTransferUserFirst.tgUserId());
         assertNotNull(foundClient);
