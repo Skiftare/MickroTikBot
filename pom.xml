@@ -34,6 +34,7 @@
         <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
         <git-commit-id-plugin.version>7.0.0</git-commit-id-plugin.version>
         <spring-boot-maven-plugin.version>3.2.2</spring-boot-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <java.version>17</java.version>
     </properties>
     <dependencies>
@@ -209,6 +210,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
