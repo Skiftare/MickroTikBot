@@ -5,7 +5,6 @@ import org.stellar.sdk.KeyPair;
 import org.stellar.sdk.requests.EventListener;
 import org.stellar.sdk.responses.operations.OperationResponse;
 import org.stellar.sdk.responses.operations.PaymentOperationResponse;
-
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.logging.Logger;

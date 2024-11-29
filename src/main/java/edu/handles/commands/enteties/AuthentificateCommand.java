@@ -7,10 +7,8 @@ import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
-import java.util.logging.Logger;
-
 import static edu.Integrations.server.CryptoGenerator.generateUsersHash;
+import java.util.logging.Logger;
 
 public class AuthentificateCommand implements Command {
     private final DataManager jdbcDataManager;
