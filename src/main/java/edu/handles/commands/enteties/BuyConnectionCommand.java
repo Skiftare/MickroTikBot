@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.logging.Logger;
 
+import edu.Data.formatters.UserProfileFormatter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -47,6 +48,7 @@ public class BuyConnectionCommand implements Command {
                     .append(plainTextMarkdownFormatter)
                     .append(clientTransfer.paymentKey()).append(plainTextMarkdownFormatter)
                     .append(endOfString);
+            message.setText(stringBuilder.toString());
         } else {
             String vpnProfile = "TEST";
             Date newDateExpiredAt;
@@ -96,9 +98,12 @@ public class BuyConnectionCommand implements Command {
                 dataManager.update(updatedClient);
             }
             stringBuilder.append(vpnProfile);
+            String responseText = stringBuilder.toString();
+            String markdownWrappedTest = UserProfileFormatter.formatCredentialsForConnection(responseText);
+            message.setText(markdownWrappedTest);
         }
-        message.setText(stringBuilder.toString());
         message.enableMarkdown(true);
+
         return message;
     }
 
