@@ -8,10 +8,8 @@ import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.sql.Date;
 import java.util.logging.Logger;
-
 import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.Integrations.chr.RouterConnector.initialisationTrial;
 import static edu.utility.Constants.DAY_LENGTH_IN_MILLISECONDS;

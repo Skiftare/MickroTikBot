@@ -2,21 +2,28 @@ package edu.Data.formatters;
 
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
-
 import java.util.Date;
 import java.util.logging.Logger;
 
-public class UserProfileFormatter {
+/**
+ * Класс для форматирования профиля пользователя.
+ */
+public final class UserProfileFormatter {
 
-    public String format(UserInfo userInfo) {
+    /**
+     * Форматирует информацию о пользователе.
+     *
+     * @param userInfo информация о пользователе
+     * @return отформатированная строка профиля пользователя
+     */
+    public String format(final UserInfo userInfo) {
         if (userInfo == null || userInfo.client() == null) {
             return "Профиль не найден";
         }
-
         return formatClientInfo(userInfo);
     }
 
-    private String formatClientInfo(UserInfo userInfo)  {
+    private String formatClientInfo(final UserInfo userInfo) {
         ClientTransfer client = userInfo.client();
 
         StringBuilder result = new StringBuilder();
@@ -38,9 +45,8 @@ public class UserProfileFormatter {
         if (client.vpnProfile() != null) {
             try {
                 result.append("\n🔐 VPN профиль: ").append(EncryptionUtil.decrypt(client.vpnProfile()));
-            }
-            catch (Exception e){
-                Logger.getAnonymousLogger().info("Exception: "+e.getMessage());
+            } catch (Exception e) {
+                Logger.getAnonymousLogger().info("Exception: " + e.getMessage());
             }
             result.append("\nСтатус: ").append(client.isVpnProfileAlive() ? "✅ Активен" : "❌ Неактивен");
 

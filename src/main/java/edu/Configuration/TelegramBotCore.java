@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -59,13 +58,13 @@ public class TelegramBotCore extends TelegramLongPollingBot {
             SendMessage response = new SendMessage();
             if (command != null && command.isVisibleForKeyboard(status)) {
                 response = command.execute(update);
-                if(response.getReplyMarkup() == null){
+                if (response.getReplyMarkup() == null) {
                     response.setReplyMarkup(getKeyboardMarkup(status));
                 }
             } else {
                 response.setChatId(chatId);
                 response.setText(UNKNOWN_COMMAND);
-                if(response.getReplyMarkup() == null){
+                if (response.getReplyMarkup() == null) {
                     response.setReplyMarkup(getKeyboardMarkup(status));
                 }
             }

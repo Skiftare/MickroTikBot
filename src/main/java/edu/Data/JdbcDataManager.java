@@ -1,17 +1,10 @@
 package edu.Data;
 
-
-import edu.Configuration.DataConnectConfigurator;
-import edu.Data.dto.ClientTransfer;
-import edu.Data.dto.UserInfo;
-import edu.models.UserProfileStatus;
-import org.stellar.sdk.responses.operations.PaymentOperationResponse;
-
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,6 +13,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import edu.Configuration.DataConnectConfigurator;
+
+import edu.Data.dto.ClientTransfer;
+import edu.Data.dto.UserInfo;
+import edu.models.UserProfileStatus;
+import org.stellar.sdk.responses.operations.PaymentOperationResponse;
 
 @SuppressWarnings({"MultipleStringLiterals", "MagicNumber"})
 public class JdbcDataManager implements DataManager, PaymentDataManager {

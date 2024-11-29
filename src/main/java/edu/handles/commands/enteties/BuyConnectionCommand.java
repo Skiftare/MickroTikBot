@@ -1,24 +1,24 @@
 package edu.handles.commands.enteties;
 
-import edu.Data.DataManager;
-import edu.Data.dto.ClientTransfer;
-import edu.Data.dto.UserInfo;
-import edu.handles.commands.Command;
-import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.logging.Logger;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+
+import edu.Data.DataManager;
+import edu.Data.dto.ClientTransfer;
+import edu.Data.dto.UserInfo;
 import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.Integrations.chr.RouterConnector.initialisationSecret;
 import static edu.Integrations.chr.RouterConnector.prolongSecret;
+import edu.handles.commands.Command;
+import edu.models.UserProfileStatus;
 import static edu.utility.Constants.CONNECTION_PRICE;
 import static edu.utility.Constants.ERROR_AT_ADVANCING_VPN;
-import static edu.utility.Constants.PUBLIC_ADDRESS;
 import static edu.utility.Constants.MONTH_LENGTH_IN_MILLISECONDS;
+import static edu.utility.Constants.PUBLIC_ADDRESS;
 
 public class BuyConnectionCommand implements Command {
     private final DataManager dataManager;
@@ -34,13 +34,19 @@ public class BuyConnectionCommand implements Command {
         UserInfo userInfo = dataManager.getInfoById(update.getMessage().getChatId());
         ClientTransfer clientTransfer = userInfo.client();
         StringBuilder stringBuilder = new StringBuilder();
+        String endOfString = "\n";
+        String plainTextMarkdownFormatter = "`";
 
         if (clientTransfer.balance().compareTo(CONNECTION_PRICE) <= 0) {
             stringBuilder.append("У вас недостаточно средств для покупки подключения к интернету").append("\n");
-            stringBuilder.append("Ваш баланс: ").append(clientTransfer.balance()).append("\n");
-            stringBuilder.append("Кошелек для пополнения: ").append(PUBLIC_ADDRESS).append("\n");
+            stringBuilder.append("Ваш баланс: ").append(clientTransfer.balance()).append(endOfString);
+            stringBuilder.append("Кошелек для пополнения: ")
+                    .append(plainTextMarkdownFormatter).append(PUBLIC_ADDRESS)
+                    .append(plainTextMarkdownFormatter).append(endOfString);
             stringBuilder.append("Комментарий для идентификации платежа: ")
-                    .append(clientTransfer.paymentKey()).append("\n");
+                    .append(plainTextMarkdownFormatter)
+                    .append(clientTransfer.paymentKey()).append(plainTextMarkdownFormatter)
+                    .append(endOfString);
         } else {
             String vpnProfile = "TEST";
             Date newDateExpiredAt;
@@ -92,6 +98,7 @@ public class BuyConnectionCommand implements Command {
             stringBuilder.append(vpnProfile);
         }
         message.setText(stringBuilder.toString());
+        message.enableMarkdown(true);
         return message;
     }
 

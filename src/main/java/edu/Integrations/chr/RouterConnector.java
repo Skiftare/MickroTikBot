@@ -4,10 +4,8 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import edu.Data.dto.ClientTransfer;
-
 import java.util.Random;
 import java.util.logging.Logger;
-
 import static edu.Data.formatters.EncryptionUtil.decrypt;
 
 @SuppressWarnings("HideUtilityClassConstructor")
