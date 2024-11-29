@@ -1,5 +1,5 @@
 package edu.Data;
-/*
+
 import edu.Configuration.DataConnectConfigurator;
 import edu.Data.dto.ClientTransfer;
 import edu.models.UserProfileStatus;
@@ -204,7 +204,5 @@ public class JdbcDataManagerTest extends IntegrationTest {
         }
     }
 
-    // Вспомогательный метод для создания мока PaymentOperationResponse
 
 }
-*/
