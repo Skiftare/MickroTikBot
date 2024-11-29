@@ -59,10 +59,15 @@ public class TelegramBotCore extends TelegramLongPollingBot {
             SendMessage response = new SendMessage();
             if (command != null && command.isVisibleForKeyboard(status)) {
                 response = command.execute(update);
+                if(response.getReplyMarkup() == null){
+                    response.setReplyMarkup(getKeyboardMarkup(status));
+                }
             } else {
                 response.setChatId(chatId);
                 response.setText(UNKNOWN_COMMAND);
-                response.setReplyMarkup(getKeyboardMarkup(status));
+                if(response.getReplyMarkup() == null){
+                    response.setReplyMarkup(getKeyboardMarkup(status));
+                }
             }
             sendMessageToUser(response);
         } else if (update.getMessage().hasContact()) {
@@ -72,7 +77,11 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + update.getMessage().getContact().getPhoneNumber());
 
             Command authentificateCommand = commandTable.get("/authentificate");
-            authentificateCommand.execute(update);
+            SendMessage response = authentificateCommand.execute(update);
+            Long chatId = update.getMessage().getChatId();
+            UserProfileStatus status = jdbcDataManager.getUserProfileStatus(chatId);
+            response.setReplyMarkup(getKeyboardMarkup(status));
+            sendMessageToUser(response);
         }
     }
 

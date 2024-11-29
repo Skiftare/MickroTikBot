@@ -4,7 +4,6 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     container_name: MickroTikBot
-    privileged: true
     depends_on:
       - postgresql
     networks:
