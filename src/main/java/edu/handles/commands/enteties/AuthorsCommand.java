@@ -2,9 +2,9 @@ package edu.handles.commands.enteties;
 
 
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 
@@ -15,12 +15,12 @@ public class AuthorsCommand implements Command {
     private final static List<String> AUTHORS = List.of("artem");
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper update) {
 
         String responseText = String.join("\n", AUTHORS);
 
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
+        message.setChatId(update.userId());
         message.setText(responseText);
         return message;
     }

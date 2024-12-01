@@ -2,9 +2,9 @@ package edu.handles.commands.enteties;
 
 
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class InfoCommand implements Command {
 
@@ -17,9 +17,9 @@ public class InfoCommand implements Command {
                     + "общественных местах, таких как кофейни.";
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper update) {
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
+        message.setChatId(update.userId());
         message.setText(INFO_MESSAGE);
         return message;
     }

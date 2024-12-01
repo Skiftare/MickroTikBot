@@ -6,9 +6,9 @@ import edu.Data.dto.UserInfo;
 import edu.Data.formatters.UserProfileFormatter;
 import edu.Integrations.telegram.SubscriptionChecker;
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import java.sql.Date;
 import java.util.logging.Logger;
 import static edu.Data.formatters.EncryptionUtil.encrypt;
@@ -25,18 +25,19 @@ public class GetFreeVpnCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper update) {
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId().toString());
+        Long chatId = update.userId();
+        message.setChatId(chatId.toString());
 
         // Получаем информацию о пользователе
-        UserInfo userInfo = dataManager.getInfoById(update.getMessage().getChatId());
+        UserInfo userInfo = dataManager.getInfoById(chatId);
         ClientTransfer clientTransfer = userInfo.client();
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
             // Проверка подписки на канал
-            if (isUserSubscribedToChannel(update.getMessage().getFrom().getId())) {
+            if (isUserSubscribedToChannel(chatId)) {
                 // Пользователь подписан на канал, выдаем VPN профиль
                 String vpnProfile = initialisationTrial(clientTransfer);
 

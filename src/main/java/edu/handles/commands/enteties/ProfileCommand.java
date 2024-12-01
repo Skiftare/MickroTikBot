@@ -3,9 +3,9 @@ package edu.handles.commands.enteties;
 
 import edu.Configuration.SSHConnection;
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 
 public class ProfileCommand implements Command {
@@ -15,9 +15,9 @@ public class ProfileCommand implements Command {
     private static final String COMMAND_NAME = "/chr_profile";
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper update) {
         SendMessage message = new SendMessage();
-        Long tgUserId = update.getMessage().getFrom().getId();
+        Long tgUserId = update.userId();
         message.setChatId(tgUserId);
 
         message.setText(SSHConnection.establishingSSH());

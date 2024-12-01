@@ -4,9 +4,9 @@ import edu.Data.DataManager;
 import edu.Data.dto.UserInfo;
 import edu.Data.formatters.UserProfileFormatter;
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class GetUserProfileCommand implements Command {
     DataManager dataManager;
@@ -19,9 +19,9 @@ public class GetUserProfileCommand implements Command {
 
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper update) {
         SendMessage result = new SendMessage();
-        Long tgIdLong = update.getMessage().getChatId();
+        Long tgIdLong = update.userId();
         result.setChatId(tgIdLong);
         UserInfo allUserInfo = dataManager.getInfoById(tgIdLong);
         result.setText(userProfileFormatter.format(allUserInfo));

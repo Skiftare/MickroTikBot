@@ -4,9 +4,9 @@ package edu.handles.commands.enteties;
 import edu.Data.JdbcDataManager;
 import edu.Data.dto.ClientTransfer;
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -39,14 +39,14 @@ public class RegisterCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper update) {
         // Извлечение данных пользователя из объекта Update
-        Long tgUserId = update.getMessage().getFrom().getId();
-        String name = update.getMessage().getFrom().getFirstName();
+        Long tgUserId = update.userId();
+        String name = update.firstName();
 
         // Ответ пользователю по умолчанию
         SendMessage response = new SendMessage();
-        response.setChatId(update.getMessage().getChatId().toString());
+        response.setChatId(tgUserId.toString());
 
 
         try {
