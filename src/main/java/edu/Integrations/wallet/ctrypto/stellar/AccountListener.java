@@ -68,13 +68,7 @@ public class AccountListener {
 
                                 @Override
                                 public void onFailure(Optional<Throwable> optional, Optional<Integer> optional1) {
-                                    if (optional instanceof Optional) {
-                                        Logger.getAnonymousLogger().severe("Ошибка при обработке транзакции: "
-                                                + optional.get().getMessage());
-                                    } else {
-                                        Logger.getAnonymousLogger().severe("Случилось что-то страшное "
-                                                + optional1);
-                                    }
+
                                 }
                             }
                     );

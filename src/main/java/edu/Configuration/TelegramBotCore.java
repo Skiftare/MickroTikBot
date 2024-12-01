@@ -2,6 +2,7 @@ package edu.Configuration;
 
 import edu.Data.JdbcDataManager;
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -9,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -56,8 +58,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + " sent message: "
                     + messageText);
             SendMessage response = new SendMessage();
+            UserMessageFromBotWrapper userMessage = new UserMessageFromBotWrapper(update, status);
             if (command != null && command.isVisibleForKeyboard(status)) {
-                response = command.execute(update);
+                response = command.execute(userMessage);
                 if (response.getReplyMarkup() == null) {
                     response.setReplyMarkup(getKeyboardMarkup(status));
                 }
@@ -74,11 +77,12 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + update.getMessage().getChatId()
                     + " sent phone number: "
                     + update.getMessage().getContact().getPhoneNumber());
-
+            UserProfileStatus status = jdbcDataManager.getUserProfileStatus(update.getMessage().getChatId());
             Command authentificateCommand = commandTable.get("/authentificate");
-            SendMessage response = authentificateCommand.execute(update);
+            UserMessageFromBotWrapper userMessage = new UserMessageFromBotWrapper(update, status);
+            SendMessage response = authentificateCommand.execute(userMessage);
             Long chatId = update.getMessage().getChatId();
-            UserProfileStatus status = jdbcDataManager.getUserProfileStatus(chatId);
+            status = jdbcDataManager.getUserProfileStatus(chatId);
             response.setReplyMarkup(getKeyboardMarkup(status));
             sendMessageToUser(response);
         }

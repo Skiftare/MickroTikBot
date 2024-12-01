@@ -1,13 +1,15 @@
 package edu.handles.commands.enteties;
 
-import edu.handles.commands.Command;
-import edu.handles.tables.CommandTable;
-import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
+import edu.handles.tables.CommandTable;
+import edu.models.UserProfileStatus;
 
 public class HelpCommand implements Command {
 
@@ -15,22 +17,26 @@ public class HelpCommand implements Command {
     private final static String COMMAND_NAME = "/help";
     private final static String COMMAND_DESCRIPTION = "Получить список всех доступных команд";
 
-
-    private String responseText;
+    private final Map<UserProfileStatus, String> statusResponses;
 
     public HelpCommand(CommandTable table) {
         String separatorInLine = " - ";
-        responseText = table.getCommands().values().stream()
-                .map(command -> command.getCommandName() + separatorInLine + command.getCommandDescription())
-                .collect(Collectors.joining("\n"));
-        responseText += "\n" + COMMAND_NAME + separatorInLine + COMMAND_DESCRIPTION;
+        statusResponses = new EnumMap<>(UserProfileStatus.class);
+        // Подготавливаем ответы для каждого статуса
+        for (UserProfileStatus status : UserProfileStatus.values()) {
+            String response = table.getCommands().values().stream()
+                    .filter(command -> command.isVisibleForKeyboard(status))
+                    .map(command -> command.getCommandName() + separatorInLine + command.getCommandDescription())
+                    .collect(Collectors.joining("\n"));
+            statusResponses.put(status, response);
+        }
     }
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper wrapper) {
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
-        message.setText(responseText);
+        message.setChatId(wrapper.userId());
+        message.setText(statusResponses.get(wrapper.status()));
         return message;
     }
 

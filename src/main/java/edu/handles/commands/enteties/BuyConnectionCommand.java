@@ -5,8 +5,8 @@ import java.sql.Date;
 import java.util.logging.Logger;
 
 import edu.Data.formatters.UserProfileFormatter;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import edu.Data.DataManager;
 import edu.Data.dto.ClientTransfer;
@@ -29,10 +29,11 @@ public class BuyConnectionCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update) {
+    public SendMessage execute(UserMessageFromBotWrapper update) {
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId().toString());
-        UserInfo userInfo = dataManager.getInfoById(update.getMessage().getChatId());
+        Long chatId = update.userId();
+        message.setChatId(chatId);
+        UserInfo userInfo = dataManager.getInfoById(chatId);
         ClientTransfer clientTransfer = userInfo.client();
         StringBuilder stringBuilder = new StringBuilder();
         String endOfString = "\n";
