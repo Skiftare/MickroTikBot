@@ -1,10 +1,11 @@
 package edu.handles.commands.enteties;
 
 
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 import java.util.List;
 
 
@@ -15,14 +16,11 @@ public class AuthorsCommand implements Command {
     private final static List<String> AUTHORS = List.of("artem");
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper update) {
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
 
         String responseText = String.join("\n", AUTHORS);
 
-        SendMessage message = new SendMessage();
-        message.setChatId(update.userId());
-        message.setText(responseText);
-        return message;
+        return new BotResponseToUserWrapper(update.userId(), responseText);
     }
 
     @Override

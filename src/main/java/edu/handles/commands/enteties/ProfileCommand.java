@@ -2,10 +2,10 @@ package edu.handles.commands.enteties;
 
 
 import edu.Configuration.SSHConnection;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 
 public class ProfileCommand implements Command {
@@ -15,13 +15,9 @@ public class ProfileCommand implements Command {
     private static final String COMMAND_NAME = "/chr_profile";
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper update) {
-        SendMessage message = new SendMessage();
-        Long tgUserId = update.userId();
-        message.setChatId(tgUserId);
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
 
-        message.setText(SSHConnection.establishingSSH());
-        return message;
+        return new BotResponseToUserWrapper(update.userId(), SSHConnection.establishingSSH());
     }
 
     @Override

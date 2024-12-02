@@ -2,11 +2,13 @@ package edu.handles.commands.enteties;
 
 
 import edu.Data.DataManager;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 import static edu.Integrations.server.CryptoGenerator.generateUsersHash;
+
 import java.util.logging.Logger;
 
 public class AuthentificateCommand implements Command {
@@ -18,8 +20,9 @@ public class AuthentificateCommand implements Command {
 
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper update) {
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
         Long chatId = update.userId();
+
 
         if (update.hasContact()) {
             String phoneNumber = update.phoneNumber();
@@ -36,10 +39,11 @@ public class AuthentificateCommand implements Command {
             } catch (Exception e) {
                 responseText = "Что-то пошло не так. Скорее всего, БД не отвечает. Попробуйте позже.";
             }
-            return new SendMessage(chatId.toString(), responseText);
+
+            return new BotResponseToUserWrapper(chatId, responseText);
         }
 
-        return new SendMessage(chatId.toString(), "Что-то пошло не так");
+        return new BotResponseToUserWrapper(chatId, "Что-то пошло не так");
     }
 
     @Override
