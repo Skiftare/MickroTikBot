@@ -3,13 +3,14 @@ package edu.handles.commands.enteties;
 
 import edu.Data.JdbcDataManager;
 import edu.Data.dto.ClientTransfer;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
@@ -39,24 +40,23 @@ public class RegisterCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper update) {
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
         // Извлечение данных пользователя из объекта Update
         Long tgUserId = update.userId();
         String name = update.firstName();
 
         // Ответ пользователю по умолчанию
-        SendMessage response = new SendMessage();
-        response.setChatId(tgUserId.toString());
+        String response;
 
 
         try {
             // Попытка зарегистрировать пользователя в БД
             if (jdbcDataManager.isUserExists(tgUserId)) {
-                response.setText("Для подтверждения телефона воспользуйтесь кнопкой ниже");
+                response = ("Для подтверждения телефона воспользуйтесь кнопкой ниже");
             } else {
                 ClientTransfer clientProfile = getClientTransfer(tgUserId, name);
                 jdbcDataManager.addUser(clientProfile);
-                response.setText("Вам необходимо подтвердить номер телефона для дальнейшего использования сервиса.");
+                response = ("Вам необходимо подтвердить номер телефона для дальнейшего использования сервиса.");
 
 
                 List<ClientTransfer> l = jdbcDataManager.getAllUsers();
@@ -64,7 +64,7 @@ public class RegisterCommand implements Command {
             }
         } catch (Exception e) {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
-            response.setText("Произошла ошибка при регистрации. Пожалуйста, попробуйте позже.");
+            response = ("Произошла ошибка при регистрации. Пожалуйста, попробуйте позже.");
         }
         KeyboardButton contactButton = new KeyboardButton("Отправить номер телефона");
         contactButton.setRequestContact(true);
@@ -76,10 +76,9 @@ public class RegisterCommand implements Command {
         keyboardMarkup.setResizeKeyboard(true);  // Подстройка клавиатуры под экран
         keyboardMarkup.setOneTimeKeyboard(true);  // Клавиатура исчезнет после нажатия
 
-        response.setReplyMarkup(keyboardMarkup);
 
 
-        return response;
+        return new BotResponseToUserWrapper(tgUserId, response, false, keyboardMarkup);
     }
 
     @Override

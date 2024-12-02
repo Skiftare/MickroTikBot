@@ -3,10 +3,10 @@ package edu.handles.commands.enteties;
 import edu.Data.DataManager;
 import edu.Data.dto.UserInfo;
 import edu.Data.formatters.UserProfileFormatter;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 public class GetUserProfileCommand implements Command {
     DataManager dataManager;
@@ -19,14 +19,11 @@ public class GetUserProfileCommand implements Command {
 
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper update) {
-        SendMessage result = new SendMessage();
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
         Long tgIdLong = update.userId();
-        result.setChatId(tgIdLong);
         UserInfo allUserInfo = dataManager.getInfoById(tgIdLong);
-        result.setText(userProfileFormatter.format(allUserInfo));
 
-        return result;
+        return new BotResponseToUserWrapper(tgIdLong, userProfileFormatter.format(allUserInfo));
     }
 
     @Override

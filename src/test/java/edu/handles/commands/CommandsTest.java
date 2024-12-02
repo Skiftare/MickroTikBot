@@ -36,11 +36,11 @@ public class CommandsTest {
             "TestLastName" // lastName
         );
         
-        SendMessage result = infoCommand.execute(wrapper);
+        BotResponseToUserWrapper result = infoCommand.execute(wrapper);
 
-        assertNotNull(result.getText());
+        assertNotNull(result.message());
         assertEquals("/info", infoCommand.getCommandName());
-        assertEquals("Этот бот помогает установить безопасное приватное VPN-соединение, что особенно полезно для повышения уровня конфиденциальности в общественных местах, таких как кофейни.", result.getText());
+        assertEquals("Этот бот помогает установить безопасное приватное VPN-соединение, что особенно полезно для повышения уровня конфиденциальности в общественных местах, таких как кофейни.", result.message());
     }
 
     @Test
@@ -55,11 +55,11 @@ public class CommandsTest {
             "TestLastName"
         );
 
-        SendMessage result = authorsCommand.execute(wrapper);
+        BotResponseToUserWrapper result = authorsCommand.execute(wrapper);
 
-        assertNotNull(result.getText(), "SendMessage should not be null");
+        assertNotNull(result.message(), "SendMessage should not be null");
         assertEquals("/authors", authorsCommand.getCommandName());
-        assertEquals("artem", result.getText());
+        assertEquals("artem", result.message());
     }
 
     @Test
@@ -77,9 +77,9 @@ public class CommandsTest {
             "TestLastName"
         );
 
-        SendMessage result = helpCommand.execute(wrapper);
+        BotResponseToUserWrapper result = helpCommand.execute(wrapper);
 
-        assertNotNull(result.getText());
+        assertNotNull(result.message());
         assertEquals("/help", helpCommand.getCommandName());
         verify(mockedCommandTable, times(1)).getCommands();
     }
@@ -101,9 +101,9 @@ public class CommandsTest {
             mockedSecretInitialiser.when(() -> initialisationSecret(
                     new ClientTransfer(1L,"","",new Date(0)," ",false,new Date(1)))).thenReturn("Secret initialized!");
 
-            SendMessage result = profileCommand.execute(wrapper);
+            BotResponseToUserWrapper result = profileCommand.execute(wrapper);
 
-            assertNotNull(result.getText());
+            assertNotNull(result.message());
             assertEquals("/chr_profile", profileCommand.getCommandName());
         }
     }

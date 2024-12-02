@@ -4,7 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import edu.handles.commands.BotResponseToUserWrapper;
 
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
@@ -33,11 +33,8 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper wrapper) {
-        SendMessage message = new SendMessage();
-        message.setChatId(wrapper.userId());
-        message.setText(statusResponses.get(wrapper.status()));
-        return message;
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper wrapper) {
+        return new BotResponseToUserWrapper(wrapper.userId(), statusResponses.get(wrapper.status()));
     }
 
     @Override

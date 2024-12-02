@@ -5,10 +5,10 @@ import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
 import edu.Data.formatters.UserProfileFormatter;
 import edu.Integrations.telegram.SubscriptionChecker;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import java.sql.Date;
 import java.util.logging.Logger;
 import static edu.Data.formatters.EncryptionUtil.encrypt;
@@ -25,10 +25,8 @@ public class GetFreeVpnCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper update) {
-        SendMessage message = new SendMessage();
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
         Long chatId = update.userId();
-        message.setChatId(chatId.toString());
 
         // Получаем информацию о пользователе
         UserInfo userInfo = dataManager.getInfoById(chatId);
@@ -72,10 +70,9 @@ public class GetFreeVpnCommand implements Command {
             stringBuilder.append("Произошла ошибка при выдаче VPN профиля. Пожалуйста, попробуйте позже.");
         }
         String responseText = stringBuilder.toString();
-        String markdownWrappedTest = UserProfileFormatter.formatCredentialsForConnection(responseText);
-        message.setText(markdownWrappedTest);
-        message.enableMarkdown(true);
-        return message;
+        String markdownWrappedText = UserProfileFormatter.formatCredentialsForConnection(responseText);
+
+        return new BotResponseToUserWrapper(update.userId(), markdownWrappedText, true, null);
     }
 
     private boolean isUserSubscribedToChannel(Long userId) {

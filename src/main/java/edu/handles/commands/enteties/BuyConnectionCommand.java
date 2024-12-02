@@ -5,8 +5,8 @@ import java.sql.Date;
 import java.util.logging.Logger;
 
 import edu.Data.formatters.UserProfileFormatter;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.UserMessageFromBotWrapper;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import edu.Data.DataManager;
 import edu.Data.dto.ClientTransfer;
@@ -29,16 +29,16 @@ public class BuyConnectionCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(UserMessageFromBotWrapper update) {
-        SendMessage message = new SendMessage();
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
+
         Long chatId = update.userId();
-        message.setChatId(chatId);
+
         UserInfo userInfo = dataManager.getInfoById(chatId);
         ClientTransfer clientTransfer = userInfo.client();
         StringBuilder stringBuilder = new StringBuilder();
         String endOfString = "\n";
         String plainTextMarkdownFormatter = "`";
-
+        String responseMessage;
         if (clientTransfer.balance().compareTo(CONNECTION_PRICE) <= 0) {
             stringBuilder.append("У вас недостаточно средств для покупки подключения к интернету").append("\n");
             stringBuilder.append("Ваш баланс: ").append(clientTransfer.balance()).append(endOfString);
@@ -49,7 +49,7 @@ public class BuyConnectionCommand implements Command {
                     .append(plainTextMarkdownFormatter)
                     .append(clientTransfer.paymentKey()).append(plainTextMarkdownFormatter)
                     .append(endOfString);
-            message.setText(stringBuilder.toString());
+            responseMessage = stringBuilder.toString();
         } else {
             String vpnProfile = "TEST";
             Date newDateExpiredAt;
@@ -100,12 +100,10 @@ public class BuyConnectionCommand implements Command {
             }
             stringBuilder.append(vpnProfile);
             String responseText = stringBuilder.toString();
-            String markdownWrappedTest = UserProfileFormatter.formatCredentialsForConnection(responseText);
-            message.setText(markdownWrappedTest);
+            responseMessage  = UserProfileFormatter.formatCredentialsForConnection(responseText);
         }
-        message.enableMarkdown(true);
 
-        return message;
+        return new BotResponseToUserWrapper(update.userId(), responseMessage, true, null);
     }
 
     @Override
