@@ -49,23 +49,7 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
     // Метод для создания записи
     public void save(ClientTransfer client) {
 
-        try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY)) {
-
-            preparedStatement.setLong(1, client.tgUserId());
-            preparedStatement.setString(2, client.phone());
-            preparedStatement.setString(3, client.name());
-            preparedStatement.setDate(4, new java.sql.Date(client.userLastVisited().getTime()));
-            preparedStatement.setString(5, client.vpnProfile());
-            preparedStatement.setBoolean(6, client.isVpnProfileAlive());
-            preparedStatement.setDate(7, new java.sql.Date(client.expiredAt().getTime()));
-            preparedStatement.setBoolean(8, client.isInPaymentProcess());
-            preparedStatement.setString(9, client.paymentKey());
-            preparedStatement.setBigDecimal(10, client.balance());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
-        }
+        saveUserWithPreparedStatement(client);
     }
 
     // Метод для чтения записи
@@ -156,6 +140,10 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
     public void addUser(ClientTransfer client) {
 
 
+        saveUserWithPreparedStatement(client);
+    }
+
+    private void saveUserWithPreparedStatement(ClientTransfer client) {
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY)) {
 

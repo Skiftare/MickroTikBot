@@ -86,7 +86,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + update.getMessage().getChatId()
                     + " sent phone number: "
                     + update.getMessage().getContact().getPhoneNumber());
+
             UserProfileStatus status = jdbcDataManager.getUserProfileStatus(update.getMessage().getChatId());
+
             Command authentificateCommand = commandTable.get("/authentificate");
             UserMessageFromBotWrapper userMessage = new UserMessageFromBotWrapper(update, status);
             BotResponseToUserWrapper response = authentificateCommand.execute(userMessage);
@@ -97,6 +99,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     response.message(),
                     response.isMarkdownEnabled(),
                     getKeyboardMarkup(status));
+
             sendMessageToUser(response);
         }
     }
