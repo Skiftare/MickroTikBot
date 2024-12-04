@@ -7,6 +7,9 @@ import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
+import org.apache.commons.logging.Log;
+
+import java.util.logging.Logger;
 
 public class GetUserProfileCommand implements Command {
     DataManager dataManager;
@@ -22,8 +25,10 @@ public class GetUserProfileCommand implements Command {
     public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
         Long tgIdLong = update.userId();
         UserInfo allUserInfo = dataManager.getInfoById(tgIdLong);
+        String formattedInfo = userProfileFormatter.format(allUserInfo);
 
-        return new BotResponseToUserWrapper(tgIdLong, userProfileFormatter.format(allUserInfo), true, null);
+        Logger.getAnonymousLogger().info(formattedInfo);
+        return new BotResponseToUserWrapper(tgIdLong, formattedInfo, true, null);
     }
 
     @Override

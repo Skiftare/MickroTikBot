@@ -6,6 +6,7 @@ import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
+import org.apache.commons.logging.Log;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -112,10 +113,17 @@ public class TelegramBotCore extends TelegramLongPollingBot {
     public void sendMessageToUser(BotResponseToUserWrapper message) {
         try {
             SendMessage sendMessage = new SendMessage();
-            sendMessage.setText(message.message());
             sendMessage.setChatId(message.userId());
+
+            sendMessage.setText(message.message());
             sendMessage.setReplyMarkup(message.keyboardMarkup());
             sendMessage.enableMarkdown(message.isMarkdownEnabled());
+
+            Logger.getAnonymousLogger().info("Sending message: ");
+            Logger.getAnonymousLogger().info(message.message());
+            Logger.getAnonymousLogger().info(String.valueOf(message.userId()));
+            Logger.getAnonymousLogger().info(String.valueOf(message.isMarkdownEnabled()));
+
             execute(sendMessage);
         } catch (TelegramApiException e) {
             Logger.getAnonymousLogger().severe("Error while sending message to user: " + e.getMessage());
