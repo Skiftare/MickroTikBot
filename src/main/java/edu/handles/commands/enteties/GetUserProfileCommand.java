@@ -23,7 +23,7 @@ public class GetUserProfileCommand implements Command {
         Long tgIdLong = update.userId();
         UserInfo allUserInfo = dataManager.getInfoById(tgIdLong);
 
-        return new BotResponseToUserWrapper(tgIdLong, userProfileFormatter.format(allUserInfo));
+        return new BotResponseToUserWrapper(tgIdLong, userProfileFormatter.format(allUserInfo), true, null);
     }
 
     @Override
