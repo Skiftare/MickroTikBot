@@ -6,7 +6,6 @@ import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
-import org.apache.commons.logging.Log;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;

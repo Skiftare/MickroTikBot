@@ -7,7 +7,6 @@ import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
 import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.apache.commons.logging.Log;
 
 import java.util.logging.Logger;
 
