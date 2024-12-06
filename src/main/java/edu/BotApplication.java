@@ -10,20 +10,17 @@ import edu.Integrations.wallet.ctrypto.stellar.StellarConnection;
 import edu.handles.commands.Command;
 import edu.handles.commands.enteties.HelpCommand;
 import edu.handles.commands.enteties.GetFreeVpnCommand;
-import edu.handles.commands.enteties.UserProfileCommand;
 import edu.handles.commands.enteties.AuthorsCommand;
 import edu.handles.commands.enteties.AuthentificateCommand;
 import edu.handles.commands.enteties.BuyConnectionCommand;
 import edu.handles.commands.enteties.GetUserProfileCommand;
 import edu.handles.commands.enteties.InfoCommand;
 import edu.handles.commands.enteties.ProfileCommand;
-import edu.handles.commands.enteties.StateCommand;
 import edu.handles.commands.enteties.RegisterCommand;
 import edu.handles.tables.CommandTable;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-
 import java.util.logging.Logger;
 
 
@@ -45,9 +42,7 @@ public class BotApplication {
         Command authorsCommand = new AuthorsCommand();
         Command registerCommand = new RegisterCommand(jdbcDataManager);
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
-        Command stateCommand = new StateCommand();
         Command profileCommand = new ProfileCommand();
-        Command userProfileCommand = new UserProfileCommand(jdbcDataManager);
         Command buyCommand = new BuyConnectionCommand(jdbcDataManager);
         Command getUserProfileCommand = new GetUserProfileCommand(jdbcDataManager, new UserProfileFormatter());
         Command getFreeVpnCommand = new GetFreeVpnCommand(jdbcDataManager);
@@ -59,8 +54,8 @@ public class BotApplication {
 
         CommandTable preCommandTable = new CommandTable(infoCommand,
                 authorsCommand, registerCommand,
-                authentificateCommand, stateCommand,
-                profileCommand, userProfileCommand,
+                authentificateCommand,
+                profileCommand,
                 buyCommand, getUserProfileCommand,
                 getFreeVpnCommand
         );

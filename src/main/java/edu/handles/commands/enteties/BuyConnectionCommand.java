@@ -1,24 +1,25 @@
 package edu.handles.commands.enteties;
 
-import edu.Data.DataManager;
-import edu.Data.dto.ClientTransfer;
-import edu.Data.dto.UserInfo;
-import edu.handles.commands.Command;
-import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.logging.Logger;
 
+import edu.Data.formatters.UserProfileFormatter;
+import edu.handles.commands.BotResponseToUserWrapper;
+import edu.handles.commands.UserMessageFromBotWrapper;
+
+import edu.Data.DataManager;
+import edu.Data.dto.ClientTransfer;
+import edu.Data.dto.UserInfo;
 import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.Integrations.chr.RouterConnector.initialisationSecret;
 import static edu.Integrations.chr.RouterConnector.prolongSecret;
+import edu.handles.commands.Command;
+import edu.models.UserProfileStatus;
 import static edu.utility.Constants.CONNECTION_PRICE;
 import static edu.utility.Constants.ERROR_AT_ADVANCING_VPN;
-import static edu.utility.Constants.PUBLIC_ADDRESS;
 import static edu.utility.Constants.MONTH_LENGTH_IN_MILLISECONDS;
+import static edu.utility.Constants.PUBLIC_ADDRESS;
 
 public class BuyConnectionCommand implements Command {
     private final DataManager dataManager;
@@ -28,19 +29,27 @@ public class BuyConnectionCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update) {
-        SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId().toString());
-        UserInfo userInfo = dataManager.getInfoById(update.getMessage().getChatId());
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
+
+        Long chatId = update.userId();
+
+        UserInfo userInfo = dataManager.getInfoById(chatId);
         ClientTransfer clientTransfer = userInfo.client();
         StringBuilder stringBuilder = new StringBuilder();
-
+        String endOfString = "\n";
+        String plainTextMarkdownFormatter = "`";
+        String responseMessage;
         if (clientTransfer.balance().compareTo(CONNECTION_PRICE) <= 0) {
             stringBuilder.append("У вас недостаточно средств для покупки подключения к интернету").append("\n");
-            stringBuilder.append("Ваш баланс: ").append(clientTransfer.balance()).append("\n");
-            stringBuilder.append("Кошелек для пополнения: ").append(PUBLIC_ADDRESS).append("\n");
+            stringBuilder.append("Ваш баланс: ").append(clientTransfer.balance()).append(endOfString);
+            stringBuilder.append("Кошелек для пополнения: ")
+                    .append(plainTextMarkdownFormatter).append(PUBLIC_ADDRESS)
+                    .append(plainTextMarkdownFormatter).append(endOfString);
             stringBuilder.append("Комментарий для идентификации платежа: ")
-                    .append(clientTransfer.paymentKey()).append("\n");
+                    .append(plainTextMarkdownFormatter)
+                    .append(clientTransfer.paymentKey()).append(plainTextMarkdownFormatter)
+                    .append(endOfString);
+            responseMessage = stringBuilder.toString();
         } else {
             String vpnProfile = "TEST";
             Date newDateExpiredAt;
@@ -90,9 +99,11 @@ public class BuyConnectionCommand implements Command {
                 dataManager.update(updatedClient);
             }
             stringBuilder.append(vpnProfile);
+            String responseText = stringBuilder.toString();
+            responseMessage  = UserProfileFormatter.formatCredentialsForConnection(responseText);
         }
-        message.setText(stringBuilder.toString());
-        return message;
+
+        return new BotResponseToUserWrapper(update.userId(), responseMessage, true, null);
     }
 
     @Override

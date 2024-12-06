@@ -1,5 +1,5 @@
 package edu.Data;
-/*
+
 import edu.Configuration.DataConnectConfigurator;
 import edu.Data.dto.ClientTransfer;
 import edu.models.UserProfileStatus;
@@ -119,6 +119,7 @@ public class JdbcDataManagerTest extends IntegrationTest {
                 "0",
                 new BigDecimal(0)
         );
+
         jdbcDataManager.update(updatedClientTransfer);
         ClientTransfer foundClient = jdbcDataManager.findById(clientTransferUserFirst.tgUserId());
         assertNotNull(foundClient);
@@ -204,7 +205,5 @@ public class JdbcDataManagerTest extends IntegrationTest {
         }
     }
 
-    // Вспомогательный метод для создания мока PaymentOperationResponse
 
 }
-*/

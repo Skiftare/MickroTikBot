@@ -1,5 +1,5 @@
 package edu.Data;
-/*
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -144,4 +144,4 @@ public class DatabaseTest extends IntegrationTest {
         assertEquals(sourceAccount, transaction.get("source_account"));
     }
 
-}*/
+}
