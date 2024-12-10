@@ -23,6 +23,8 @@ import static edu.utility.Constants.PUBLIC_ADDRESS;
 
 public class BuyConnectionCommand implements Command {
     private final DataManager dataManager;
+    private static final String INSUFFICIENT_FUNDS_IMAGE_URL = "https://s1.hostingkartinok.com/uploads/images/2024/12/ead747c68f60511d1819838f07811359.jpg";
+    private static final String SUCCESS_IMAGE_URL = "https://s1.hostingkartinok.com/uploads/images/2024/12/323a6e17d6fa670a2b2e93fe22dca455.jpg";
 
     public BuyConnectionCommand(DataManager incomingDataManager) {
         dataManager = incomingDataManager;
@@ -50,6 +52,7 @@ public class BuyConnectionCommand implements Command {
                     .append(clientTransfer.paymentKey()).append(plainTextMarkdownFormatter)
                     .append(endOfString);
             responseMessage = stringBuilder.toString();
+            return new BotResponseToUserWrapper(chatId, responseMessage, true, null, INSUFFICIENT_FUNDS_IMAGE_URL, null);
         } else {
             String vpnProfile = "TEST";
             Date newDateExpiredAt;
@@ -103,7 +106,7 @@ public class BuyConnectionCommand implements Command {
             responseMessage  = UserProfileFormatter.formatCredentialsForConnection(responseText);
         }
 
-        return new BotResponseToUserWrapper(update.userId(), responseMessage, true, null);
+        return new BotResponseToUserWrapper(update.userId(), responseMessage, true, null, SUCCESS_IMAGE_URL, null);
     }
 
     @Override

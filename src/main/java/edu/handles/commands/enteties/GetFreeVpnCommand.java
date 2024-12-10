@@ -72,7 +72,7 @@ public class GetFreeVpnCommand implements Command {
         String responseText = stringBuilder.toString();
         String markdownWrappedText = UserProfileFormatter.formatCredentialsForConnection(responseText);
 
-        return new BotResponseToUserWrapper(update.userId(), markdownWrappedText, true, null);
+        return new BotResponseToUserWrapper(update.userId(), markdownWrappedText, true, null,null, null);
     }
 
     private boolean isUserSubscribedToChannel(Long userId) {
