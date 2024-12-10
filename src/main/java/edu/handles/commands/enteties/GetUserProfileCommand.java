@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 public class GetUserProfileCommand implements Command {
     DataManager dataManager;
     UserProfileFormatter userProfileFormatter;
+    private static final String INSTRUCTION_VIDEO_URL = "URL To Hosted Video";
 
     public GetUserProfileCommand(DataManager incomingDataManager, UserProfileFormatter incomingUserProfileFormatter) {
         dataManager = incomingDataManager;
@@ -27,7 +28,7 @@ public class GetUserProfileCommand implements Command {
         String formattedInfo = userProfileFormatter.format(allUserInfo);
 
         Logger.getAnonymousLogger().info(formattedInfo);
-        return new BotResponseToUserWrapper(tgIdLong, formattedInfo, true, null);
+        return new BotResponseToUserWrapper(tgIdLong, formattedInfo, true, null, null, INSTRUCTION_VIDEO_URL);
     }
 
     @Override

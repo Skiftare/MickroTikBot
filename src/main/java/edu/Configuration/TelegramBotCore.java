@@ -8,6 +8,9 @@ import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -60,7 +63,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + messageText);
 
             UserMessageFromBotWrapper userMessage = new UserMessageFromBotWrapper(update, status);
-            BotResponseToUserWrapper response = new BotResponseToUserWrapper(chatId, UNKNOWN_COMMAND, false, null);
+            BotResponseToUserWrapper response = new BotResponseToUserWrapper(chatId, UNKNOWN_COMMAND, false, null, null, null);
             if (command != null && command.isVisibleForKeyboard(status)) {
                 response = command.execute(userMessage);
                 if (response.keyboardMarkup() == null) {
@@ -68,7 +71,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                             response.userId(),
                             response.message(),
                             response.isMarkdownEnabled(),
-                            getKeyboardMarkup(status));
+                            getKeyboardMarkup(status),
+                            response.imageLink(),
+                            response.videoLink());
                 }
             } else {
                 if (response.keyboardMarkup() == null) {
@@ -76,7 +81,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                             response.userId(),
                             response.message(),
                             response.isMarkdownEnabled(),
-                            getKeyboardMarkup(status));
+                            getKeyboardMarkup(status),
+                            response.imageLink(),
+                            response.videoLink());
                 }
 
             }
@@ -98,7 +105,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     response.userId(),
                     response.message(),
                     response.isMarkdownEnabled(),
-                    getKeyboardMarkup(status));
+                    getKeyboardMarkup(status),
+                    response.imageLink(),
+                    response.videoLink());
 
             sendMessageToUser(response);
         }
@@ -111,9 +120,22 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
     public void sendMessageToUser(BotResponseToUserWrapper message) {
         try {
+            if (message.imageLink() != null) {
+                // Отправляем изображение
+                SendPhoto sendPhoto = new SendPhoto();
+                sendPhoto.setChatId(message.userId());
+                sendPhoto.setPhoto(new InputFile(message.imageLink()));
+
+                Logger.getAnonymousLogger().info("Sending photo: ");
+                Logger.getAnonymousLogger().info(message.imageLink());
+                Logger.getAnonymousLogger().info(String.valueOf(message.userId()));
+                Logger.getAnonymousLogger().info(String.valueOf(message.isMarkdownEnabled()));
+
+                execute(sendPhoto);
+            }
+            // Отправляем текстовое сообщение
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(message.userId());
-
             sendMessage.setText(message.message());
             sendMessage.setReplyMarkup(message.keyboardMarkup());
             sendMessage.enableMarkdown(message.isMarkdownEnabled());
@@ -124,10 +146,24 @@ public class TelegramBotCore extends TelegramLongPollingBot {
             Logger.getAnonymousLogger().info(String.valueOf(message.isMarkdownEnabled()));
 
             execute(sendMessage);
+
+            if (message.videoLink() != null) {
+                // Отправляем видео
+                SendVideo sendVideo = new SendVideo();
+                sendVideo.setChatId(message.userId());
+                sendVideo.setVideo(new InputFile(message.imageLink()));
+                sendVideo.setCaption("Инструкция по использованию VPN-L2TP подключения:");
+
+                Logger.getAnonymousLogger().info("Sending video: ");
+                Logger.getAnonymousLogger().info(message.videoLink());
+                Logger.getAnonymousLogger().info(String.valueOf(message.userId()));
+                Logger.getAnonymousLogger().info(String.valueOf(message.isMarkdownEnabled()));
+
+                execute(sendVideo);
+            }
         } catch (TelegramApiException e) {
             Logger.getAnonymousLogger().severe("Error while sending message to user: " + e.getMessage());
         }
     }
-
 
 }
