@@ -36,8 +36,7 @@ public class RouterConnector {
             + "abcdefghijklmnopqrstuvwxyz";
     private static final Integer USERS_LOGIN_LENGTH = 5;
     private static final String PASSWORD_CHARACTERS = LOGIN_CHARACTERS
-            + "0123456789" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            + "abcdefghijklmnopqrstuvwxyz";
+            + "0123456789" + LOGIN_CHARACTERS;
     private static final Integer USERS_PASSWORD_LENGTH = 10;
 
     private static final String MONTHLY_PROFILE = "30d";

@@ -68,7 +68,8 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                             response.userId(),
                             response.message(),
                             response.isMarkdownEnabled(),
-                            getKeyboardMarkup(status));
+                            getKeyboardMarkup(status)
+                    );
                 }
             } else {
                 if (response.keyboardMarkup() == null) {
@@ -98,7 +99,8 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     response.userId(),
                     response.message(),
                     response.isMarkdownEnabled(),
-                    getKeyboardMarkup(status));
+                    getKeyboardMarkup(status)
+            );
 
             sendMessageToUser(response);
         }

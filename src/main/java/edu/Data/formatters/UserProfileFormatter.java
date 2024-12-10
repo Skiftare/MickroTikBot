@@ -53,7 +53,9 @@ public final class UserProfileFormatter {
         if (client.vpnProfile() != null) {
             try {
                 result.append(ENDL_STRING);
-                result.append("🔐 VPN профиль: ").append((EncryptionUtil.decrypt(client.vpnProfile())));
+                result.append("🔐 VPN профиль: ").append(formatCredentialsForConnection(EncryptionUtil.decrypt(
+                        client.vpnProfile()))
+                );
             } catch (Exception e) {
                 Logger.getAnonymousLogger().info("Exception: " + e.getMessage());
             }
@@ -66,6 +68,7 @@ public final class UserProfileFormatter {
                 result.append("⏰ Действует до: ").append(client.expiredAt());
             }
         }
+        result.append(" ");
         return result.toString();
     }
 

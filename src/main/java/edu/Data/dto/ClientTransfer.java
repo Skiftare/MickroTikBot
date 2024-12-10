@@ -17,6 +17,7 @@ import java.sql.Date;
  * @param isInPaymentProcess флаг процесса оплаты
  * @param paymentKey ключ платежа
  * @param balance баланс клиента
+ * @param heldBalance заблокированный баланс клиента
  */
 public record ClientTransfer(Long id,
                            Long tgUserId,
@@ -28,7 +29,8 @@ public record ClientTransfer(Long id,
                            Date expiredAt,
                            boolean isInPaymentProcess,
                            String paymentKey,
-                           BigDecimal balance) {
+                           BigDecimal balance,
+                           BigDecimal heldBalance) {
 
     /**
      * Конструктор для создания записи о клиенте без ID.
@@ -49,7 +51,7 @@ public record ClientTransfer(Long id,
                          Boolean isVpnProfileAlive,
                          Date expiredAt) {
         this(null, tgUserId, phone, name, userLastVisited, vpnProfile, isVpnProfileAlive, expiredAt,
-             false, "0", BigDecimal.ZERO);
+             false, "0", BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     /**
@@ -74,6 +76,22 @@ public record ClientTransfer(Long id,
                          Boolean isVpnProfileAlive,
                          Date expiredAt) {
         this(id, tgUserId, phone, name, userLastVisited, vpnProfile, isVpnProfileAlive, expiredAt,
-             false, "0", BigDecimal.ZERO);
+             false, "0", BigDecimal.ZERO, BigDecimal.ZERO);
+    }
+
+    @SuppressWarnings("ParameterNumber")
+    public ClientTransfer(Long id,
+    Long tgUserId,
+    String phone,
+    String name,
+    Date userLastVisited,
+    String vpnProfile,
+    Boolean isVpnProfileAlive,
+    Date expiredAt,
+    boolean isInPaymentProcess,
+    String paymentKey,
+    BigDecimal balance) {
+     this(id, tgUserId, phone, name, userLastVisited, vpnProfile, isVpnProfileAlive, expiredAt, isInPaymentProcess,
+             paymentKey, balance, BigDecimal.ZERO);
     }
 }
