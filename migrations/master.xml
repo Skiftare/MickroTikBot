@@ -17,5 +17,8 @@
     <changeSet id="create-payments-table" author="Skiftare">
         <sqlFile path="tables_configuration/stellar_transactions.sql"/>
     </changeSet>
+    <changeSet id="create-helding_balance" author="Skiftare">
+        <sqlFile path="tables_configuration/add_held_balance.sql"/>
+    </changeSet>
 
 </databaseChangeLog>

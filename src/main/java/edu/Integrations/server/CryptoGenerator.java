@@ -1,7 +1,6 @@
 package edu.Integrations.server;
 
-import org.telegram.telegrambots.meta.api.objects.Update;
-
+import edu.handles.commands.UserMessageFromBotWrapper;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -87,10 +86,10 @@ public class CryptoGenerator {
     }
 
 
-    public static String generateUsersHash(Update update) {
-        Long tgUserId = update.getMessage().getFrom().getId();
-        String phoneNumber = update.getMessage().getContact().getPhoneNumber();
-        String name = update.getMessage().getFrom().getFirstName() + " " + update.getMessage().getFrom().getLastName();
+    public static String generateUsersHash(UserMessageFromBotWrapper update) {
+        Long tgUserId = update.userId();
+        String phoneNumber = update.phoneNumber();
+        String name = update.firstName() + " " + update.lastName();
         String rawData = tgUserId + "_" + phoneNumber + "_" + name;
         String salt = generateSalt();
         long timestamp = System.currentTimeMillis();

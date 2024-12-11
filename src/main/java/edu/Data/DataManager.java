@@ -1,11 +1,11 @@
 package edu.Data;
 
+import java.time.Duration;
+import java.util.List;
+
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
 import edu.models.UserProfileStatus;
-
-import java.time.Duration;
-import java.util.List;
 
 
 public interface DataManager {
@@ -42,5 +42,6 @@ public interface DataManager {
 
     void updateUserPhoneAndHash(Long tgUserId, String newPhone, String hash);
 
+    void releaseAllHeldFunds();
 
 }
