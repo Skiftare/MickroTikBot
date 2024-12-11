@@ -18,6 +18,7 @@ import edu.handles.commands.enteties.InfoCommand;
 import edu.handles.commands.enteties.ProfileCommand;
 import edu.handles.commands.enteties.RegisterCommand;
 import edu.handles.tables.CommandTable;
+import edu.startup.HeldFundsReleaser;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
@@ -65,22 +66,31 @@ public class BotApplication {
 
     }
 
+    private static void releaseHeldFunds(JdbcDataManager jdbcDataManager) {
+        LOGGER.info("Releasing held funds");
+        HeldFundsReleaser fundsReleaser = new HeldFundsReleaser(jdbcDataManager);
+        fundsReleaser.releaseAllHeldFunds();
+        LOGGER.info("Held funds released");
+    }
+
 
     public static void main(String[] args) throws TelegramApiException {
 
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
             // Сборка бота
-            //TODO: стоит ли всё в одном try хранить, или лучше растащить процесс сборки и получше прологировать его?
             DataConnectConfigurator dataConnection = dataConnectionAssembling();
 
             JdbcDataManager jdbcDataManager = new JdbcDataManager(dataConnection);
+
+            releaseHeldFunds(jdbcDataManager);
             CommandTable coreCommandTable = commandTableAssembling(jdbcDataManager);
             KeyboardMarkupBuilder keyboardMarkupBuilder = new KeyboardMarkupBuilder(coreCommandTable);
 
             LOGGER.info("Registering bot");
             botsApi.registerBot(new TelegramBotCore(coreCommandTable, keyboardMarkupBuilder, jdbcDataManager));
             LOGGER.info("Bot registered");
+
         } catch (TelegramApiException e) {
             LOGGER.info("Bot registration failed with stacktrace: " + e.getStackTrace());
         }
