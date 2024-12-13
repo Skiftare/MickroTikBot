@@ -15,6 +15,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -147,11 +149,11 @@ public class TelegramBotCore extends TelegramLongPollingBot {
 
             execute(sendMessage);
 
-            if (message.videoLink() != null) {
+            /*if (message.videoLink() != null) {
                 // Отправляем видео
                 SendVideo sendVideo = new SendVideo();
                 sendVideo.setChatId(message.userId());
-                sendVideo.setVideo(new InputFile(message.imageLink()));
+                sendVideo.setVideo(new InputFile(message.videoLink()));
                 sendVideo.setCaption("Инструкция по использованию VPN-L2TP подключения:");
 
                 Logger.getAnonymousLogger().info("Sending video: ");
@@ -160,7 +162,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                 Logger.getAnonymousLogger().info(String.valueOf(message.isMarkdownEnabled()));
 
                 execute(sendVideo);
-            }
+            }*/
         } catch (TelegramApiException e) {
             Logger.getAnonymousLogger().severe("Error while sending message to user: " + e.getMessage());
         }
