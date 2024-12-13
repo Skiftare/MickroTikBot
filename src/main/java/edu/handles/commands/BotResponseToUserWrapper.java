@@ -23,4 +23,11 @@ public record BotResponseToUserWrapper(
         this(userId, message, false, null, imageLink, videoLink);
     }
 
+    public BotResponseToUserWrapper(
+            Long userId,
+            String message, boolean isMarkdownEnabled, ReplyKeyboardMarkup keyboardMarkup) {
+        this(userId, message, isMarkdownEnabled, keyboardMarkup, null, null);
+    }
+
+
 }

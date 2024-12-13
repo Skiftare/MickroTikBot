@@ -9,14 +9,11 @@ import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -65,7 +62,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + messageText);
 
             UserMessageFromBotWrapper userMessage = new UserMessageFromBotWrapper(update, status);
-            BotResponseToUserWrapper response = new BotResponseToUserWrapper(chatId, UNKNOWN_COMMAND, false, null, null, null);
+            BotResponseToUserWrapper response = new BotResponseToUserWrapper(chatId, UNKNOWN_COMMAND,
+                    false, null, null, null
+            );
             if (command != null && command.isVisibleForKeyboard(status)) {
                 response = command.execute(userMessage);
                 if (response.keyboardMarkup() == null) {
@@ -75,8 +74,9 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                             response.isMarkdownEnabled(),
                             getKeyboardMarkup(status),
                             response.imageLink(),
-                            response.videoLink());
+                            response.videoLink()
                     );
+
                 }
             } else {
                 if (response.keyboardMarkup() == null) {
@@ -86,7 +86,8 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                             response.isMarkdownEnabled(),
                             getKeyboardMarkup(status),
                             response.imageLink(),
-                            response.videoLink());
+                            response.videoLink()
+                    );
                 }
 
             }
@@ -111,7 +112,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     getKeyboardMarkup(status),
                     response.imageLink(),
                     response.videoLink());
-            );
+
 
 
             sendMessageToUser(response);
