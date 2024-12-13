@@ -4,10 +4,8 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import edu.Data.dto.ClientTransfer;
-
 import java.util.Random;
 import java.util.logging.Logger;
-
 import static edu.Data.formatters.EncryptionUtil.decrypt;
 
 @SuppressWarnings("HideUtilityClassConstructor")
@@ -38,7 +36,7 @@ public class RouterConnector {
             + "abcdefghijklmnopqrstuvwxyz";
     private static final Integer USERS_LOGIN_LENGTH = 5;
     private static final String PASSWORD_CHARACTERS = LOGIN_CHARACTERS
-            + "0123456789@#!%";
+            + "0123456789" + LOGIN_CHARACTERS;
     private static final Integer USERS_PASSWORD_LENGTH = 10;
 
     private static final String MONTHLY_PROFILE = "30d";

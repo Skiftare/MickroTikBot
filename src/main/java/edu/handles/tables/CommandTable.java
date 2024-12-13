@@ -1,7 +1,6 @@
 package edu.handles.tables;
 
 import edu.handles.commands.Command;
-
 import java.util.LinkedHashMap;
 
 
