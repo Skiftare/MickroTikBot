@@ -81,7 +81,7 @@ public class CommandsTest {
 
         assertNotNull(result.message());
         assertEquals("/help", helpCommand.getCommandName());
-        verify(mockedCommandTable, times(1)).getCommands();
+        verify(mockedCommandTable, times(UserProfileStatus.values().length)).getCommands();
     }
 
 

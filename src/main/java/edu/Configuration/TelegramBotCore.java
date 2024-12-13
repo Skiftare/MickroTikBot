@@ -76,6 +76,7 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                             getKeyboardMarkup(status),
                             response.imageLink(),
                             response.videoLink());
+                    );
                 }
             } else {
                 if (response.keyboardMarkup() == null) {
@@ -110,6 +111,8 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     getKeyboardMarkup(status),
                     response.imageLink(),
                     response.videoLink());
+            );
+
 
             sendMessageToUser(response);
         }
