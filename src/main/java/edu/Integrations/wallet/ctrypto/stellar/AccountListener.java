@@ -5,7 +5,6 @@ import org.stellar.sdk.KeyPair;
 import org.stellar.sdk.requests.EventListener;
 import org.stellar.sdk.responses.operations.OperationResponse;
 import org.stellar.sdk.responses.operations.PaymentOperationResponse;
-
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -69,13 +68,7 @@ public class AccountListener {
 
                                 @Override
                                 public void onFailure(Optional<Throwable> optional, Optional<Integer> optional1) {
-                                    if (optional instanceof Optional) {
-                                        Logger.getAnonymousLogger().severe("Ошибка при обработке транзакции: "
-                                                + optional.get().getMessage());
-                                    } else {
-                                        Logger.getAnonymousLogger().severe("Случилось что-то страшное "
-                                                + optional1);
-                                    }
+
                                 }
                             }
                     );

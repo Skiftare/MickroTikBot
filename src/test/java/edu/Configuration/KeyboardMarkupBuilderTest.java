@@ -1,6 +1,6 @@
 package edu.Configuration;
 
-/*
+
 import edu.handles.commands.Command;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
@@ -127,4 +127,3 @@ public class KeyboardMarkupBuilderTest {
     }
 }
 
-*/

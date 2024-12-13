@@ -1,5 +1,5 @@
 package edu.Data;
-/*
+
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -61,4 +61,4 @@ public abstract class IntegrationTest {
         }
     }
 
-}*/
+}

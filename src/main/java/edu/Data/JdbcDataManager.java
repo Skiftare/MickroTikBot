@@ -1,12 +1,5 @@
 package edu.Data;
 
-
-import edu.Configuration.DataConnectConfigurator;
-import edu.Data.dto.ClientTransfer;
-import edu.Data.dto.UserInfo;
-import edu.models.UserProfileStatus;
-import org.stellar.sdk.responses.operations.PaymentOperationResponse;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +13,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.stellar.sdk.responses.operations.PaymentOperationResponse;
+
+import edu.Configuration.DataConnectConfigurator;
+import edu.Data.dto.ClientTransfer;
+import edu.Data.dto.UserInfo;
+import edu.models.UserProfileStatus;
 
 @SuppressWarnings({"MultipleStringLiterals", "MagicNumber"})
 public class JdbcDataManager implements DataManager, PaymentDataManager {
@@ -27,8 +26,9 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
 
             "INSERT INTO users "
                     + "(tg_user_id, phone, name, user_last_visited, vpn_profile, "
-                    + "is_vpn_profile_alive, expired_at, is_payment_pending, key_for_recognizing, balance) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+                    + "is_vpn_profile_alive, expired_at, is_payment_pending, key_for_recognizing, "
+                    + "balance, held_balance) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
 
     private static final String SELECT_USER_BY_ID_QUERY =
             "SELECT * FROM users WHERE tg_user_id = ?";
@@ -50,23 +50,7 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
     // Метод для создания записи
     public void save(ClientTransfer client) {
 
-        try (Connection connection = dataConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY)) {
-
-            preparedStatement.setLong(1, client.tgUserId());
-            preparedStatement.setString(2, client.phone());
-            preparedStatement.setString(3, client.name());
-            preparedStatement.setDate(4, new java.sql.Date(client.userLastVisited().getTime()));
-            preparedStatement.setString(5, client.vpnProfile());
-            preparedStatement.setBoolean(6, client.isVpnProfileAlive());
-            preparedStatement.setDate(7, new java.sql.Date(client.expiredAt().getTime()));
-            preparedStatement.setBoolean(8, client.isInPaymentProcess());
-            preparedStatement.setString(9, client.paymentKey());
-            preparedStatement.setBigDecimal(10, client.balance());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
-        }
+        saveUserWithPreparedStatement(client);
     }
 
     // Метод для чтения записи
@@ -157,6 +141,10 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
     public void addUser(ClientTransfer client) {
 
 
+        saveUserWithPreparedStatement(client);
+    }
+
+    private void saveUserWithPreparedStatement(ClientTransfer client) {
         try (Connection connection = dataConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY)) {
 
@@ -170,6 +158,7 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
             preparedStatement.setBoolean(8, client.isInPaymentProcess());
             preparedStatement.setString(9, client.paymentKey());
             preparedStatement.setBigDecimal(10, client.balance());
+            preparedStatement.setBigDecimal(11, client.heldBalance());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
@@ -480,6 +469,19 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
         } catch (SQLException e) {
             Logger.getAnonymousLogger().info("Error processing transaction: "
                     + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @Override
+    public void releaseAllHeldFunds() {
+        String query = "UPDATE users SET balance = balance + held_balance, held_balance = 0 WHERE held_balance > 0";
+        try (Connection connection = dataConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            int updatedRows = preparedStatement.executeUpdate();
+            Logger.getAnonymousLogger().info("Released held funds for " + updatedRows + " users");
+        } catch (SQLException e) {
+            Logger.getAnonymousLogger().info("Error releasing held funds: " + e.getMessage());
+            Logger.getAnonymousLogger().info(Arrays.toString(e.getStackTrace()));
         }
     }
 

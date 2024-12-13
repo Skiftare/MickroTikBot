@@ -3,15 +3,14 @@ package edu.handles.commands.enteties;
 import edu.Data.DataManager;
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
+import edu.Data.formatters.UserProfileFormatter;
 import edu.Integrations.telegram.SubscriptionChecker;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.sql.Date;
 import java.util.logging.Logger;
-
 import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.Integrations.chr.RouterConnector.initialisationTrial;
 import static edu.utility.Constants.DAY_LENGTH_IN_MILLISECONDS;
@@ -26,18 +25,17 @@ public class GetFreeVpnCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update) {
-        SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId().toString());
+    public BotResponseToUserWrapper execute(UserMessageFromBotWrapper update) {
+        Long chatId = update.userId();
 
         // Получаем информацию о пользователе
-        UserInfo userInfo = dataManager.getInfoById(update.getMessage().getChatId());
+        UserInfo userInfo = dataManager.getInfoById(chatId);
         ClientTransfer clientTransfer = userInfo.client();
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
             // Проверка подписки на канал
-            if (isUserSubscribedToChannel(update.getMessage().getFrom().getId())) {
+            if (isUserSubscribedToChannel(chatId)) {
                 // Пользователь подписан на канал, выдаем VPN профиль
                 String vpnProfile = initialisationTrial(clientTransfer);
 
@@ -71,9 +69,10 @@ public class GetFreeVpnCommand implements Command {
             Logger.getAnonymousLogger().info("Ошибка при выдаче VPN профиля: " + e.getMessage());
             stringBuilder.append("Произошла ошибка при выдаче VPN профиля. Пожалуйста, попробуйте позже.");
         }
+        String responseText = stringBuilder.toString();
+        String markdownWrappedText = UserProfileFormatter.formatCredentialsForConnection(responseText);
 
-        message.setText(stringBuilder.toString());
-        return message;
+        return new BotResponseToUserWrapper(update.userId(), markdownWrappedText, true, null);
     }
 
     private boolean isUserSubscribedToChannel(Long userId) {

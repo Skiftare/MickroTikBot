@@ -1,25 +1,32 @@
 package edu.Data;
-/*
-import edu.Configuration.DataConnectConfigurator;
-import edu.Data.dto.ClientTransfer;
-import edu.models.UserProfileStatus;
-import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.stellar.sdk.Memo;
-import org.stellar.sdk.Transaction;
-import org.stellar.sdk.responses.TransactionResponse;
-import org.stellar.sdk.responses.operations.PaymentOperationResponse;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import org.stellar.sdk.Memo;
+import org.stellar.sdk.responses.TransactionResponse;
+import org.stellar.sdk.responses.operations.PaymentOperationResponse;
+
+import edu.Configuration.DataConnectConfigurator;
+import edu.Data.dto.ClientTransfer;
+import edu.models.UserProfileStatus;
 
 public class JdbcDataManagerTest extends IntegrationTest {
     private static final String url = POSTGRES.getJdbcUrl();
@@ -119,6 +126,7 @@ public class JdbcDataManagerTest extends IntegrationTest {
                 "0",
                 new BigDecimal(0)
         );
+
         jdbcDataManager.update(updatedClientTransfer);
         ClientTransfer foundClient = jdbcDataManager.findById(clientTransferUserFirst.tgUserId());
         assertNotNull(foundClient);
@@ -204,7 +212,68 @@ public class JdbcDataManagerTest extends IntegrationTest {
         }
     }
 
-    // Вспомогательный метод для создания мока PaymentOperationResponse
+    @Test
+    public void testReleaseAllHeldFunds() {
+        // Создаем клиента с удержанными средствами
+        ClientTransfer clientWithHeldFunds = new ClientTransfer(
+            null, 12347L, "1234567890", "Test User",
+            new Date(System.currentTimeMillis()),
+            "vpn_profile_1", true,
+            new Date(System.currentTimeMillis() + 123444),
+            false, "test memo mock",
+            new BigDecimal("100.00"), // основной баланс
+            new BigDecimal("50.00")   // удержанный баланс
+        );
+        
+        jdbcDataManager.save(clientWithHeldFunds);
+        
+        // Выполняем освобождение удержанных средств
+        jdbcDataManager.releaseAllHeldFunds();
+        
+        // Проверяем результат
+        ClientTransfer updatedClient = jdbcDataManager.findById(clientWithHeldFunds.tgUserId());
+        assertEquals(new BigDecimal("150.0000000"), updatedClient.balance());
+        assertEquals(BigDecimal.ZERO, updatedClient.heldBalance());
+    }
+
+    @Test
+    public void testReleaseAllHeldFundsWithMultipleUsers() {
+        // Создаем несколько клиентов с разными удержанными средствами
+        ClientTransfer client1 = new ClientTransfer(
+            null, 12348L, "1111111111", "User 1",
+            new Date(System.currentTimeMillis()),
+            "vpn_profile_1", true,
+            new Date(System.currentTimeMillis() + 123444),
+            false, "test memo 1",
+            new BigDecimal("100.0000000"),
+            new BigDecimal("50.0000000")
+        );
+        
+        ClientTransfer client2 = new ClientTransfer(
+            null, 12349L, "2222222222", "User 2",
+            new Date(System.currentTimeMillis()),
+            "vpn_profile_2", true,
+            new Date(System.currentTimeMillis() + 123444),
+            false, "test memo 2",
+            new BigDecimal("200.0000000"),
+            new BigDecimal("75.0000000")
+        );
+        
+        jdbcDataManager.save(client1);
+        jdbcDataManager.save(client2);
+        
+        // Выполняем освобождение удержанных средств
+        jdbcDataManager.releaseAllHeldFunds();
+        
+        // Проверяем результаты для обоих клиентов
+        ClientTransfer updatedClient1 = jdbcDataManager.findById(client1.tgUserId());
+        ClientTransfer updatedClient2 = jdbcDataManager.findById(client2.tgUserId());
+        
+        assertEquals(new BigDecimal("150.0000000"), updatedClient1.balance());
+        assertEquals(BigDecimal.ZERO, updatedClient1.heldBalance());
+        
+        assertEquals(new BigDecimal("275.0000000"), updatedClient2.balance());
+        assertEquals(BigDecimal.ZERO, updatedClient2.heldBalance());
+    }
 
 }
-*/

@@ -1,7 +1,9 @@
 package edu.Configuration;
 
 import edu.Data.JdbcDataManager;
+import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -56,13 +58,28 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + status.toString()
                     + " sent message: "
                     + messageText);
-            SendMessage response = new SendMessage();
+
+            UserMessageFromBotWrapper userMessage = new UserMessageFromBotWrapper(update, status);
+            BotResponseToUserWrapper response = new BotResponseToUserWrapper(chatId, UNKNOWN_COMMAND, false, null);
             if (command != null && command.isVisibleForKeyboard(status)) {
-                response = command.execute(update);
+                response = command.execute(userMessage);
+                if (response.keyboardMarkup() == null) {
+                    response = new BotResponseToUserWrapper(
+                            response.userId(),
+                            response.message(),
+                            response.isMarkdownEnabled(),
+                            getKeyboardMarkup(status)
+                    );
+                }
             } else {
-                response.setChatId(chatId);
-                response.setText(UNKNOWN_COMMAND);
-                response.setReplyMarkup(getKeyboardMarkup(status));
+                if (response.keyboardMarkup() == null) {
+                    response = new BotResponseToUserWrapper(
+                            response.userId(),
+                            response.message(),
+                            response.isMarkdownEnabled(),
+                            getKeyboardMarkup(status));
+                }
+
             }
             sendMessageToUser(response);
         } else if (update.getMessage().hasContact()) {
@@ -71,8 +88,21 @@ public class TelegramBotCore extends TelegramLongPollingBot {
                     + " sent phone number: "
                     + update.getMessage().getContact().getPhoneNumber());
 
+            UserProfileStatus status = jdbcDataManager.getUserProfileStatus(update.getMessage().getChatId());
+
             Command authentificateCommand = commandTable.get("/authentificate");
-            authentificateCommand.execute(update);
+            UserMessageFromBotWrapper userMessage = new UserMessageFromBotWrapper(update, status);
+            BotResponseToUserWrapper response = authentificateCommand.execute(userMessage);
+            Long chatId = update.getMessage().getChatId();
+            status = jdbcDataManager.getUserProfileStatus(chatId);
+            response = new BotResponseToUserWrapper(
+                    response.userId(),
+                    response.message(),
+                    response.isMarkdownEnabled(),
+                    getKeyboardMarkup(status)
+            );
+
+            sendMessageToUser(response);
         }
     }
 
@@ -81,9 +111,21 @@ public class TelegramBotCore extends TelegramLongPollingBot {
         return keyboardMarkupBuilder.getKeyboardByStatus(status);
     }
 
-    public void sendMessageToUser(SendMessage message) {
+    public void sendMessageToUser(BotResponseToUserWrapper message) {
         try {
-            execute(message);
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setChatId(message.userId());
+
+            sendMessage.setText(message.message());
+            sendMessage.setReplyMarkup(message.keyboardMarkup());
+            sendMessage.enableMarkdown(message.isMarkdownEnabled());
+
+            Logger.getAnonymousLogger().info("Sending message: ");
+            Logger.getAnonymousLogger().info(message.message());
+            Logger.getAnonymousLogger().info(String.valueOf(message.userId()));
+            Logger.getAnonymousLogger().info(String.valueOf(message.isMarkdownEnabled()));
+
+            execute(sendMessage);
         } catch (TelegramApiException e) {
             Logger.getAnonymousLogger().severe("Error while sending message to user: " + e.getMessage());
         }
