@@ -22,6 +22,7 @@ import static edu.utility.Constants.CONNECTION_PRICE;
 import static edu.utility.Constants.MONTH_LENGTH_IN_MILLISECONDS;
 import static edu.utility.Constants.PUBLIC_ADDRESS;
 
+
 public class BuyConnectionCommand implements Command {
     private final DataManager dataManager;
     private static final String INSUFFICIENT_FUNDS_IMAGE_URL = "https://s1.hostingkartinok.com/uploads/images/2024/12/ead747c68f60511d1819838f07811359.jpg";
@@ -36,6 +37,8 @@ public class BuyConnectionCommand implements Command {
         Long chatId = update.userId();
         UserInfo userInfo = dataManager.getInfoById(chatId);
         ClientTransfer clientTransfer = userInfo.client();
+        String plainTextMarkdownFormatter = "`";
+        String endOfString = "\n";
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -50,8 +53,11 @@ public class BuyConnectionCommand implements Command {
                     .append(plainTextMarkdownFormatter)
                     .append(clientTransfer.paymentKey()).append(plainTextMarkdownFormatter)
                     .append(endOfString);
-            responseMessage = stringBuilder.toString();
-            return new BotResponseToUserWrapper(chatId, responseMessage, true, null, INSUFFICIENT_FUNDS_IMAGE_URL, null);
+            String responseMessage = stringBuilder.toString();
+            return new BotResponseToUserWrapper(
+                    chatId, responseMessage, true, null,
+                    INSUFFICIENT_FUNDS_IMAGE_URL, null
+            );
         }
 
         try {
@@ -74,33 +80,26 @@ public class BuyConnectionCommand implements Command {
             if (!vpnProfile.startsWith("!Не удалось установить")) {
                 vpnProfile = encrypt(vpnProfile);
 
+
                 takeFundsToCompanyBalance(clientWithHeldBalance, newDateExpiredAt);
 
                 stringBuilder.append(vpnProfile);
                 String responseText = stringBuilder.toString();
                 String responseMessage = UserProfileFormatter.formatCredentialsForConnection(responseText);
-                return new BotResponseToUserWrapper(chatId, responseMessage, true, null);
+                return new BotResponseToUserWrapper(
+                        update.userId(), responseMessage,
+                        true, null, SUCCESS_IMAGE_URL, null
+                );
             } else {
                 // Если операция не удалась, возвращаем средства
                 releaseFunds(clientWithHeldBalance);
-                return new BotResponseToUserWrapper(chatId, vpnProfile, true, null);
+                return new BotResponseToUserWrapper(chatId, vpnProfile);
             }
         } catch (Exception e) {
             // В случае ошибки возвращаем средства
             releaseFunds(clientTransfer);
             throw new RuntimeException("Ошибка при обработке платежа", e);
         }
-    }
-
-    private BotResponseToUserWrapper handleInsufficientFunds(ClientTransfer clientTransfer) {
-        final String endlWithMarkdown = "`\n";
-
-        String stringBuilder = "У вас недостаточно средств для покупки подключения к интернету\n"
-                + "Ваш баланс: " + clientTransfer.balance() + "\n"
-                + "Кошелек для пополнения: `" + PUBLIC_ADDRESS + endlWithMarkdown
-                + "Комментарий для идентификации платежа: `"
-                + clientTransfer.paymentKey() + endlWithMarkdown;
-        return new BotResponseToUserWrapper(clientTransfer.tgUserId(), stringBuilder, true, null);
     }
 
     private ClientTransfer holdFunds(ClientTransfer client) {
@@ -140,10 +139,7 @@ public class BuyConnectionCommand implements Command {
                 newBalance, newHeldBalance
         );
         dataManager.update(updatedClient);
-      
 
-        return new BotResponseToUserWrapper(update.userId(), responseMessage, true, null, SUCCESS_IMAGE_URL, null);
-        
     }
 
     @Override
