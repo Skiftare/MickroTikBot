@@ -65,6 +65,8 @@ public final class UserProfileFormatter {
                 result.append(ENDL_STRING);
                 result.append("⏰ Действует до: ").append(client.expiredAt());
             }
+            result.append("\n");
+            result.append("https://t.me/MikroTikBotTGC/7");
         }
         return result.toString();
     }

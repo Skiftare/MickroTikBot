@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class GetUserProfileCommand implements Command {
     DataManager dataManager;
     UserProfileFormatter userProfileFormatter;
-    private static final String INSTRUCTION_VIDEO_URL = "URL To Hosted Video";
+    private static final String INSTRUCTION_VIDEO_URL = "C:\\Users\\Berdi\\IdeaProjects\\MickroTikBot\\pictures\\video_2024-12-09_01-10-35.mp4   ";
 
     public GetUserProfileCommand(DataManager incomingDataManager, UserProfileFormatter incomingUserProfileFormatter) {
         dataManager = incomingDataManager;
