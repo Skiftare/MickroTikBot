@@ -71,7 +71,8 @@ public final class UserProfileFormatter {
             result.append("https://t.me/MikroTikBotTGC/7");
         }
         result.append(" ");
-        return result.toString();
+
+        return formatCredentialsForConnection(result.toString());
     }
 
     public static String formatCredentialsForConnection(String incomedString) {
