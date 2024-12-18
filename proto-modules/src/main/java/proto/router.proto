@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "proto";
+option java_outer_classname = "RouterProtos";
+
+service RouterConnector {
+  rpc InitialisationSecret (ClientRequest) returns (ResponseMessage);
+  rpc InitialisationTrial (ClientRequest) returns (ResponseMessage);
+  rpc ProlongSecret (ClientRequestWithProlongationSecret) returns (ResponseMessage);
+}
+
+message ClientRequest {
+  int64 tg_user_id = 1;
+}
+message ClientRequestWithProlongationSecret{
+  int64 tg_user_id = 1;
+  string prolongation_secret = 2;
+}
+
+
+message ResponseMessage {
+  string message = 1;
+}
