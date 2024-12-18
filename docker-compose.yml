@@ -54,7 +54,6 @@ services:
         - ROUTER_BEHAVIOUR=${ROUTER_BEHAVIOUR}
     env_file:
         - .env
-
     restart: always
     ports:
       - "8090:8090"

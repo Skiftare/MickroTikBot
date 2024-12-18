@@ -1,26 +1,21 @@
 package edu.handles.commands.enteties;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.logging.Logger;
-
+import edu.Data.DataManager;
+import edu.Data.dto.ClientTransfer;
+import edu.Data.dto.UserInfo;
 import edu.Data.formatters.UserProfileFormatter;
 import edu.EncryptionUtil;
 import edu.Integrations.chr.RouterGrpcConnector;
 import edu.handles.commands.BotResponseToUserWrapper;
-import edu.handles.commands.UserMessageFromBotWrapper;
-
-import edu.Data.DataManager;
-import edu.Data.dto.ClientTransfer;
-import edu.Data.dto.UserInfo;
-
-
 import edu.handles.commands.Command;
+import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 
-import static edu.utility.Constants.CONNECTION_PRICE;
-import static edu.utility.Constants.MONTH_LENGTH_IN_MILLISECONDS;
-import static edu.utility.Constants.PUBLIC_ADDRESS;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.logging.Logger;
+
+import static edu.utility.Constants.*;
 
 
 public class BuyConnectionCommand implements Command {
@@ -89,10 +84,9 @@ public class BuyConnectionCommand implements Command {
 
             // Если операция успешна, списываем удержанные средства и обновляем профиль
             if (!vpnProfile.startsWith("!Не удалось установить")) {
-                vpnProfile = EncryptionUtil.encrypt(vpnProfile);
 
 
-                takeFundsToCompanyBalance(clientWithHeldBalance, newDateExpiredAt);
+                takeFundsToCompanyBalance(clientWithHeldBalance, newDateExpiredAt, EncryptionUtil.encrypt(vpnProfile));
 
                 stringBuilder.append(vpnProfile);
                 String responseText = stringBuilder.toString();
@@ -140,7 +134,7 @@ public class BuyConnectionCommand implements Command {
         dataManager.update(updatedClient);
     }
 
-    private void takeFundsToCompanyBalance(ClientTransfer client, Date newDateExpiredAt) {
+    private void takeFundsToCompanyBalance(ClientTransfer client, Date newDateExpiredAt, String vpnProfile) {
         BigDecimal newBalance = client.balance();
         BigDecimal newHeldBalance = client.heldBalance().subtract(CONNECTION_PRICE);
         ClientTransfer updatedClient = new ClientTransfer(

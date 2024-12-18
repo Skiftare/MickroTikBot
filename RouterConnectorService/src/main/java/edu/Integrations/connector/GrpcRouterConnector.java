@@ -19,11 +19,13 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
 
 
 
-
     @Override
     public void initialisationSecret(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         Logger.getAnonymousLogger().info("Doing response to initialisationSecret");
+        Logger.getAnonymousLogger().info(request.toString());
+        Logger.getAnonymousLogger().info(String.valueOf(request.getTgUserId()));
         ClientDtoToRouter clientTransfer = new ClientDtoToRouter(request);
+        
         String result = vpnManagerFactory.initialisationSecret(clientTransfer);
 
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()

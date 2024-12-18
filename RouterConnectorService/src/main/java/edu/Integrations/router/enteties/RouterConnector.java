@@ -16,11 +16,8 @@ import java.util.logging.Logger;
 public class RouterConnector implements VpnProfileServerManager {
 
 
-    private static final RouterConnector instance = new RouterConnector();
-    private RouterConnector() {}
-    public static RouterConnector getInstance() {
-        return instance;
-    }
+    public RouterConnector() {}
+
 
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;

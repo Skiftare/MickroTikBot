@@ -7,12 +7,7 @@ import edu.dto.ClientDtoToRouterWithVpnProfile;
 
 public class TestRouterConnector implements VpnProfileServerManager {
 
-    private static final TestRouterConnector instance = new TestRouterConnector();
-    private TestRouterConnector() {
-    }
-    public static TestRouterConnector getInstance() {
-        return instance;
-    }
+
 
 
     private static String generateSuccessMessageForUser() {

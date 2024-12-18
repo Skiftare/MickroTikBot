@@ -20,6 +20,8 @@ import edu.handles.commands.enteties.ProfileCommand;
 import edu.handles.commands.enteties.RegisterCommand;
 import edu.handles.tables.CommandTable;
 import edu.startup.HeldFundsReleaser;
+import io.grpc.NameResolverRegistry;
+import io.grpc.internal.DnsNameResolverProvider;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
@@ -40,8 +42,11 @@ public class BotApplication {
 
     private static CommandTable commandTableAssembling(JdbcDataManager jdbcDataManager) {
         LOGGER.info("Assembling command table");
+        // Регистрация DNS-резолвера
+        NameResolverRegistry.getDefaultRegistry().register(new DnsNameResolverProvider());
+        Logger.getAnonymousLogger().info("DNS NameResolver registered");
 
-        RouterGrpcConnector routerGrpcConnector = new RouterGrpcConnector("RouterConnector",8090);
+        RouterGrpcConnector routerGrpcConnector = new RouterGrpcConnector("dns:///RouterConnector:8090");
 
         Command infoCommand = new InfoCommand();
         Command authorsCommand = new AuthorsCommand();

@@ -14,17 +14,22 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class VpnProfileServerManagerFactory implements VpnProfileServerManager {
-    private static final Map<String, VpnProfileServerManager> managerTable = new HashMap<>();
+    private static  Map<String, VpnProfileServerManager> managerTable = new HashMap<>();
     private static String envForRouterConnectorBehaviour = System.getenv("ROUTER_BEHAVIOUR");
     private static final String DEFAULT_ENV = "test";
 
-    static {
-        managerTable.put("production", RouterConnector.getInstance());
-        managerTable.put("test", TestRouterConnector.getInstance());
+    public VpnProfileServerManagerFactory() {
+        if(envForRouterConnectorBehaviour == null) {
+            envForRouterConnectorBehaviour = DEFAULT_ENV;
+        }
+        managerTable.put("production", new RouterConnector());
+        managerTable.put("test", new TestRouterConnector());
     }
 
     @Override
     public String initialisationSecret(ClientDtoToRouter clientTransfer) {
+        Logger.getAnonymousLogger().info("Doing response to initialisationSecret with clientTransfer: " + clientTransfer);
+        Logger.getAnonymousLogger().info("envForRouterConnectorBehaviour: " + envForRouterConnectorBehaviour);
         return managerTable.get(envForRouterConnectorBehaviour).initialisationSecret(clientTransfer);
         //return invokeDynamic("initialisationSecret", new Class[]{ClientDtoToRouter.class}, new Object[]{clientTransfer});
     }
