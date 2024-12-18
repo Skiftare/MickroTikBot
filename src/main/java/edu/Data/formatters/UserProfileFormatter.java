@@ -67,9 +67,12 @@ public final class UserProfileFormatter {
                 result.append(ENDL_STRING);
                 result.append("⏰ Действует до: ").append(client.expiredAt());
             }
+            result.append("\n");
+            result.append("https://t.me/MikroTikBotTGC/7");
         }
         result.append(" ");
-        return result.toString();
+
+        return formatCredentialsForConnection(result.toString());
     }
 
     public static String formatCredentialsForConnection(String incomedString) {

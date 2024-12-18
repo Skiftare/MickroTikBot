@@ -22,8 +22,11 @@ import static edu.utility.Constants.CONNECTION_PRICE;
 import static edu.utility.Constants.MONTH_LENGTH_IN_MILLISECONDS;
 import static edu.utility.Constants.PUBLIC_ADDRESS;
 
+
 public class BuyConnectionCommand implements Command {
     private final DataManager dataManager;
+    private static final String INSUFFICIENT_FUNDS_IMAGE_URL = "https://s1.hostingkartinok.com/uploads/images/2024/12/ead747c68f60511d1819838f07811359.jpg";
+    private static final String SUCCESS_IMAGE_URL = "https://s1.hostingkartinok.com/uploads/images/2024/12/323a6e17d6fa670a2b2e93fe22dca455.jpg";
 
     public BuyConnectionCommand(DataManager incomingDataManager) {
         dataManager = incomingDataManager;
@@ -34,17 +37,33 @@ public class BuyConnectionCommand implements Command {
         Long chatId = update.userId();
         UserInfo userInfo = dataManager.getInfoById(chatId);
         ClientTransfer clientTransfer = userInfo.client();
+        String plainTextMarkdownFormatter = "`";
+        String endOfString = "\n";
 
         StringBuilder stringBuilder = new StringBuilder();
 
         // Проверяем достаточно ли средств
         if (clientTransfer.balance().compareTo(CONNECTION_PRICE) <= 0) {
-            return handleInsufficientFunds(clientTransfer);
+            stringBuilder.append("У вас недостаточно средств для покупки подключения к интернету").append("\n");
+            stringBuilder.append("Ваш баланс: ").append(clientTransfer.balance()).append(endOfString);
+            stringBuilder.append("Кошелек для пополнения: ")
+                    .append(plainTextMarkdownFormatter).append(PUBLIC_ADDRESS)
+                    .append(plainTextMarkdownFormatter).append(endOfString);
+            stringBuilder.append("Комментарий для идентификации платежа: ")
+                    .append(plainTextMarkdownFormatter)
+                    .append(clientTransfer.paymentKey()).append(plainTextMarkdownFormatter)
+                    .append(endOfString);
+            String responseMessage = stringBuilder.toString();
+            return new BotResponseToUserWrapper(
+                    chatId, responseMessage, true, null,
+                    INSUFFICIENT_FUNDS_IMAGE_URL, null
+            );
         }
 
         try {
             // Переводим средства на удержание
             ClientTransfer clientWithHeldBalance = holdFunds(clientTransfer);
+
             String vpnProfile = "TEST";
             Date newDateExpiredAt = clientWithHeldBalance.expiredAt();
 
@@ -61,33 +80,26 @@ public class BuyConnectionCommand implements Command {
             if (!vpnProfile.startsWith("!Не удалось установить")) {
                 vpnProfile = encrypt(vpnProfile);
 
+
                 takeFundsToCompanyBalance(clientWithHeldBalance, newDateExpiredAt);
 
                 stringBuilder.append(vpnProfile);
                 String responseText = stringBuilder.toString();
                 String responseMessage = UserProfileFormatter.formatCredentialsForConnection(responseText);
-                return new BotResponseToUserWrapper(chatId, responseMessage, true, null);
+                return new BotResponseToUserWrapper(
+                        update.userId(), responseMessage,
+                        true, null, SUCCESS_IMAGE_URL, null
+                );
             } else {
                 // Если операция не удалась, возвращаем средства
                 releaseFunds(clientWithHeldBalance);
-                return new BotResponseToUserWrapper(chatId, vpnProfile, true, null);
+                return new BotResponseToUserWrapper(chatId, vpnProfile);
             }
         } catch (Exception e) {
             // В случае ошибки возвращаем средства
             releaseFunds(clientTransfer);
             throw new RuntimeException("Ошибка при обработке платежа", e);
         }
-    }
-
-    private BotResponseToUserWrapper handleInsufficientFunds(ClientTransfer clientTransfer) {
-        final String endlWithMarkdown = "`\n";
-
-        String stringBuilder = "У вас недостаточно средств для покупки подключения к интернету\n"
-                + "Ваш баланс: " + clientTransfer.balance() + "\n"
-                + "Кошелек для пополнения: `" + PUBLIC_ADDRESS + endlWithMarkdown
-                + "Комментарий для идентификации платежа: `"
-                + clientTransfer.paymentKey() + endlWithMarkdown;
-        return new BotResponseToUserWrapper(clientTransfer.tgUserId(), stringBuilder, true, null);
     }
 
     private ClientTransfer holdFunds(ClientTransfer client) {
@@ -120,14 +132,14 @@ public class BuyConnectionCommand implements Command {
     private void takeFundsToCompanyBalance(ClientTransfer client, Date newDateExpiredAt) {
         BigDecimal newBalance = client.balance();
         BigDecimal newHeldBalance = client.heldBalance().subtract(CONNECTION_PRICE);
-
-        ClientTransfer updatedClient = new ClientTransfer(
+      ClientTransfer updatedClient = new ClientTransfer(
                 client.id(), client.tgUserId(), client.phone(), client.name(),
                 client.userLastVisited(), client.vpnProfile(), client.isVpnProfileAlive(),
                 newDateExpiredAt, client.isInPaymentProcess(), client.paymentKey(),
                 newBalance, newHeldBalance
         );
         dataManager.update(updatedClient);
+
     }
 
     @Override

@@ -78,7 +78,7 @@ public class RegisterCommand implements Command {
 
 
 
-        return new BotResponseToUserWrapper(tgUserId, response, false, keyboardMarkup);
+        return new BotResponseToUserWrapper(tgUserId, response, false, keyboardMarkup, null, null);
     }
 
     @Override
