@@ -23,6 +23,8 @@
     <modules>
         <module>BotService</module>
         <module>RouterConnectorService</module>
+        <module>proto-modules</module>
+        <module>cryptography</module>
     </modules>
 
     <licenses>

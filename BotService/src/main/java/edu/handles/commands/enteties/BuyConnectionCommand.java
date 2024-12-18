@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.util.logging.Logger;
 
 import edu.Data.formatters.UserProfileFormatter;
+import edu.EncryptionUtil;
 import edu.Integrations.chr.RouterGrpcConnector;
 import edu.handles.commands.BotResponseToUserWrapper;
 import edu.handles.commands.UserMessageFromBotWrapper;
@@ -13,11 +14,9 @@ import edu.Data.DataManager;
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
 
-import static edu.Data.formatters.EncryptionUtil.encrypt;
 
 import edu.handles.commands.Command;
 import edu.models.UserProfileStatus;
-import org.apache.commons.logging.Log;
 
 import static edu.utility.Constants.CONNECTION_PRICE;
 import static edu.utility.Constants.MONTH_LENGTH_IN_MILLISECONDS;
@@ -90,7 +89,7 @@ public class BuyConnectionCommand implements Command {
 
             // Если операция успешна, списываем удержанные средства и обновляем профиль
             if (!vpnProfile.startsWith("!Не удалось установить")) {
-                vpnProfile = encrypt(vpnProfile);
+                vpnProfile = EncryptionUtil.encrypt(vpnProfile);
 
 
                 takeFundsToCompanyBalance(clientWithHeldBalance, newDateExpiredAt);

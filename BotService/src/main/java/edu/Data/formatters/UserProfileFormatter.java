@@ -2,6 +2,7 @@ package edu.Data.formatters;
 
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
+import edu.EncryptionUtil;
 
 import java.util.Date;
 import java.util.logging.Logger;

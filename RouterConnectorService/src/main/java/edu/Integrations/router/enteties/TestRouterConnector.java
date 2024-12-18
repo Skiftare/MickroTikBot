@@ -1,9 +1,11 @@
-package edu.Integrations.router;
+package edu.Integrations.router.enteties;
 
 
-import edu.Data.dto.ClientTransfer;
+import edu.Integrations.router.VpnProfileServerManager;
+import edu.dto.ClientDtoToRouter;
+import edu.dto.ClientDtoToRouterWithVpnProfile;
 
-public class TestRouterConnector {
+public class TestRouterConnector implements VpnProfileServerManager {
     private static String generateSuccessMessageForUser() {
         String res =  "VPN профиль успешно создан!\n"
                 + "Адрес VPN-сервера: " + "localhost" + "\n"
@@ -12,13 +14,13 @@ public class TestRouterConnector {
                 + "\n\nSecret: vpn";
         return res;
     }
-    static String initialisationSecret(ClientTransfer clientTransfer) {
+    public static String initialisationSecret(ClientDtoToRouter clientTransfer) {
         return generateSuccessMessageForUser();
     }
-    static String initialisationTrial(ClientTransfer clientTransfer) {
+    public static String initialisationTrial(ClientDtoToRouter clientTransfer) {
         return generateSuccessMessageForUser();
     }
-    static String prolongSecret(ClientTransfer clientTransfer) {
+    public static String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer) {
         return generateSuccessMessageForUser();
     }
 

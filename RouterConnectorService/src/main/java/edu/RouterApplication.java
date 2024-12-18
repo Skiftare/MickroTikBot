@@ -1,6 +1,6 @@
 package edu;
 
-import edu.Integrations.router.GrpcRouterConnector;
+import edu.Integrations.connector.GrpcRouterConnector;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 

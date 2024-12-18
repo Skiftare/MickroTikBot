@@ -1,20 +1,19 @@
-package edu.Integrations.router;
-import edu.Data.dto.ClientTransfer;
-import io.grpc.BindableService;
-import io.grpc.stub.StreamObserver;
-import proto.RouterConnectorGrpc;
-import proto.RouterProtos;
+package edu.Integrations.router.enteties;
+
+import edu.EncryptionUtil;
+import edu.Integrations.router.VpnProfileServerManager;
+import edu.dto.ClientDtoToRouter;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import edu.Data.dto.ClientTransfer;
+import edu.dto.ClientDtoToRouterWithVpnProfile;
+
 import java.util.Random;
 import java.util.logging.Logger;
-import static edu.Data.formatters.EncryptionUtil.decrypt;
 
 @SuppressWarnings("HideUtilityClassConstructor")
-class RouterConnector {
+public class RouterConnector implements VpnProfileServerManager {
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;
 
@@ -60,7 +59,7 @@ class RouterConnector {
 
 
     private static String generateSuccessMessageForUser(String finalLogin, String finalPass) {
-        String res =  "VPN профиль успешно создан!\n"
+        String res = "VPN профиль успешно создан!\n"
                 + "Адрес VPN-сервера: " + SERVER_IP + "\n"
                 + "\nLogin for l2tp: " + finalLogin
                 + "\n\nPassword for l2tp: " + finalPass
@@ -69,7 +68,7 @@ class RouterConnector {
     }
 
     // Метод для инициализации секретного ключа (вызывается из другого класса)
-    static String initialisationSecret(ClientTransfer clientTransfer) {
+    public static String initialisationSecret(ClientDtoToRouter clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String finalLogin = "";
         String finalPass = "";
@@ -149,7 +148,7 @@ class RouterConnector {
     }
 
     // Метод для инициализации секретного ключа (вызывается из другого класса)
-    static String initialisationTrial(ClientTransfer clientTransfer) {
+    public static String initialisationTrial(ClientDtoToRouter clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String finalLogin = "";
         String finalPass = "";
@@ -194,7 +193,6 @@ class RouterConnector {
             LOGGER.info(LOG_SUCCESSFUL_CONNECT);
 
 
-
             // Команды для выполнения на Mikrotik
             String[] commands = {
                     COMMAND_FOR_ADDING_USER_TO_USER_MANAGER + finalPass
@@ -229,11 +227,11 @@ class RouterConnector {
         }
     }
 
-    static String prolongSecret(ClientTransfer clientTransfer) {
+    public static String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String profileData = null;
         try {
-            profileData = decrypt(clientTransfer.vpnProfile());
+            profileData = EncryptionUtil.decrypt(clientTransfer.vpnProfile());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -264,8 +262,6 @@ class RouterConnector {
             // Устанавливаем соединение
             session.connect();
             LOGGER.info(LOG_SUCCESSFUL_CONNECT);
-
-
 
 
             // Команды для выполнения на Mikrotik

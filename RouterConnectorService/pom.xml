@@ -51,9 +51,17 @@
         </dependency>
         <dependency>
             <groupId>edu.java</groupId>
-            <artifactId>BotService</artifactId>
+            <artifactId>proto-modules</artifactId>
             <version>0.1</version>
+            <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>edu.java</groupId>
+            <artifactId>cryptography</artifactId>
+            <version>0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

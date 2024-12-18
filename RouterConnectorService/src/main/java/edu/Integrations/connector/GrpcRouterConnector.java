@@ -1,44 +1,31 @@
-package edu.Integrations.router;
+package edu.Integrations.connector;
 
 
-import edu.Data.dto.ClientTransfer;
+import edu.Integrations.router.enteties.RouterConnector;
+import edu.Integrations.router.enteties.TestRouterConnector;
+import edu.dto.ClientDtoToRouter;
+import edu.dto.ClientDtoToRouterWithVpnProfile;
 import io.grpc.BindableService;
 import io.grpc.stub.StreamObserver;
 import proto.RouterConnectorGrpc;
 import proto.RouterProtos;
 
-import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.logging.Logger;
 
 public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImplBase implements BindableService {
     private static final String envForProduction = System.getenv("ROUTER_BEHAVIOUR");
 
-    private static ClientTransfer createDtoClassFromRouterDto(RouterProtos.ClientRequest request){
-        return new ClientTransfer(
-                request.getId(),
-                request.getTgUserId(),
-                request.getPhone(),
-                request.getName(),
-                Date.valueOf(request.getUserLastVisited()),
-                request.getVpnProfile(),
-                request.getIsVpnProfileAlive(),
-                Date.valueOf(request.getExpiredAt()),
-                request.getIsInPaymentProcess(),
-                request.getPaymentKey(),
-                new BigDecimal(request.getBalance()),
-                new BigDecimal(request.getHeldBalance())
-        );
-    }
 
     @Override
     public void initialisationSecret(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
-
-        ClientTransfer clientTransfer = createDtoClassFromRouterDto(request);
+        Logger.getAnonymousLogger().info("Doing response to initialisationSecret");
+        ClientDtoToRouter clientTransfer = new ClientDtoToRouter(request);
         String result = "";
-        if(envForProduction.equals("test")){
+        if (envForProduction.equals("test")) {
+            Logger.getAnonymousLogger().info("Doing response to initialisationSecret in test");
             result = TestRouterConnector.initialisationSecret(clientTransfer);
-        }
-        else{
+        } else {
+            Logger.getAnonymousLogger().info("Doing response to initialisationSecret in production");
             result = RouterConnector.initialisationSecret(clientTransfer);
         }
 
@@ -52,12 +39,11 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
 
     @Override
     public void initialisationTrial(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
-        ClientTransfer clientTransfer = createDtoClassFromRouterDto(request);
+        ClientDtoToRouter clientTransfer = new ClientDtoToRouter(request);
         String result = "";
-        if(envForProduction.equals("test")){
+        if (envForProduction.equals("test")) {
             result = TestRouterConnector.initialisationTrial(clientTransfer);
-        }
-        else{
+        } else {
             result = RouterConnector.initialisationTrial(clientTransfer);
         }
 
@@ -70,13 +56,12 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
     }
 
     @Override
-    public void prolongSecret(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
-        ClientTransfer clientTransfer = createDtoClassFromRouterDto(request);
+    public void prolongSecret(RouterProtos.ClientRequestWithProlongationSecret request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
+        ClientDtoToRouterWithVpnProfile clientTransfer = new ClientDtoToRouterWithVpnProfile(request);
         String result = "";
-        if(envForProduction.equals("test")){
+        if (envForProduction.equals("test")) {
             result = TestRouterConnector.prolongSecret(clientTransfer);
-        }
-        else{
+        } else {
             result = RouterConnector.prolongSecret(clientTransfer);
         }
 
