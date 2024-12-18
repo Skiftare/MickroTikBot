@@ -20,6 +20,7 @@ public class RouterApplication {
             try {
                 server.awaitTermination();
             } catch (InterruptedException e) {
+
                 e.printStackTrace();
             }
         }

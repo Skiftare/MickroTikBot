@@ -11,36 +11,31 @@ import java.util.logging.Logger;
 
 public class RouterGrpcConnector {
     private final RouterConnectorGrpc.RouterConnectorBlockingStub stub;
-    public RouterProtos.ClientRequest reformatDtoForGrpcTransfer(ClientTransfer clientTransfer){
-        return RouterProtos.ClientRequest.newBuilder()
-                .setId(clientTransfer.id() != null ? clientTransfer.id() : 0L)
-                .setTgUserId(clientTransfer.tgUserId() != null ? clientTransfer.tgUserId() : 0L)
-                .setPhone(clientTransfer.phone() != null ? clientTransfer.phone() : "")
-                .setName(clientTransfer.name() != null ? clientTransfer.name() : "")
-                .setUserLastVisited(clientTransfer.userLastVisited() != null
-                        ? clientTransfer.userLastVisited().toString()
-                        : "")
-                .setVpnProfile(clientTransfer.vpnProfile() != null ? clientTransfer.vpnProfile() : "")
-                .setIsVpnProfileAlive(clientTransfer.isVpnProfileAlive() != null
-                        ? clientTransfer.isVpnProfileAlive()
-                        : false)
-                .setExpiredAt(clientTransfer.expiredAt() != null
-                        ? clientTransfer.expiredAt().toString()
-                        : "")
-                .setIsInPaymentProcess(clientTransfer.isInPaymentProcess())
-                .setPaymentKey(clientTransfer.paymentKey() != null ? clientTransfer.paymentKey() : "")
-                .setBalance(clientTransfer.balance() != null ? clientTransfer.balance().toString() : "0")
-                .setHeldBalance(clientTransfer.heldBalance() != null ? clientTransfer.heldBalance().toString() : "0")
+    public RouterProtos.ClientRequestWithProlongationSecret reformatToProlongation(ClientTransfer clientTransfer){
+        return RouterProtos.ClientRequestWithProlongationSecret.newBuilder()
+                .setTgUserId(clientTransfer.tgUserId())
+                .setProlongationSecret(clientTransfer.vpnProfile())
                 .build();
     }
-
-    public RouterGrpcConnector(String target) {
+    public RouterProtos.ClientRequest reformatToInitialization(ClientTransfer clientTransfer){
+        return RouterProtos.ClientRequest.newBuilder()
+                .setTgUserId(clientTransfer.tgUserId())
+                .build();
+    }
+    public RouterGrpcConnector(String name, int port) {
         // Создаём
         ManagedChannel channel = ManagedChannelBuilder
-                .forTarget(target)
+                .forAddress(name, port)
                 .usePlaintext() // (без TLS)
                 .build();
 
+        this.stub = RouterConnectorGrpc.newBlockingStub(channel);
+    }
+    public RouterGrpcConnector(String target){
+        ManagedChannel channel = ManagedChannelBuilder
+                .forTarget(target)
+                .usePlaintext()
+                .build();
         this.stub = RouterConnectorGrpc.newBlockingStub(channel);
     }
 
@@ -55,7 +50,7 @@ public class RouterGrpcConnector {
         RouterProtos.ResponseMessage response = stub.initialisationTrial(request);
         return response.getMessage();
     }
-    public String prolongSecret(RouterProtos.ClientRequest request) {
+    public String prolongSecret(RouterProtos.ClientRequestWithProlongationSecret request) {
         RouterProtos.ResponseMessage response = stub.prolongSecret(request);
         return response.getMessage();
     }

@@ -41,7 +41,7 @@ public class BotApplication {
     private static CommandTable commandTableAssembling(JdbcDataManager jdbcDataManager) {
         LOGGER.info("Assembling command table");
 
-        RouterGrpcConnector routerGrpcConnector = new RouterGrpcConnector("RouterConnector:8090");
+        RouterGrpcConnector routerGrpcConnector = new RouterGrpcConnector("RouterConnector",8090);
 
         Command infoCommand = new InfoCommand();
         Command authorsCommand = new AuthorsCommand();

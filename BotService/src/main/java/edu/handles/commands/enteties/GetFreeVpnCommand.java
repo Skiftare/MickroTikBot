@@ -4,6 +4,7 @@ import edu.Data.DataManager;
 import edu.Data.dto.ClientTransfer;
 import edu.Data.dto.UserInfo;
 import edu.Data.formatters.UserProfileFormatter;
+import edu.EncryptionUtil;
 import edu.Integrations.chr.RouterGrpcConnector;
 import edu.Integrations.telegram.SubscriptionChecker;
 import edu.handles.commands.BotResponseToUserWrapper;
@@ -12,7 +13,6 @@ import edu.handles.commands.UserMessageFromBotWrapper;
 import edu.models.UserProfileStatus;
 import java.sql.Date;
 import java.util.logging.Logger;
-import static edu.Data.formatters.EncryptionUtil.encrypt;
 import static edu.utility.Constants.DAY_LENGTH_IN_MILLISECONDS;
 
 public class GetFreeVpnCommand implements Command {
@@ -40,12 +40,12 @@ public class GetFreeVpnCommand implements Command {
             if (isUserSubscribedToChannel(chatId)) {
                 // Пользователь подписан на канал, выдаем VPN профиль
                 String vpnProfile = routerGrpcConnector.initialisationTrial(
-                        routerGrpcConnector.reformatDtoForGrpcTransfer(clientTransfer));
+                        routerGrpcConnector.reformatToInitialization(clientTransfer));
 
                 // Устанавливаем новый срок действия VPN на день
                 Date newDateExpiredAt = new Date(System.currentTimeMillis() + DAY_LENGTH_IN_MILLISECONDS);
 
-                String encryptedVpnProfile = encrypt(vpnProfile);
+                String encryptedVpnProfile = EncryptionUtil.encrypt(vpnProfile);
                 ClientTransfer updatedClient = new ClientTransfer(
                         clientTransfer.id(),
                         clientTransfer.tgUserId(),

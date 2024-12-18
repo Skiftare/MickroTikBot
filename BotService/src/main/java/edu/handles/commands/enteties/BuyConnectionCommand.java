@@ -75,13 +75,13 @@ public class BuyConnectionCommand implements Command {
             if (update.status() == UserProfileStatus.ACTIVE_VPN) {
                 Logger.getAnonymousLogger().info("Prolonging");
                 routerGrpcConnector.prolongSecret(
-                        routerGrpcConnector.reformatDtoForGrpcTransfer(clientWithHeldBalance)
+                        routerGrpcConnector.reformatToProlongation(clientWithHeldBalance)
                 );
                 newDateExpiredAt = new Date(clientTransfer.expiredAt().getTime() + MONTH_LENGTH_IN_MILLISECONDS);
             } else {
                 Logger.getAnonymousLogger().info("Initializing secret");
                 vpnProfile = routerGrpcConnector.initialisationSecret(
-                        routerGrpcConnector.reformatDtoForGrpcTransfer(clientWithHeldBalance)
+                        routerGrpcConnector.reformatToInitialization(clientWithHeldBalance)
                 );
                 newDateExpiredAt = new Date(System.currentTimeMillis() + MONTH_LENGTH_IN_MILLISECONDS);
             }
