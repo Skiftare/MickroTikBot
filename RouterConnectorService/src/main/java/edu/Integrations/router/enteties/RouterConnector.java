@@ -14,6 +14,14 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("HideUtilityClassConstructor")
 public class RouterConnector implements VpnProfileServerManager {
+
+
+    private static final RouterConnector instance = new RouterConnector();
+    private RouterConnector() {}
+    public static RouterConnector getInstance() {
+        return instance;
+    }
+
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 1000;
 
@@ -68,7 +76,7 @@ public class RouterConnector implements VpnProfileServerManager {
     }
 
     // Метод для инициализации секретного ключа (вызывается из другого класса)
-    public static String initialisationSecret(ClientDtoToRouter clientTransfer) {
+    public String initialisationSecret(ClientDtoToRouter clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String finalLogin = "";
         String finalPass = "";
@@ -148,7 +156,7 @@ public class RouterConnector implements VpnProfileServerManager {
     }
 
     // Метод для инициализации секретного ключа (вызывается из другого класса)
-    public static String initialisationTrial(ClientDtoToRouter clientTransfer) {
+    public String initialisationTrial(ClientDtoToRouter clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String finalLogin = "";
         String finalPass = "";
@@ -227,7 +235,7 @@ public class RouterConnector implements VpnProfileServerManager {
         }
     }
 
-    public static String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer) {
+    public String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer) {
         StringBuilder stateString = new StringBuilder();
         String profileData = null;
         try {

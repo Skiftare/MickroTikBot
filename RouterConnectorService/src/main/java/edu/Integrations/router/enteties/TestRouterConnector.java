@@ -6,6 +6,15 @@ import edu.dto.ClientDtoToRouter;
 import edu.dto.ClientDtoToRouterWithVpnProfile;
 
 public class TestRouterConnector implements VpnProfileServerManager {
+
+    private static final TestRouterConnector instance = new TestRouterConnector();
+    private TestRouterConnector() {
+    }
+    public static TestRouterConnector getInstance() {
+        return instance;
+    }
+
+
     private static String generateSuccessMessageForUser() {
         String res =  "VPN профиль успешно создан!\n"
                 + "Адрес VPN-сервера: " + "localhost" + "\n"
@@ -14,13 +23,13 @@ public class TestRouterConnector implements VpnProfileServerManager {
                 + "\n\nSecret: vpn";
         return res;
     }
-    public static String initialisationSecret(ClientDtoToRouter clientTransfer) {
+    public String initialisationSecret(ClientDtoToRouter clientTransfer) {
         return generateSuccessMessageForUser();
     }
-    public static String initialisationTrial(ClientDtoToRouter clientTransfer) {
+    public String initialisationTrial(ClientDtoToRouter clientTransfer) {
         return generateSuccessMessageForUser();
     }
-    public static String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer) {
+    public String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer) {
         return generateSuccessMessageForUser();
     }
 

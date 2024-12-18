@@ -1,6 +1,7 @@
 package edu.Integrations.connector;
 
 
+import edu.Integrations.router.VpnProfileServerManagerFactory;
 import edu.Integrations.router.enteties.RouterConnector;
 import edu.Integrations.router.enteties.TestRouterConnector;
 import edu.dto.ClientDtoToRouter;
@@ -13,21 +14,17 @@ import proto.RouterProtos;
 import java.util.logging.Logger;
 
 public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImplBase implements BindableService {
-    private static final String envForProduction = System.getenv("ROUTER_BEHAVIOUR");
+
+    private final VpnProfileServerManagerFactory vpnManagerFactory = new VpnProfileServerManagerFactory();
+
+
 
 
     @Override
     public void initialisationSecret(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         Logger.getAnonymousLogger().info("Doing response to initialisationSecret");
         ClientDtoToRouter clientTransfer = new ClientDtoToRouter(request);
-        String result = "";
-        if (envForProduction.equals("test")) {
-            Logger.getAnonymousLogger().info("Doing response to initialisationSecret in test");
-            result = TestRouterConnector.initialisationSecret(clientTransfer);
-        } else {
-            Logger.getAnonymousLogger().info("Doing response to initialisationSecret in production");
-            result = RouterConnector.initialisationSecret(clientTransfer);
-        }
+        String result = vpnManagerFactory.initialisationSecret(clientTransfer);
 
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
                 .setMessage(result)
@@ -40,12 +37,7 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
     @Override
     public void initialisationTrial(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         ClientDtoToRouter clientTransfer = new ClientDtoToRouter(request);
-        String result = "";
-        if (envForProduction.equals("test")) {
-            result = TestRouterConnector.initialisationTrial(clientTransfer);
-        } else {
-            result = RouterConnector.initialisationTrial(clientTransfer);
-        }
+        String result = vpnManagerFactory.initialisationTrial(clientTransfer);
 
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
                 .setMessage(result)
@@ -58,13 +50,7 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
     @Override
     public void prolongSecret(RouterProtos.ClientRequestWithProlongationSecret request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         ClientDtoToRouterWithVpnProfile clientTransfer = new ClientDtoToRouterWithVpnProfile(request);
-        String result = "";
-        if (envForProduction.equals("test")) {
-            result = TestRouterConnector.prolongSecret(clientTransfer);
-        } else {
-            result = RouterConnector.prolongSecret(clientTransfer);
-        }
-
+        String result = vpnManagerFactory.prolongSecret(clientTransfer);
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
                 .setMessage(result)
                 .build();
