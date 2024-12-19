@@ -108,27 +108,27 @@ public final class RouterConnectorGrpc {
     return getProlongSecretMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithProlongationSecret,
+  private static volatile io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithoutIdentification,
       proto.RouterProtos.ResponseMessage> getEstablishSSHMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "EstablishSSH",
-      requestType = proto.RouterProtos.ClientRequestWithProlongationSecret.class,
+      requestType = proto.RouterProtos.ClientRequestWithoutIdentification.class,
       responseType = proto.RouterProtos.ResponseMessage.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithProlongationSecret,
+  public static io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithoutIdentification,
       proto.RouterProtos.ResponseMessage> getEstablishSSHMethod() {
-    io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithProlongationSecret, proto.RouterProtos.ResponseMessage> getEstablishSSHMethod;
+    io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithoutIdentification, proto.RouterProtos.ResponseMessage> getEstablishSSHMethod;
     if ((getEstablishSSHMethod = RouterConnectorGrpc.getEstablishSSHMethod) == null) {
       synchronized (RouterConnectorGrpc.class) {
         if ((getEstablishSSHMethod = RouterConnectorGrpc.getEstablishSSHMethod) == null) {
           RouterConnectorGrpc.getEstablishSSHMethod = getEstablishSSHMethod =
-              io.grpc.MethodDescriptor.<proto.RouterProtos.ClientRequestWithProlongationSecret, proto.RouterProtos.ResponseMessage>newBuilder()
+              io.grpc.MethodDescriptor.<proto.RouterProtos.ClientRequestWithoutIdentification, proto.RouterProtos.ResponseMessage>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "EstablishSSH"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  proto.RouterProtos.ClientRequestWithProlongationSecret.getDefaultInstance()))
+                  proto.RouterProtos.ClientRequestWithoutIdentification.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   proto.RouterProtos.ResponseMessage.getDefaultInstance()))
               .setSchemaDescriptor(new RouterConnectorMethodDescriptorSupplier("EstablishSSH"))
@@ -210,7 +210,7 @@ public final class RouterConnectorGrpc {
 
     /**
      */
-    public void establishSSH(proto.RouterProtos.ClientRequestWithProlongationSecret request,
+    public void establishSSH(proto.RouterProtos.ClientRequestWithoutIdentification request,
         io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getEstablishSSHMethod(), responseObserver);
     }
@@ -242,7 +242,7 @@ public final class RouterConnectorGrpc {
             getEstablishSSHMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                proto.RouterProtos.ClientRequestWithProlongationSecret,
+                proto.RouterProtos.ClientRequestWithoutIdentification,
                 proto.RouterProtos.ResponseMessage>(
                   this, METHODID_ESTABLISH_SSH)))
           .build();
@@ -289,7 +289,7 @@ public final class RouterConnectorGrpc {
 
     /**
      */
-    public void establishSSH(proto.RouterProtos.ClientRequestWithProlongationSecret request,
+    public void establishSSH(proto.RouterProtos.ClientRequestWithoutIdentification request,
         io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getEstablishSSHMethod(), getCallOptions()), request, responseObserver);
@@ -333,7 +333,7 @@ public final class RouterConnectorGrpc {
 
     /**
      */
-    public proto.RouterProtos.ResponseMessage establishSSH(proto.RouterProtos.ClientRequestWithProlongationSecret request) {
+    public proto.RouterProtos.ResponseMessage establishSSH(proto.RouterProtos.ClientRequestWithoutIdentification request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getEstablishSSHMethod(), getCallOptions(), request);
     }
@@ -380,7 +380,7 @@ public final class RouterConnectorGrpc {
     /**
      */
     public com.google.common.util.concurrent.ListenableFuture<proto.RouterProtos.ResponseMessage> establishSSH(
-        proto.RouterProtos.ClientRequestWithProlongationSecret request) {
+        proto.RouterProtos.ClientRequestWithoutIdentification request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getEstablishSSHMethod(), getCallOptions()), request);
     }
@@ -421,7 +421,7 @@ public final class RouterConnectorGrpc {
               (io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage>) responseObserver);
           break;
         case METHODID_ESTABLISH_SSH:
-          serviceImpl.establishSSH((proto.RouterProtos.ClientRequestWithProlongationSecret) request,
+          serviceImpl.establishSSH((proto.RouterProtos.ClientRequestWithoutIdentification) request,
               (io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage>) responseObserver);
           break;
         default:

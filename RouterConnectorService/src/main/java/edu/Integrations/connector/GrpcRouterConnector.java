@@ -7,6 +7,7 @@ import edu.dto.ClientDtoToRouterWithVpnProfile;
 import io.grpc.BindableService;
 import io.grpc.stub.StreamObserver;
 import proto.RouterConnectorGrpc;
+import proto.RouterProtos;
 
 import java.util.logging.Logger;
 
@@ -58,6 +59,19 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
                 .setMessage(result)
                 .build();
         Logger.getAnonymousLogger().info("Response: " + response.getMessage());
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void establishingSSH(RouterProtos.ClientRequestWithoutIdentification request,
+                                StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
+        String result = vpnManagerFactory.establishingSSH();
+
+        RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
+                .setMessage(result)
+                .build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();

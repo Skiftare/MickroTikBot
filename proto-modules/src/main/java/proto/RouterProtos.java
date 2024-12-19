@@ -1122,6 +1122,406 @@ public final class RouterProtos {
 
   }
 
+  public interface ClientRequestWithoutIdentificationOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:proto.ClientRequestWithoutIdentification)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code proto.ClientRequestWithoutIdentification}
+   */
+  public static final class ClientRequestWithoutIdentification extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:proto.ClientRequestWithoutIdentification)
+      ClientRequestWithoutIdentificationOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ClientRequestWithoutIdentification.newBuilder() to construct.
+    private ClientRequestWithoutIdentification(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ClientRequestWithoutIdentification() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ClientRequestWithoutIdentification();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return proto.RouterProtos.internal_static_proto_ClientRequestWithoutIdentification_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return proto.RouterProtos.internal_static_proto_ClientRequestWithoutIdentification_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              proto.RouterProtos.ClientRequestWithoutIdentification.class, proto.RouterProtos.ClientRequestWithoutIdentification.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof proto.RouterProtos.ClientRequestWithoutIdentification)) {
+        return super.equals(obj);
+      }
+      proto.RouterProtos.ClientRequestWithoutIdentification other = (proto.RouterProtos.ClientRequestWithoutIdentification) obj;
+
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static proto.RouterProtos.ClientRequestWithoutIdentification parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(proto.RouterProtos.ClientRequestWithoutIdentification prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code proto.ClientRequestWithoutIdentification}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:proto.ClientRequestWithoutIdentification)
+        proto.RouterProtos.ClientRequestWithoutIdentificationOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return proto.RouterProtos.internal_static_proto_ClientRequestWithoutIdentification_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return proto.RouterProtos.internal_static_proto_ClientRequestWithoutIdentification_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                proto.RouterProtos.ClientRequestWithoutIdentification.class, proto.RouterProtos.ClientRequestWithoutIdentification.Builder.class);
+      }
+
+      // Construct using proto.RouterProtos.ClientRequestWithoutIdentification.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return proto.RouterProtos.internal_static_proto_ClientRequestWithoutIdentification_descriptor;
+      }
+
+      @java.lang.Override
+      public proto.RouterProtos.ClientRequestWithoutIdentification getDefaultInstanceForType() {
+        return proto.RouterProtos.ClientRequestWithoutIdentification.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public proto.RouterProtos.ClientRequestWithoutIdentification build() {
+        proto.RouterProtos.ClientRequestWithoutIdentification result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public proto.RouterProtos.ClientRequestWithoutIdentification buildPartial() {
+        proto.RouterProtos.ClientRequestWithoutIdentification result = new proto.RouterProtos.ClientRequestWithoutIdentification(this);
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof proto.RouterProtos.ClientRequestWithoutIdentification) {
+          return mergeFrom((proto.RouterProtos.ClientRequestWithoutIdentification)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(proto.RouterProtos.ClientRequestWithoutIdentification other) {
+        if (other == proto.RouterProtos.ClientRequestWithoutIdentification.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:proto.ClientRequestWithoutIdentification)
+    }
+
+    // @@protoc_insertion_point(class_scope:proto.ClientRequestWithoutIdentification)
+    private static final proto.RouterProtos.ClientRequestWithoutIdentification DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new proto.RouterProtos.ClientRequestWithoutIdentification();
+    }
+
+    public static proto.RouterProtos.ClientRequestWithoutIdentification getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ClientRequestWithoutIdentification>
+        PARSER = new com.google.protobuf.AbstractParser<ClientRequestWithoutIdentification>() {
+      @java.lang.Override
+      public ClientRequestWithoutIdentification parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ClientRequestWithoutIdentification> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ClientRequestWithoutIdentification> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public proto.RouterProtos.ClientRequestWithoutIdentification getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface ResponseMessageOrBuilder extends
       // @@protoc_insertion_point(interface_extends:proto.ResponseMessage)
       com.google.protobuf.MessageOrBuilder {
@@ -1688,6 +2088,11 @@ public final class RouterProtos {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_proto_ClientRequestWithProlongationSecret_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_proto_ClientRequestWithoutIdentification_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_proto_ClientRequestWithoutIdentification_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_proto_ResponseMessage_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -1704,17 +2109,18 @@ public final class RouterProtos {
       "\n\022proto/router.proto\022\005proto\"#\n\rClientReq" +
       "uest\022\022\n\ntg_user_id\030\001 \001(\003\"V\n#ClientReques" +
       "tWithProlongationSecret\022\022\n\ntg_user_id\030\001 " +
-      "\001(\003\022\033\n\023prolongation_secret\030\002 \001(\t\"\"\n\017Resp" +
-      "onseMessage\022\017\n\007message\030\001 \001(\t2\305\002\n\017RouterC" +
-      "onnector\022D\n\024InitialisationSecret\022\024.proto" +
-      ".ClientRequest\032\026.proto.ResponseMessage\022C" +
-      "\n\023InitialisationTrial\022\024.proto.ClientRequ" +
-      "est\032\026.proto.ResponseMessage\022S\n\rProlongSe" +
-      "cret\022*.proto.ClientRequestWithProlongati" +
-      "onSecret\032\026.proto.ResponseMessage\022R\n\014Esta" +
-      "blishSSH\022*.proto.ClientRequestWithProlon" +
-      "gationSecret\032\026.proto.ResponseMessageB\025\n\005" +
-      "protoB\014RouterProtosb\006proto3"
+      "\001(\003\022\033\n\023prolongation_secret\030\002 \001(\t\"$\n\"Clie" +
+      "ntRequestWithoutIdentification\"\"\n\017Respon" +
+      "seMessage\022\017\n\007message\030\001 \001(\t2\304\002\n\017RouterCon" +
+      "nector\022D\n\024InitialisationSecret\022\024.proto.C" +
+      "lientRequest\032\026.proto.ResponseMessage\022C\n\023" +
+      "InitialisationTrial\022\024.proto.ClientReques" +
+      "t\032\026.proto.ResponseMessage\022S\n\rProlongSecr" +
+      "et\022*.proto.ClientRequestWithProlongation" +
+      "Secret\032\026.proto.ResponseMessage\022Q\n\014Establ" +
+      "ishSSH\022).proto.ClientRequestWithoutIdent" +
+      "ification\032\026.proto.ResponseMessageB\025\n\005pro" +
+      "toB\014RouterProtosb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1732,8 +2138,14 @@ public final class RouterProtos {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_ClientRequestWithProlongationSecret_descriptor,
         new java.lang.String[] { "TgUserId", "ProlongationSecret", });
-    internal_static_proto_ResponseMessage_descriptor =
+    internal_static_proto_ClientRequestWithoutIdentification_descriptor =
       getDescriptor().getMessageTypes().get(2);
+    internal_static_proto_ClientRequestWithoutIdentification_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_proto_ClientRequestWithoutIdentification_descriptor,
+        new java.lang.String[] { });
+    internal_static_proto_ResponseMessage_descriptor =
+      getDescriptor().getMessageTypes().get(3);
     internal_static_proto_ResponseMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_ResponseMessage_descriptor,

@@ -42,4 +42,8 @@ public class VpnProfileServerManagerFactory implements VpnProfileServerManager {
         return managerTable.get(envForRouterConnectorBehaviour).prolongSecret(clientTransfer);
     }
 
+    @Override
+    public String establishingSSH() {
+        return managerTable.get(envForRouterConnectorBehaviour).establishingSSH();
+    }
 }

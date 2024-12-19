@@ -9,4 +9,6 @@ public interface VpnProfileServerManager {
     String initialisationTrial(ClientDtoToRouter clientTransfer);
 
     String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer);
+
+    String establishingSSH();
 }

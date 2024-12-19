@@ -4,6 +4,7 @@ import edu.Data.dto.ClientTransfer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import proto.RouterConnectorGrpc;
+import proto.RouterProtos;
 
 import java.util.logging.Logger;
 
@@ -46,6 +47,11 @@ public class RouterGrpcConnector {
 
     public String prolongSecret(RouterProtos.ClientRequestWithProlongationSecret request) {
         RouterProtos.ResponseMessage response = stub.prolongSecret(request);
+        return response.getMessage();
+    }
+
+    public String establishSSH(RouterProtos.ClientRequestWithoutIdentification request) {
+        RouterProtos.ResponseMessage response = stub.establishSSH(request);
         return response.getMessage();
     }
 }
