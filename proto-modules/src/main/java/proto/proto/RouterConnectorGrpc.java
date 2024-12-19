@@ -108,6 +108,37 @@ public final class RouterConnectorGrpc {
     return getProlongSecretMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithProlongationSecret,
+      proto.RouterProtos.ResponseMessage> getEstablishSSHMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "EstablishSSH",
+      requestType = proto.RouterProtos.ClientRequestWithProlongationSecret.class,
+      responseType = proto.RouterProtos.ResponseMessage.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithProlongationSecret,
+      proto.RouterProtos.ResponseMessage> getEstablishSSHMethod() {
+    io.grpc.MethodDescriptor<proto.RouterProtos.ClientRequestWithProlongationSecret, proto.RouterProtos.ResponseMessage> getEstablishSSHMethod;
+    if ((getEstablishSSHMethod = RouterConnectorGrpc.getEstablishSSHMethod) == null) {
+      synchronized (RouterConnectorGrpc.class) {
+        if ((getEstablishSSHMethod = RouterConnectorGrpc.getEstablishSSHMethod) == null) {
+          RouterConnectorGrpc.getEstablishSSHMethod = getEstablishSSHMethod =
+              io.grpc.MethodDescriptor.<proto.RouterProtos.ClientRequestWithProlongationSecret, proto.RouterProtos.ResponseMessage>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "EstablishSSH"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  proto.RouterProtos.ClientRequestWithProlongationSecret.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  proto.RouterProtos.ResponseMessage.getDefaultInstance()))
+              .setSchemaDescriptor(new RouterConnectorMethodDescriptorSupplier("EstablishSSH"))
+              .build();
+        }
+      }
+    }
+    return getEstablishSSHMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -177,6 +208,13 @@ public final class RouterConnectorGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getProlongSecretMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void establishSSH(proto.RouterProtos.ClientRequestWithProlongationSecret request,
+        io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getEstablishSSHMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -200,6 +238,13 @@ public final class RouterConnectorGrpc {
                 proto.RouterProtos.ClientRequestWithProlongationSecret,
                 proto.RouterProtos.ResponseMessage>(
                   this, METHODID_PROLONG_SECRET)))
+          .addMethod(
+            getEstablishSSHMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                proto.RouterProtos.ClientRequestWithProlongationSecret,
+                proto.RouterProtos.ResponseMessage>(
+                  this, METHODID_ESTABLISH_SSH)))
           .build();
     }
   }
@@ -241,6 +286,14 @@ public final class RouterConnectorGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getProlongSecretMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void establishSSH(proto.RouterProtos.ClientRequestWithProlongationSecret request,
+        io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getEstablishSSHMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -276,6 +329,13 @@ public final class RouterConnectorGrpc {
     public proto.RouterProtos.ResponseMessage prolongSecret(proto.RouterProtos.ClientRequestWithProlongationSecret request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getProlongSecretMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public proto.RouterProtos.ResponseMessage establishSSH(proto.RouterProtos.ClientRequestWithProlongationSecret request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getEstablishSSHMethod(), getCallOptions(), request);
     }
   }
 
@@ -316,11 +376,20 @@ public final class RouterConnectorGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getProlongSecretMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<proto.RouterProtos.ResponseMessage> establishSSH(
+        proto.RouterProtos.ClientRequestWithProlongationSecret request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getEstablishSSHMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_INITIALISATION_SECRET = 0;
   private static final int METHODID_INITIALISATION_TRIAL = 1;
   private static final int METHODID_PROLONG_SECRET = 2;
+  private static final int METHODID_ESTABLISH_SSH = 3;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -349,6 +418,10 @@ public final class RouterConnectorGrpc {
           break;
         case METHODID_PROLONG_SECRET:
           serviceImpl.prolongSecret((proto.RouterProtos.ClientRequestWithProlongationSecret) request,
+              (io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage>) responseObserver);
+          break;
+        case METHODID_ESTABLISH_SSH:
+          serviceImpl.establishSSH((proto.RouterProtos.ClientRequestWithProlongationSecret) request,
               (io.grpc.stub.StreamObserver<proto.RouterProtos.ResponseMessage>) responseObserver);
           break;
         default:
@@ -415,6 +488,7 @@ public final class RouterConnectorGrpc {
               .addMethod(getInitialisationSecretMethod())
               .addMethod(getInitialisationTrialMethod())
               .addMethod(getProlongSecretMethod())
+              .addMethod(getEstablishSSHMethod())
               .build();
         }
       }

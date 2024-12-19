@@ -9,6 +9,7 @@ service RouterConnector {
   rpc InitialisationSecret (ClientRequest) returns (ResponseMessage);
   rpc InitialisationTrial (ClientRequest) returns (ResponseMessage);
   rpc ProlongSecret (ClientRequestWithProlongationSecret) returns (ResponseMessage);
+  rpc EstablishSSH (ClientRequestWithProlongationSecret) returns (ResponseMessage);
 }
 
 message ClientRequest {

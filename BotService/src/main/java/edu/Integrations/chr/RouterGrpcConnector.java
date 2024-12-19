@@ -4,7 +4,6 @@ import edu.Data.dto.ClientTransfer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import proto.RouterConnectorGrpc;
-import proto.RouterProtos;
 
 import java.util.logging.Logger;
 

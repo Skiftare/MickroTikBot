@@ -1705,14 +1705,16 @@ public final class RouterProtos {
       "uest\022\022\n\ntg_user_id\030\001 \001(\003\"V\n#ClientReques" +
       "tWithProlongationSecret\022\022\n\ntg_user_id\030\001 " +
       "\001(\003\022\033\n\023prolongation_secret\030\002 \001(\t\"\"\n\017Resp" +
-      "onseMessage\022\017\n\007message\030\001 \001(\t2\361\001\n\017RouterC" +
+      "onseMessage\022\017\n\007message\030\001 \001(\t2\305\002\n\017RouterC" +
       "onnector\022D\n\024InitialisationSecret\022\024.proto" +
       ".ClientRequest\032\026.proto.ResponseMessage\022C" +
       "\n\023InitialisationTrial\022\024.proto.ClientRequ" +
       "est\032\026.proto.ResponseMessage\022S\n\rProlongSe" +
       "cret\022*.proto.ClientRequestWithProlongati" +
-      "onSecret\032\026.proto.ResponseMessageB\025\n\005prot" +
-      "oB\014RouterProtosb\006proto3"
+      "onSecret\032\026.proto.ResponseMessage\022R\n\014Esta" +
+      "blishSSH\022*.proto.ClientRequestWithProlon" +
+      "gationSecret\032\026.proto.ResponseMessageB\025\n\005" +
+      "protoB\014RouterProtosb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
