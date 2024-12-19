@@ -2,8 +2,6 @@ package edu.Integrations.connector;
 
 
 import edu.Integrations.router.VpnProfileServerManagerFactory;
-import edu.Integrations.router.enteties.RouterConnector;
-import edu.Integrations.router.enteties.TestRouterConnector;
 import edu.dto.ClientDtoToRouter;
 import edu.dto.ClientDtoToRouterWithVpnProfile;
 import io.grpc.BindableService;
@@ -18,14 +16,14 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
     private final VpnProfileServerManagerFactory vpnManagerFactory = new VpnProfileServerManagerFactory();
 
 
-
     @Override
-    public void initialisationSecret(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
+    public void initialisationSecret(RouterProtos.ClientRequest request,
+                                     StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         Logger.getAnonymousLogger().info("Doing response to initialisationSecret");
         Logger.getAnonymousLogger().info(request.toString());
         Logger.getAnonymousLogger().info(String.valueOf(request.getTgUserId()));
         ClientDtoToRouter clientTransfer = new ClientDtoToRouter(request);
-        
+
         String result = vpnManagerFactory.initialisationSecret(clientTransfer);
 
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
@@ -37,7 +35,8 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
     }
 
     @Override
-    public void initialisationTrial(RouterProtos.ClientRequest request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
+    public void initialisationTrial(RouterProtos.ClientRequest request,
+                                    StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         ClientDtoToRouter clientTransfer = new ClientDtoToRouter(request);
         String result = vpnManagerFactory.initialisationTrial(clientTransfer);
 
@@ -50,12 +49,16 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
     }
 
     @Override
-    public void prolongSecret(RouterProtos.ClientRequestWithProlongationSecret request, StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
+    public void prolongSecret(RouterProtos.ClientRequestWithProlongationSecret request,
+                              StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         ClientDtoToRouterWithVpnProfile clientTransfer = new ClientDtoToRouterWithVpnProfile(request);
         String result = vpnManagerFactory.prolongSecret(clientTransfer);
+        Logger.getAnonymousLogger().info("Doing response to prolongSecret");
+        Logger.getAnonymousLogger().info("For client "+clientTransfer.tgUserId().toString());
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
                 .setMessage(result)
                 .build();
+        Logger.getAnonymousLogger().info("Response: "+response.getMessage());
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();

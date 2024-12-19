@@ -3,13 +3,13 @@ package edu;
 import edu.Integrations.connector.GrpcRouterConnector;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.grpc.NameResolverRegistry;
-import io.grpc.internal.DnsNameResolverProvider;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 
+@SuppressWarnings({"HideUtilityClassConstructor", "MagicNumber"})
 public class RouterApplication {
+
     public static void main(String[] args) throws IOException {
         int port = 8090;
         Logger.getAnonymousLogger().info("Starting");
@@ -26,7 +26,8 @@ public class RouterApplication {
             try {
                 server.awaitTermination();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Logger.getAnonymousLogger().info("Server was interrupted");
+                Logger.getAnonymousLogger().info(e.getMessage());
             }
         }
     }

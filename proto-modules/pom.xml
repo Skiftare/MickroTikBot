@@ -9,4 +9,5 @@
     <artifactId>proto-modules</artifactId>
     <name>Archetype - proto-modules</name>
     <url>http://maven.apache.org</url>
+
 </project>

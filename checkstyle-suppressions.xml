@@ -6,4 +6,6 @@
 
 <suppressions>
     <suppress checks="ImportOrder" />
+    <suppress checks=".*" files=".*proto-modules/.*" />
+
 </suppressions>

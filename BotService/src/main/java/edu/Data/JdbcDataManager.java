@@ -169,11 +169,7 @@ public class JdbcDataManager implements DataManager, PaymentDataManager {
 
     // Метод для обновления записи
     public void update(ClientTransfer client) {
-        /*
-        "(tg_user_id, phone, name, user_last_visited, vpn_profile, "
-                    + "is_vpn_profile_alive, expired_at, is_payment_pending, key_for_recognizing, "
-                    + "balance, held_balance) "
-         */
+
         String query = "UPDATE users SET "
                 + "phone = ?, name = ?, "
                 + "user_last_visited = ?, "

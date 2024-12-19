@@ -15,7 +15,9 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.logging.Logger;
 
-import static edu.utility.Constants.*;
+import static edu.utility.Constants.CONNECTION_PRICE;
+import static edu.utility.Constants.PUBLIC_ADDRESS;
+import static edu.utility.Constants.MONTH_LENGTH_IN_MILLISECONDS;
 
 
 public class BuyConnectionCommand implements Command {
@@ -69,7 +71,7 @@ public class BuyConnectionCommand implements Command {
 
             if (update.status() == UserProfileStatus.ACTIVE_VPN) {
                 Logger.getAnonymousLogger().info("Prolonging");
-                routerGrpcConnector.prolongSecret(
+                vpnProfile = routerGrpcConnector.prolongSecret(
                         routerGrpcConnector.reformatToProlongation(clientWithHeldBalance)
                 );
                 newDateExpiredAt = new Date(clientTransfer.expiredAt().getTime() + MONTH_LENGTH_IN_MILLISECONDS);
@@ -91,6 +93,7 @@ public class BuyConnectionCommand implements Command {
                 stringBuilder.append(vpnProfile);
                 String responseText = stringBuilder.toString();
                 String responseMessage = UserProfileFormatter.formatCredentialsForConnection(responseText);
+
                 return new BotResponseToUserWrapper(
                         update.userId(), responseMessage,
                         true, null, SUCCESS_IMAGE_URL, null
@@ -139,7 +142,7 @@ public class BuyConnectionCommand implements Command {
         BigDecimal newHeldBalance = client.heldBalance().subtract(CONNECTION_PRICE);
         ClientTransfer updatedClient = new ClientTransfer(
                 client.id(), client.tgUserId(), client.phone(), client.name(),
-                client.userLastVisited(), client.vpnProfile(), client.isVpnProfileAlive(),
+                client.userLastVisited(), vpnProfile, client.isVpnProfileAlive(),
                 newDateExpiredAt, client.isInPaymentProcess(), client.paymentKey(),
                 newBalance, newHeldBalance
         );

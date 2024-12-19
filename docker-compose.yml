@@ -33,27 +33,20 @@ services:
       - "8080:8080"
     restart: always
 
+
   router_connector:
     build:
-        context: .
-        dockerfile: RouterConnectorService/Router.Dockerfile
+      context: .
+      dockerfile: RouterConnectorService/Router.Dockerfile
     container_name: RouterConnector
     depends_on:
-        - postgresql
+      - postgresql
     networks:
-        - botnet
+      - botnet
     environment:
-        - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
-        - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
-        - NEW_DATABASE_LOGIN=${NEW_DATABASE_LOGIN}
-        - NEW_DATABASE_PASS=${NEW_DATABASE_PASS}
-        - SERVER_IP=${SERVER_IP}
-        - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-        - TELEGRAM_CHANNEL_ID=${TELEGRAM_CHANNEL_ID}
-        - DB_ENCRYPTION_KEY=${DB_ENCRYPTION_KEY}
-        - ROUTER_BEHAVIOUR=${ROUTER_BEHAVIOUR}
+      - ROUTER_BEHAVIOUR=${ROUTER_BEHAVIOUR}
     env_file:
-        - .env
+      - .env
     restart: always
     ports:
       - "8090:8090"

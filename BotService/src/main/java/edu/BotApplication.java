@@ -25,6 +25,7 @@ import io.grpc.internal.DnsNameResolverProvider;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
 import java.util.logging.Logger;
 
 
@@ -53,10 +54,14 @@ public class BotApplication {
         Command registerCommand = new RegisterCommand(jdbcDataManager);
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
         Command profileCommand = new ProfileCommand();
-        Command buyCommand = new BuyConnectionCommand(jdbcDataManager,routerGrpcConnector);
+        Command buyCommand = new BuyConnectionCommand(jdbcDataManager, routerGrpcConnector);
         Command getUserProfileCommand = new GetUserProfileCommand(jdbcDataManager, new UserProfileFormatter());
-        Command getFreeVpnCommand = new GetFreeVpnCommand(jdbcDataManager,routerGrpcConnector);
-        AccountListener accountListener = new AccountListener(new StellarConnection(),
+        Command getFreeVpnCommand = new GetFreeVpnCommand(jdbcDataManager, routerGrpcConnector);
+        AccountListener accountListener = new AccountListener(new StellarConnection(
+                System.getenv("STELLAR_PUBLIC_KEY"),
+                System.getenv("STELLAR_SECRET_KEY"),
+                System.getenv("STELLAR_NETWORK")
+        ),
                 jdbcDataManager
         );
         accountListener.startListening();
