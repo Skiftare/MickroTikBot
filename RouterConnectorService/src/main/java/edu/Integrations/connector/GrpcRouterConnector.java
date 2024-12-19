@@ -54,11 +54,11 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
         ClientDtoToRouterWithVpnProfile clientTransfer = new ClientDtoToRouterWithVpnProfile(request);
         String result = vpnManagerFactory.prolongSecret(clientTransfer);
         Logger.getAnonymousLogger().info("Doing response to prolongSecret");
-        Logger.getAnonymousLogger().info("For client "+clientTransfer.tgUserId().toString());
+        Logger.getAnonymousLogger().info("For client " + clientTransfer.tgUserId().toString());
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
                 .setMessage(result)
                 .build();
-        Logger.getAnonymousLogger().info("Response: "+response.getMessage());
+        Logger.getAnonymousLogger().info("Response: " + response.getMessage());
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
