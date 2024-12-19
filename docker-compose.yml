@@ -2,10 +2,11 @@ services:
   bot:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: BotService/Bot.Dockerfile
     container_name: MickroTikBot
     depends_on:
       - postgresql
+      - router_connector
     networks:
       - botnet
     environment:
@@ -25,10 +26,31 @@ services:
       - KEY_FOR_AES=${KEY_FOR_AES}
       - TELEGRAM_CHANNEL_ID=${TELEGRAM_CHANNEL_ID}
       - DB_ENCRYPTION_KEY=${DB_ENCRYPTION_KEY}
+      - ROUTER_BEHAVIOUR=${ROUTER_BEHAVIOUR}
     env_file:
       - .env
     ports:
       - "8080:8080"
+    restart: always
+
+
+  router_connector:
+    build:
+      context: .
+      dockerfile: RouterConnectorService/Router.Dockerfile
+    container_name: RouterConnector
+    depends_on:
+      - postgresql
+    networks:
+      - botnet
+    environment:
+      - ROUTER_BEHAVIOUR=${ROUTER_BEHAVIOUR}
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "8090:8090"
+
 
 
   postgresql:
