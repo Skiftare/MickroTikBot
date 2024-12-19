@@ -10,5 +10,5 @@ public interface VpnProfileServerManager {
 
     String prolongSecret(ClientDtoToRouterWithVpnProfile clientTransfer);
 
-    String establishingSSH();
+    String establishSSH();
 }

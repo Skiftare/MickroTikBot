@@ -68,7 +68,7 @@ public class GrpcRouterConnector extends RouterConnectorGrpc.RouterConnectorImpl
     public void establishSSH(RouterProtos.ClientRequestWithoutIdentification request,
                                 StreamObserver<RouterProtos.ResponseMessage> responseObserver) {
         Logger.getAnonymousLogger().info("Doing response to establishingSSH "+request.toString());
-        String result = vpnManagerFactory.establishingSSH();
+        String result = vpnManagerFactory.establishSSH();
 
         RouterProtos.ResponseMessage response = RouterProtos.ResponseMessage.newBuilder()
                 .setMessage(result)

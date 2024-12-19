@@ -43,7 +43,7 @@ public class VpnProfileServerManagerFactory implements VpnProfileServerManager {
     }
 
     @Override
-    public String establishingSSH() {
-        return managerTable.get(envForRouterConnectorBehaviour).establishingSSH();
+    public String establishSSH() {
+        return managerTable.get(envForRouterConnectorBehaviour).establishSSH();
     }
 }

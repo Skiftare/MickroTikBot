@@ -53,7 +53,7 @@ public class BotApplication {
         Command authorsCommand = new AuthorsCommand();
         Command registerCommand = new RegisterCommand(jdbcDataManager);
         Command authentificateCommand = new AuthentificateCommand(jdbcDataManager);
-        Command profileCommand = new ProfileCommand();
+        Command profileCommand = new ProfileCommand(routerGrpcConnector);
         Command buyCommand = new BuyConnectionCommand(jdbcDataManager, routerGrpcConnector);
         Command getUserProfileCommand = new GetUserProfileCommand(jdbcDataManager, new UserProfileFormatter());
         Command getFreeVpnCommand = new GetFreeVpnCommand(jdbcDataManager, routerGrpcConnector);

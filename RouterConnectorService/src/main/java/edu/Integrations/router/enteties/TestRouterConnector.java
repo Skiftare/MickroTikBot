@@ -30,7 +30,7 @@ public class TestRouterConnector implements VpnProfileServerManager {
     }
 
     @Override
-    public String establishingSSH() {
+    public String establishSSH() {
         return "SSH is ok";
     }
 

@@ -297,7 +297,8 @@ public class RouterConnector implements VpnProfileServerManager {
         }
     }
 
-    public String establishingSSH() {
+    @Override
+    public String establishSSH() {
         StringBuilder stateString = new StringBuilder();
         try {
             if (USER == null || PASSWORD == null) {

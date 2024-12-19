@@ -1,24 +1,19 @@
 package edu.handles.commands;
 
-import java.sql.Date;
 import java.util.LinkedHashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import edu.Configuration.SSHConnection;
-import edu.Data.dto.ClientTransfer;
 import edu.handles.commands.enteties.*;
 import edu.handles.tables.CommandTable;
 import edu.models.UserProfileStatus;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 public class CommandsTest {
 
