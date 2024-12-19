@@ -29,5 +29,10 @@ public class TestRouterConnector implements VpnProfileServerManager {
         return generateSuccessMessageForUser();
     }
 
+    @Override
+    public String establishingSSH() {
+        return "SSH is ok";
+    }
+
 
 }
