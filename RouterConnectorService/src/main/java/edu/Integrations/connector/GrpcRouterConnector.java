@@ -7,6 +7,7 @@ import edu.dto.ClientDtoToRouterWithVpnProfile;
 import io.grpc.BindableService;
 import io.grpc.stub.StreamObserver;
 import proto.RouterConnectorGrpc;
+import proto.RouterProtos;
 
 import java.util.logging.Logger;
 
