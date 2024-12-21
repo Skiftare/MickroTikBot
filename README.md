@@ -56,14 +56,18 @@
     ```
    2. Создайте .env файл в корне проекта и добавьте в него переменные окружения:
       ```bash
-      BOT_TOKEN=your_bot_token
-      BOT_USERNAME=your_bot_username
-      NEW_ROUTER_LOGIN=your_login_to_chr
-      NEW_ROUTER_PASS=your_password_to_chr
-      NEW_DATABASE_LOGIN=your_login_to_db
-      NEW_DATABASE_PASS=your_password_to_db
-      CHR_ROUTER_IP=your_mac_adress_of_chr
-      STELLAR_PUBLIC_KEY=your_public_key
-      STELLAR_SECRET_KEY=your_secret_key 
-      STELLAR_NETWORK=network (testnet/real)
+      TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+      NEW_ROUTER_LOGIN=your_chr_login
+      NEW_ROUTER_PASS=your_chr_password
+      CHR_ROUTER_IP=your_chr_IP_address
+      STELLAR_PUBLIC_KEY=your_public_key_for_payment_proceeding
+      STELLAR_SECRET_KEY=your_secret_key_for_payment_proceeding
+      SERVER_IP=your_radius_server_public_IP
+      STELLAR_NETWORK=(testnet/real)
+      NEW_DATABASE_LOGIN=your_database_login
+      NEW_DATABASE_PASS=your_database_password
+      KEY_FOR_AES=your_AES_key
+      TELEGRAM_CHANNEL_ID=your_tg_channel_ID_for_trial
+      DB_ENCRYPTION_KEY=your_encryption_key
+      ROUTER_BEHAVIOUR=program_launch_option(test/production)
       ```

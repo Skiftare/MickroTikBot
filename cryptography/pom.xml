@@ -7,6 +7,6 @@
         <version>0.1</version>
     </parent>
     <artifactId>cryptography</artifactId>
-    <name>Archetype - cruptography</name>
+    <name>Archetype - cryptography</name>
     <url>http://maven.apache.org</url>
 </project>
