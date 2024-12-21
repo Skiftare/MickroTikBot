@@ -2,11 +2,11 @@ services:
   bot:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: BotService/Bot.Dockerfile
     container_name: MickroTikBot
     depends_on:
       - postgresql
-      - chr
+      - router_connector
     networks:
       - botnet
     environment:
@@ -17,10 +17,40 @@ services:
       - STELLAR_SECRET_KEY=${STELLAR_SECRET_KEY}
       - SERVER_IP=${SERVER_IP}
       - STELLAR_NETWORK=${STELLAR_NETWORK}
+      - IPSEC_SECRET_KEY=${IPSEC_SECRET_KEY}
+      - L2TP_RANGES=${L2TP_RANGES}
+      - L2TP_PROF_NAME=${L2TP_PROF_NAME}
+      - CHR_ROUTER_IP=${CHR_ROUTER_IP}
+      - NEW_DATABASE_LOGIN=${NEW_DATABASE_LOGIN}
+      - NEW_DATABASE_PASS=${NEW_DATABASE_PASS}
+      - KEY_FOR_AES=${KEY_FOR_AES}
+      - TELEGRAM_CHANNEL_ID=${TELEGRAM_CHANNEL_ID}
+      - DB_ENCRYPTION_KEY=${DB_ENCRYPTION_KEY}
+      - ROUTER_BEHAVIOUR=${ROUTER_BEHAVIOUR}
     env_file:
       - .env
     ports:
       - "8080:8080"
+    restart: always
+
+
+  router_connector:
+    build:
+      context: .
+      dockerfile: RouterConnectorService/Router.Dockerfile
+    container_name: RouterConnector
+    depends_on:
+      - postgresql
+    networks:
+      - botnet
+    environment:
+      - ROUTER_BEHAVIOUR=${ROUTER_BEHAVIOUR}
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "8090:8090"
+
 
 
   postgresql:
@@ -64,22 +94,7 @@ services:
       - botnet
     restart:
       on-failure
-  chr:
-    build: ./docker/chr
-    container_name: chr_router
-    privileged: true
-    networks:
-      - botnet
-    ports:
-      - "2222:2222"
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
-    environment:
-      - NEW_ROUTER_LOGIN=${NEW_ROUTER_LOGIN}
-      - NEW_ROUTER_PASS=${NEW_ROUTER_PASS}
-    env_file:
-      - .env
+
 
 
 networks:
