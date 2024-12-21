@@ -302,7 +302,7 @@ public class RouterConnector implements VpnProfileServerManager {
         StringBuilder stateString = new StringBuilder();
         try {
             if (USER == null || PASSWORD == null) {
-                throw new IllegalStateException("NEW_ROUTER_LOGIN или NEW_ROUTER_PASS не установлены");
+                throw new IllegalStateException(ERROR_AT_CREDENTIALS_ARE_NULL);
             }
 
             LOGGER.info("Попытка подключения с использованием USER: " + USER);
@@ -319,8 +319,8 @@ public class RouterConnector implements VpnProfileServerManager {
             session.setPassword(PASSWORD);
 
             // Отключаем проверку хоста
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,password");
+            session.setConfig(STRICT_HOST_KEY_CHECKING, "no");
+            session.setConfig(PREFERRED_AUTHENTICATIONS, PUBLICKEY_PASSWORD);
 
             LOGGER.info("Попытка подключения к SSH...");
 
@@ -329,7 +329,7 @@ public class RouterConnector implements VpnProfileServerManager {
             LOGGER.info("Подключение успешно установлено.");
 
             // Создаем канал для выполнения команды
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            ChannelExec channel = (ChannelExec) session.openChannel(EXEC_COMMAND);
 
             // Команда для выполнения на Mikrotik
             String command = "/system resource print";
@@ -363,8 +363,8 @@ public class RouterConnector implements VpnProfileServerManager {
             session.disconnect();
 
         } catch (Exception e) {
-            stateString.append("Не удалось установить соединение! Ошибка: ").append(e.getMessage());
-            LOGGER.severe("Ошибка: " + e);
+            stateString.append(ERROR_AT_CONNECTION).append(e.getMessage());
+            LOGGER.severe(ERROR_FOR_MORE_INFO + e);
         }
 
         return stateString.toString();
